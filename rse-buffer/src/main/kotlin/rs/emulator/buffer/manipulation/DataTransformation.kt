@@ -1,0 +1,31 @@
+package rs.emulator.buffer.manipulation
+
+/**
+ * Represents the different way's data values can be transformed.
+ *
+ * @author Graham
+ */
+enum class DataTransformation
+{
+
+    /**
+     * Adds 128 to the value when it is written, takes 128 from the value when it is read (also known as type-A).
+     */
+    ADD,
+
+    /**
+     * Negates the value (also known as type-C).
+     */
+    NEGATE,
+
+    /**
+     * No transformation is to occur.
+     */
+    NONE,
+
+    /**
+     * Subtracts the value from 128 (also known as type-S).
+     */
+    SUBTRACT
+
+}
