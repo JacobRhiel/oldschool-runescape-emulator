@@ -42,6 +42,9 @@ subprojects {
 
         implementation("io.reactivex.rxjava2:rxkotlin:2.4.0")
 
+        implementation("com.github.ben-manes.caffeine:caffeine:2.8.4")
+
+        implementation("com.google.code.gson:gson:2.8.6")
 
     }
 
