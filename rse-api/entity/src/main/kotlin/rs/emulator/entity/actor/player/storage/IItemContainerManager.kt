@@ -1,5 +1,7 @@
 package rs.emulator.entity.actor.player.storage
 
+import rs.emulator.entity.actor.player.storage.container.ItemContainer
+
 /**
  *
  * @author javatar

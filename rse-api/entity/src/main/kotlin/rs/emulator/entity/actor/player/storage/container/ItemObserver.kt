@@ -1,4 +1,4 @@
-package rs.emulator.entity.actor.player.storage
+package rs.emulator.entity.actor.player.storage.container
 
 import io.reactivex.Observer
 import io.reactivex.disposables.Disposable
@@ -8,7 +8,7 @@ import io.reactivex.internal.disposables.DisposableHelper
 import io.reactivex.internal.functions.Functions
 import io.reactivex.observers.LambdaConsumerIntrospection
 import io.reactivex.plugins.RxJavaPlugins
-import rs.emulator.entity.material.IItem
+import rs.emulator.entity.material.items.Item
 import java.util.concurrent.atomic.AtomicReference
 
 /**
@@ -16,19 +16,19 @@ import java.util.concurrent.atomic.AtomicReference
  * @author javatar
  */
 
-class ItemObserver<Item : IItem>(block: ItemObserver<Item>.() -> Unit) :
-    AtomicReference<Disposable>(), Observer<Item>, Disposable, LambdaConsumerIntrospection {
+class ItemObserver<ITEM : Item>(block: ItemObserver<ITEM>.() -> Unit) :
+    AtomicReference<Disposable>(), Observer<ContainerEvent<ITEM>>, Disposable, LambdaConsumerIntrospection {
 
     private var onCompleteBlock: () -> Unit = {}
     private var onSubscribeBlock: (Disposable) -> Unit = {}
-    private var onNextBlock: (Item) -> Unit = {}
+    private var onNextBlock: (ContainerEvent<ITEM>) -> Unit = {}
     private var onErrorBlock: (Throwable) -> Unit = {}
 
     init {
         block(this)
     }
 
-    fun onNext(block: (Item) -> Unit) {
+    fun onNext(block: (ContainerEvent<ITEM>) -> Unit) {
         this.onNextBlock = block
     }
 
@@ -68,7 +68,7 @@ class ItemObserver<Item : IItem>(block: ItemObserver<Item>.() -> Unit) :
         }
     }
 
-    override fun onNext(t: Item) {
+    override fun onNext(t: ContainerEvent<ITEM>) {
         if (!isDisposed) {
             try {
                 onNextBlock(t)

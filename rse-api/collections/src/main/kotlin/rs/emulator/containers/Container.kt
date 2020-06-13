@@ -14,7 +14,6 @@ abstract class Container<T, O>(val array: Array<T>, private val default : T) : M
     abstract infix fun onAdd(block : O.() -> Unit) : Disposable
     abstract infix fun onRemove(block : O.() -> Unit) : Disposable
 
-
     operator fun set(index: Int, element: T) {
         array[index] = element
     }

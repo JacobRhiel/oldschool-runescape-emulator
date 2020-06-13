@@ -1,13 +1,15 @@
-package rs.emulator.entity.material
+package rs.emulator.entity.material.items
+
+import rs.emulator.entity.IEntity
 
 /**
  *
  * @author javatar
  */
 
-class Item(override var id: Int, override var amount: Int = 1, override var stackable: Boolean = false) : IItem {
+abstract class Item(var id: Int, var amount: Int = 1, var stackable: Boolean = false) : IEntity {
 
-
+    abstract fun copy(amount: Int = this.amount, stackable: Boolean = this.stackable) : Item
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -23,16 +25,20 @@ class Item(override var id: Int, override var amount: Int = 1, override var stac
 
     override fun hashCode(): Int {
         var result = id
-        result = 31 * result + amount
         result = 31 * result + stackable.hashCode()
         return result
-    }
-
-    override fun copy(amount: Int, stackable: Boolean): Item {
-        return Item(this.id, amount, stackable)
     }
 
     override fun toString(): String {
         return "Item(id=$id, amount=$amount, stackable=$stackable)"
     }
+
+    operator fun plusAssign(item : Item) {
+        this.amount += item.amount
+    }
+
+    operator fun minusAssign(item : Item) {
+        this.amount -= item.amount
+    }
+
 }

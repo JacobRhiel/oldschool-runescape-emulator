@@ -1,6 +1,7 @@
 package rs.emulator.entity.actor.player.storage
 
-import rs.emulator.entity.material.Item
+import rs.emulator.entity.actor.player.storage.container.ItemContainer
+import rs.emulator.entity.material.items.Item
 
 /**
  *
