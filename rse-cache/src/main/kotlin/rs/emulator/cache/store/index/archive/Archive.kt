@@ -1,5 +1,6 @@
 package rs.emulator.cache.store.index.archive
 
+import rs.emulator.buffer.reader.BufferedReader
 import rs.emulator.cache.store.file.StoreFile
 import rs.emulator.cache.store.index.archive.file.EntryFile
 import rs.emulator.cache.store.index.archive.reference.ArchiveReferenceTable
@@ -24,7 +25,7 @@ class Archive(
 
     var entryCount: Int = 0
 
-    override val table: IndependentReferenceTable<EntryFile> = ArchiveReferenceTable(parent, identifier)
+    override val table: ArchiveReferenceTable = ArchiveReferenceTable(parent, identifier)
 
     fun fetchEntry(identifier: Int) = table.lookup(identifier)
 

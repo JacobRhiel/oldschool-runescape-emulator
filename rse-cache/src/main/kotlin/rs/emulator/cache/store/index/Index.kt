@@ -7,7 +7,6 @@ import rs.emulator.cache.store.access.AccessType
 import rs.emulator.cache.store.file.StoreFile
 import rs.emulator.cache.store.index.archive.Archive
 import rs.emulator.cache.store.index.reference.IndexReferenceTable
-import rs.emulator.cache.store.reference.table.IndependentReferenceTable
 import rs.emulator.utilities.logger.error
 import java.io.RandomAccessFile
 import java.nio.file.Path
@@ -25,13 +24,58 @@ open class Index(
 
     internal val raf = RandomAccessFile(path.toFile(), accessType.rafAccess)
 
-    override val table: IndependentReferenceTable<Archive> = IndexReferenceTable(identifier)
+    override val table: IndexReferenceTable = IndexReferenceTable(identifier)
 
-    fun fetchArchive(identifier: Int) = table.lookup(identifier)
+    fun fetchArchive(identifier: Int): Archive
+    {
 
-    fun readArchive(identifier: Int) = readEntry(identifier, fetchArchive(identifier))
+        println("size: " + table.count)
 
-    protected fun readEntry(identifier: Int, storeFile: StoreFile)
+        val archive = table.lookup(identifier)
+
+        if(!archive.table.loaded)
+            archive.table.load()
+
+        return archive
+
+    }
+
+    fun fetchNamedArchive(name: String): Archive?
+    {
+
+        if(table.groupCount == 0)
+            table.loadReference()
+
+        var archive: Archive? = null
+
+        (0 until table.groupCount).forEach {
+
+            val createdArchive = fetchArchive(it)
+
+            return if(createdArchive.nameHash == hash(name))
+            {
+                archive = createdArchive
+                archive
+            }
+            else return@forEach
+
+        }
+
+        return archive
+
+    }
+
+    private fun hash(str: String): Int
+    {
+        var hash = 0
+        for (element in str)
+            hash = element.toInt() + ((hash shl 5) - hash)
+        return hash
+    }
+
+    fun readArchive(identifier: Int) = readEntry(identifier, table.lookup(identifier)) as Archive
+
+    protected fun readEntry(identifier: Int, storeFile: StoreFile): StoreFile
     {
 
         val headerSize = 6
@@ -58,6 +102,8 @@ open class Index(
         storeFile.sectorLength = length
 
         storeFile.referenceSector = sector
+
+        return storeFile
 
     }
 

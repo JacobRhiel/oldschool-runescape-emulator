@@ -1,18 +1,15 @@
 package rs.emulator.cache.store.index.reference
 
-import io.netty.buffer.Unpooled
-import it.unimi.dsi.fastutil.ints.Int2ObjectAVLTreeMap
-import org.koin.core.*
+import it.unimi.dsi.fastutil.ints.Int2ReferenceArrayMap
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 import rs.emulator.buffer.manipulation.DataType
 import rs.emulator.buffer.reader.BufferedReader
-import rs.emulator.cache.store.VirtualFileStore
-import rs.emulator.cache.store.data.DataFile
-import rs.emulator.cache.store.file.StoreFile
 import rs.emulator.cache.store.index.archive.Archive
-import rs.emulator.cache.store.index.archive.file.EntryFile
 import rs.emulator.cache.store.reference.ReferenceTable
 import rs.emulator.cache.store.reference.table.IndependentReferenceTable
-import java.nio.file.FileStore
+import rs.emulator.cache.store.security.crc.CrcTable
+import rs.emulator.cache.store.security.namehash.IntHashTable
 
 /**
  *
@@ -28,16 +25,38 @@ class IndexReferenceTable(parent: Int)
 
     var version: Int = 0
 
-    var named: Boolean = true
+    var namedArchive: Boolean = true
 
     var hash: Int = 0
 
-    var archiveCount = 0
+    var groupCount = 0
+
+    lateinit var groupIds: IntArray
+
+    lateinit var groupNameHashes: IntArray
+
+    lateinit var groupCrcs: IntArray
+
+    lateinit var groupVersions: IntArray
+
+    lateinit var fileCounts: IntArray
+
+    lateinit var fileIds: Int2ReferenceArrayMap<IntArray>
+
+    lateinit var fileNameHashes: Int2ReferenceArrayMap<IntArray>
+
+    lateinit var groupNameHashTable: IntHashTable
+
+    lateinit var fileNameHashTables: ArrayList<IntHashTable>
 
     private lateinit var ids: IntArray
 
-    private fun decodeHeader(reader: BufferedReader)
+    fun loadReference() = decodeHeader(referenceTable.value.fetchIndex(parent).decompressedBuffer.copy())
+
+    private fun decodeHeader(reader: BufferedReader): Int
     {
+
+        hash = CrcTable.fetchIdxHash(reader.toArray(), reader.readableBytes)
 
         protocol = reader.getUnsigned(DataType.BYTE).toInt()
 
@@ -46,59 +65,154 @@ class IndexReferenceTable(parent: Int)
         if(protocol >= 6)
             version = reader.getSigned(DataType.INT).toInt()
 
-        hash = reader.getUnsigned(DataType.BYTE).toInt()
+        namedArchive = (reader.getUnsigned(DataType.BYTE).toInt() != 0)
 
-        named = 1 and hash != 0
+        groupCount = if(protocol >= 7) reader.bigSmart else reader.getUnsigned(DataType.SHORT).toInt()
 
-        archiveCount = if(protocol >= 7) reader.bigSmart else reader.getUnsigned(DataType.SHORT).toInt()
+        groupIds = IntArray(groupCount)
 
-        ids = IntArray(archiveCount) { it.inc() - 1 }
+        var groupId = 0
 
-        println("archive count: $archiveCount")
+        var var6 = -1
+
+        (0 until groupCount).forEach { group ->
+
+            groupId += if(protocol >= 7) reader.bigSmart else reader.getUnsigned(DataType.SHORT).toInt()
+
+            groupIds[group] = groupId
+
+            if(groupIds[group] > var6)
+                var6 = groupIds[group]
+
+        }
+
+        groupCrcs = IntArray(var6 + 1)
+        groupVersions = IntArray(var6 + 1)
+        fileCounts = IntArray(var6 + 1)
+        fileIds = Int2ReferenceArrayMap(var6 + 1)
+
+        ids = IntArray(groupCount) { it.inc() - 1 }
+
+        println("archive count: $groupCount")
+
+        return var6
 
     }
 
-    override fun createEntry(identifier: Int): Archive
+    override fun loadTable(): IndexReferenceTable
     {
 
-        var offset = 0
+        val idx = referenceTable.value.fetchIndex(parent)
 
-        val reader = referenceTable.value.fetchIndex(parent).decompressedBuffer
+        val reader = idx.decompressedBuffer.copy()
 
-        decodeHeader(reader)
+        val var6 = decodeHeader(reader)
 
-        val archive = Archive(parent, identifier)
+        if(namedArchive)
+        {
 
-        val idBuffer = copyBufferToReader(reader, length = archiveCount * Short.SIZE_BYTES).also { offset += it.readableBytes}
+            groupNameHashes = IntArray(var6 + 1)
 
-        //todo: find the id correctly? typically the entire file is parsed and loaded at once,
-        //we are no longer doing this for memory/performance.
-        ids.indices.forEach { _ -> (if(protocol >= 7) idBuffer.bigSmart else idBuffer.getUnsigned(DataType.SHORT).toInt()) + if(identifier == 0) 0 else ids[identifier - 1] }
+            (0 until groupCount).forEach { group ->
 
-        ids[if(identifier == 0) 0 else identifier] = identifier
+                groupNameHashes[groupIds[group]] = reader.getSigned(DataType.INT).toInt()
 
-        val crcBuffer = copyBufferToReader(reader, length = archiveCount * Int.SIZE_BYTES).also { offset += it.readableBytes}
+                groupNameHashTable = IntHashTable(groupNameHashes)
 
-        crcBuffer.buffer.skipBytes((identifier - 1) * Int.SIZE_BYTES)
+            }
 
-        archive.crc = crcBuffer.getSigned(DataType.INT).toInt()
+        }
 
-        val versionBuffer = copyBufferToReader(reader, length = archiveCount * Int.SIZE_BYTES).also { offset += it.readableBytes}
+        (0 until groupCount).forEach { group ->
 
-        versionBuffer.buffer.skipBytes((identifier - 1) * Int.SIZE_BYTES)
+            groupCrcs[groupIds[group]] = reader.getSigned(DataType.INT).toInt()
 
-        archive.version = versionBuffer.getSigned(DataType.INT).toInt()
+        }
 
-        val archiveCountBuffer = copyBufferToReader(reader, length = archiveCount * Short.SIZE_BYTES).also { offset += it.readableBytes}
+        (0 until groupCount).forEach { group ->
 
-        archiveCountBuffer.buffer.skipBytes((identifier - 1) * Short.SIZE_BYTES)
+            groupVersions[groupIds[group]] = reader.getSigned(DataType.INT).toInt()
 
-        val count = if(protocol >= 7) archiveCountBuffer.bigSmart else archiveCountBuffer.getUnsigned(DataType.SHORT).toInt()
+        }
 
-        archive.entryCount = count
+        (0 until groupCount).forEach { group ->
 
-        return archive
+            fileCounts[groupIds[group]] = reader.getUnsigned(DataType.SHORT).toInt()
+
+        }
+
+        var groupId: Int
+
+        var fileCount: Int
+
+        var fileId = 0
+
+        var fileIdOffset = -1
+
+        (0 until groupCount).forEach { group ->
+
+            groupId = groupIds[group]
+
+            fileCount = fileCounts[groupId]
+
+            println("files count: " + fileIds.size)
+
+            fileIds[groupId] = IntArray(fileCount)
+
+            println("count: " + fileIds[groupId].size)
+
+            (0 until fileCount).forEach { file ->
+
+                fileId += if (protocol >= 7) reader.bigSmart else reader.getUnsigned(DataType.SHORT).toInt()
+
+                fileIds[groupId][file] = fileId
+
+                fileId = fileIds[groupId][file]
+
+                if (fileId > fileIdOffset)
+                    fileIdOffset = fileId
+
+            }
+
+            val archive = lookup(groupId)
+
+            archive.entryCount = fileIds[groupId].size
+
+            submitEntry(archive)
+
+        }
+
+        if (namedArchive)
+        {
+
+            fileNameHashes = Int2ReferenceArrayMap(var6 + 1)
+
+            fileNameHashTables = ArrayList(var6 + 1)
+
+            (0 until groupCount).forEach { group ->
+
+                groupId = groupIds[group]
+
+                fileCount = fileCounts[groupId]
+
+                fileNameHashes[groupId] = IntArray(lookup(groupId).entryCount)
+
+                (0 until fileCount).forEach {  file ->
+
+                    fileNameHashes[groupId][fileIds[groupId][file]] = reader.getSigned(DataType.INT).toInt()
+
+                }
+
+                fileNameHashTables[groupId] = IntHashTable((fileNameHashes[groupId]))
+
+            }
+
+        }
+
+        return this
 
     }
+
+    override fun createEntry(identifier: Int): Archive = Archive(parent, identifier)
 
 }

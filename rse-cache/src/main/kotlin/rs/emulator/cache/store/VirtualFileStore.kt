@@ -39,7 +39,7 @@ class VirtualFileStore(private val path: Path) : KoinComponent, Closeable
 
         val buffer = dataFile.read(referenceTable.identifier, idx.identifier, idx.referenceSector, idx.sectorLength)
 
-        idx.apply { decompressedBuffer = idx.decompress(this, buffer) }
+        idx.apply { decompressedBuffer = idx.decompress(this, buffer) }.apply { table.load() }
 
         return idx
 

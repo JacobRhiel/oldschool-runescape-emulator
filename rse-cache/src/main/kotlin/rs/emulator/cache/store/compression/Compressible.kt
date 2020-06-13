@@ -69,8 +69,6 @@ interface Compressible : Compressor
 
                 val decompressedLength: Int = reader.getUnsigned(DataType.INT).toInt()
 
-                println("dd: " + decryptedData.toTypedArray().contentDeepToString())
-
                 data = decompress(decryptedData, compressedLength, compressionType.algorithm)
 
                 assert(data.size == decompressedLength)
@@ -78,8 +76,6 @@ interface Compressible : Compressor
             }
 
         }
-
-        println("data size: " + data.size)
 
         return BufferedReader(data)
 

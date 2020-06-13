@@ -22,10 +22,13 @@ class ReferenceTable(path: Path,
 
     fun fetchIndex(identifier: Int, accessType: AccessType = AccessType.READ): Index
     {
+        println("index: $identifier")
         return if(indexes.containsKey(identifier))
             indexes[identifier]!!
         else
         {
+
+            println("index isnt registered")
 
             val index = Index(identifier, path.parent.resolve("main_file_cache.idx$identifier"))
 
