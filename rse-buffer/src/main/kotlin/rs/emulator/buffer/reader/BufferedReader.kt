@@ -2,6 +2,8 @@ package rs.emulator.buffer.reader
 
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.Unpooled
+import rs.emulator.buffer.BufferUtils.readJagexString
+import rs.emulator.buffer.BufferUtils.readString
 import rs.emulator.buffer.manipulation.DataOrder
 import rs.emulator.buffer.manipulation.DataTransformation
 import rs.emulator.buffer.manipulation.DataType
@@ -30,12 +32,53 @@ class BufferedReader
         this.buffer = buffer
     }
 
+    /**
+     * Gets a string from the buffer.
+     *
+     * @return The string.
+     * @throws IllegalStateException If this reader is not in byte access mode.
+     */
+    val string: String
+        get() = buffer.readString()
+
+    val jagString: String
+        get() = buffer.readJagexString()
+
     val bigSmart: Int
         get()
         {
             val peek = buffer.getByte(buffer.readerIndex()).toInt()
             return if(peek >= 0) buffer.readUnsignedShort() and 0xFFFF
             else buffer.readInt() and Integer.MAX_VALUE
+        }
+
+    /**
+     * Gets an unsigned smart from the buffer.
+     *
+     * @return The smart.
+     * @throws IllegalStateException If this reader is not in byte access mode.
+     */
+    val unsignedSmart: Int
+        get()
+        {
+            val peek = buffer.getByte(buffer.readerIndex()).toInt()
+            return if (peek < 128) buffer.readByte().toInt()
+            else buffer.readShort() - 0x8000
+        }
+
+    val unsignedIntSmartShortCompat: Int
+        get()
+        {
+            var var1 = 0
+            var var2: Int
+            var2 = unsignedSmart
+            while (var2 == 32767)
+            {
+                var1 += 32767
+                var2 = unsignedSmart
+            }
+            var1 += var2
+            return var1
         }
 
     /**
@@ -284,11 +327,15 @@ class BufferedReader
 
     fun resetReaderIndex(): ByteBuf = this.buffer.resetReaderIndex()
 
+    fun skipBytes(length: Int) = this.buffer.skipBytes(length)
+
     /**
      * Resets the buffer.
      */
     fun reset() = this.buffer.clear()
 
     fun toArray() : ByteArray = this.buffer.array()
+
+    fun copy() = BufferedReader(this.buffer.copy())
 
 }
