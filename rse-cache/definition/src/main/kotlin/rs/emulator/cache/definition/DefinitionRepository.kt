@@ -4,18 +4,22 @@ import com.github.benmanes.caffeine.cache.Cache
 import com.github.benmanes.caffeine.cache.Caffeine
 import org.koin.core.KoinComponent
 import org.koin.core.get
-import rs.emulator.buffer.reader.BufferedReader
 import rs.emulator.cache.definition.entity.loc.LocDefinitionGenerator
 import rs.emulator.cache.definition.entity.npc.NpcDefinitionGenerator
 import rs.emulator.cache.definition.entity.obj.ObjDefinitionGenerator
 import rs.emulator.cache.definition.entity.obj.meta.ObjMetaDataDefinitionGenerator
+import rs.emulator.cache.definition.entity.sequence.SequenceDefinitionGenerator
+import rs.emulator.cache.definition.entity.spotanim.SpotAnimDefinitionGenerator
 import rs.emulator.cache.definition.region.landscape.LandscapeDefinitionGenerator
 import rs.emulator.cache.definition.region.mapscape.MapScapeDefinitionGenerator
 import rs.emulator.cache.definition.varp.bit.VarBitDefinitionGenerator
 import rs.emulator.cache.definition.varp.player.VarPlayerDefinitionGenerator
 import rs.emulator.cache.definition.widget.WidgetDefinitionGenerator
+import rs.emulator.cache.definition.widget.enum.EnumDefinitionGenerator
 import rs.emulator.cache.definition.widget.inv.InvDefinitionGenerator
 import rs.emulator.cache.definition.widget.param.ParamDefinitionGenerator
+import rs.emulator.cache.definition.widget.script.ScriptDefinitionGenerator
+import rs.emulator.cache.definition.widget.struct.StructDefinitionGenerator
 import rs.emulator.cache.store.VirtualFileStore
 import java.util.concurrent.TimeUnit
 
@@ -39,11 +43,16 @@ class DefinitionRepository : KoinComponent
         MapScapeDefinitionGenerator(),
         InvDefinitionGenerator(),
         ParamDefinitionGenerator(),
-        WidgetDefinitionGenerator()
+        WidgetDefinitionGenerator(),
+        SequenceDefinitionGenerator(),
+        SpotAnimDefinitionGenerator(),
+        EnumDefinitionGenerator(),
+        ScriptDefinitionGenerator(),
+        StructDefinitionGenerator()
     )
 
     @PublishedApi internal val definitionCache: Cache<Class<Definition>, HashMap<Int, Definition>> = Caffeine.newBuilder()
-        .maximumSize(0xFFFF) //65535 default maximum size of any entry.
+        .maximumSize(255) //65535 default maximum size of any entry.
         .expireAfterAccess(2, TimeUnit.MINUTES)
         .recordStats()
         .build()
@@ -69,18 +78,13 @@ class DefinitionRepository : KoinComponent
             generator.namedArchive ->
             {
 
-                println("lol2")
-
                 val archiveName = generator.generateArchiveName(identifier)
 
-                //todo: null?
-                fileStore.fetchIndex(generator.indexConfig.identifier).fetchNamedArchive(archiveName)?.decompressedBuffer?.copy()!!
+                fileStore.fetchIndex(generator.indexConfig.identifier).fetchNamedArchive(archiveName)?.fetchBuffer()!!
 
             }
             else                   ->
             {
-
-                println("test")
 
                 fileStore.fetchIndex(generator.indexConfig.identifier)
                     .fetchArchive(
@@ -101,11 +105,9 @@ class DefinitionRepository : KoinComponent
                                 identifier
                         else
                             child
-                    ).decompressedBuffer.copy()
+                    ).fetchBuffer(true)
             }
         }
-
-        println("abc")
 
         val definition = generator.decodeHeader(identifier, reader)
 
