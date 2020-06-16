@@ -1,32 +1,39 @@
 package rs.emulator.cache.store.compression
 
 import io.netty.buffer.Unpooled
+import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream
+import org.apache.commons.compress.utils.IOUtils
 import org.bouncycastle.crypto.engines.XTEAEngine
 import org.bouncycastle.crypto.params.KeyParameter
 import rs.emulator.buffer.manipulation.DataType
 import rs.emulator.buffer.reader.BufferedReader
+import rs.emulator.cache.store.Crc32
 import rs.emulator.cache.store.file.StoreFile
+import rs.emulator.encryption.xtea.XTEA
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 import java.util.zip.CRC32
+import java.util.zip.GZIPInputStream
 
 /**
  *
  * @author Chk
  */
-interface Compressible : Compressor
+abstract class Compressible : Compressor
 {
 
-    private val crc32
-        get() = CRC32()
+    private val crc32 = CRC32()
 
-    private val hash
-        get() = crc32.value.toInt()
+    var hash: Int = 0
+
+    var version: Int = 0
 
     private val xtea
         get() = XTEAEngine()
 
     fun decompress(storeFile: StoreFile, reader: BufferedReader): BufferedReader = decompress(storeFile, reader, null)
 
-    fun decompress(storeFile: StoreFile, reader: BufferedReader, keys: ByteArray?): BufferedReader
+    fun decompress(storeFile: StoreFile, reader: BufferedReader, keys: IntArray?): BufferedReader
     {
 
         val opcode = reader.getUnsigned(DataType.BYTE).toInt()
@@ -40,7 +47,11 @@ interface Compressible : Compressor
         if (compressedLength < 0 || compressedLength > 1000000)
             throw RuntimeException("Invalid data: $compressedLength")
 
-        crc32.update(reader.toArray(), 0, 5) // compression + length
+        val crc = Crc32()
+
+        crc.update(reader.toArray(), 0, 5) // compression + length
+
+        //crc32.update(reader.toArray(), 0, 5) // compression + length
 
         var data: ByteArray
 
@@ -53,7 +64,7 @@ interface Compressible : Compressor
 
             CompressionType.NONE ->
             {
-                encryptedData = fetchEncryptedData(reader, compressedLength)
+                encryptedData = fetchEncryptedData(crc, reader, compressedLength)
                 decryptedData = decrypt(encryptedData, encryptedData.size, keys)
                 data = decryptedData
             }
@@ -61,7 +72,7 @@ interface Compressible : Compressor
             else ->
             {
 
-                encryptedData = fetchEncryptedData(reader, compressedLength + 4)
+                encryptedData = fetchEncryptedData(crc, reader, compressedLength + 4)
 
                 decryptedData = decrypt(encryptedData, encryptedData.size, keys)
 
@@ -77,11 +88,14 @@ interface Compressible : Compressor
 
         }
 
+        hash = crc.hash
+
+
         return BufferedReader(data)
 
     }
 
-    private fun fetchEncryptedData(reader: BufferedReader, length: Int): ByteArray
+    private fun fetchEncryptedData(crc32: Crc32, reader: BufferedReader, length: Int): ByteArray
     {
 
         val encryptedData = ByteArray(length)
@@ -95,6 +109,8 @@ interface Compressible : Compressor
 
             val version = reader.getUnsigned(DataType.SHORT).toInt()
 
+            this.version = version
+
             assert(version != -1)
 
         }
@@ -103,36 +119,8 @@ interface Compressible : Compressor
 
     }
 
-    private fun encrypt(keys: ByteArray?, data: ByteArray, length: Int): ByteArray
-    {
+    private fun encrypt(keys: IntArray?, data: ByteArray, length: Int): ByteArray = if (keys == null) data else XTEA.encipher(keys, data, length)
 
-        if(keys == null)
-            return data
-
-        xtea.init(true, KeyParameter(keys))
-
-        val outByteArray = byteArrayOf()
-
-        xtea.processBlock(data, 0, outByteArray, 0)
-
-        return outByteArray
-
-    }
-
-    private fun decrypt(data: ByteArray, length: Int, keys: ByteArray?): ByteArray
-    {
-
-        if(keys == null)
-            return data
-
-        xtea.init(false, KeyParameter(keys))
-
-        val outByteArray = byteArrayOf()
-
-        xtea.processBlock(data, 0, outByteArray, 0)
-
-        return outByteArray
-
-    }
+    private fun decrypt(data: ByteArray, length: Int, keys: IntArray?): ByteArray = if (keys == null) data else XTEA.decipher(keys, data, 0, length)
 
 }

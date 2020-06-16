@@ -10,4 +10,6 @@ dependencies {
 
     implementation("org.apache.commons:commons-compress:1.20")
 
+    implementation(project(":rse-encryption"))
+
 }

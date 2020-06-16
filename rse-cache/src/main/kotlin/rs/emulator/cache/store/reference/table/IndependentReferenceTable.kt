@@ -19,31 +19,16 @@ abstract class IndependentReferenceTable<T : StoreFile>(
 )
 {
 
-    private val lookup: Cache<Int, T> = Caffeine.newBuilder()
-            .maximumSize(0xFFFF) //65535 default maximum size of any entry.
-            .expireAfterAccess(30, TimeUnit.MINUTES)
-            .recordStats()
-            .build()
-
-    var loaded: Boolean = false
+    val lookup = Int2ObjectAVLTreeMap<T>()
 
     var count: Int = 0
-        get() = lookup.estimatedSize().toInt()
+        get() = lookup.size
 
-    abstract fun loadTable() : IndependentReferenceTable<T>
+    abstract fun loadTable(decompressed: Boolean = true) : IndependentReferenceTable<T>
 
     abstract fun createEntry(identifier: Int) : T
 
-    internal fun load()
-    {
-
-        println("loading table")
-
-        loadTable()
-
-        loaded = true
-
-    }
+    internal fun load() = loadTable()
 
     fun submitEntry(entry: T) : T = lookup.getOrPut(entry.identifier) {
         entry
@@ -58,8 +43,6 @@ abstract class IndependentReferenceTable<T : StoreFile>(
     }
 
     fun lookup(identifier: Int) : T = lookup.getOrPut(identifier) {
-        println(javaClass.simpleName)
-        println(this)
         submitEntry(identifier)
     }
 
