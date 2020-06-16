@@ -1,4 +1,3 @@
-import jdk.nashorn.internal.ir.annotations.Ignore
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import rs.emulator.entity.actor.player.storage.containers.Equipment

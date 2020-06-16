@@ -4,7 +4,7 @@ import com.github.benmanes.caffeine.cache.Cache
 import com.github.benmanes.caffeine.cache.Caffeine
 import org.koin.core.KoinComponent
 import org.koin.core.get
-import rs.emulator.buffer.reader.BufferedReader
+import rs.emulator.Repository
 import rs.emulator.cache.definition.entity.loc.LocDefinitionGenerator
 import rs.emulator.cache.definition.entity.npc.NpcDefinitionGenerator
 import rs.emulator.cache.definition.entity.obj.ObjDefinitionGenerator
@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit
  *
  * @author Chk
  */
-class DefinitionRepository : KoinComponent
+class DefinitionRepository : KoinComponent, Repository
 {
 
     @PublishedApi internal val fileStore: VirtualFileStore = get()
@@ -49,6 +49,10 @@ class DefinitionRepository : KoinComponent
         .build()
 
     private fun submitType(clazz: Class<Definition>) = definitionCache.put(clazz, hashMapOf())
+
+    override fun <T : rs.emulator.Definition> findDefinition(identifier: Int, child: Int): T {
+        return find(identifier, child)
+    }
 
     inline fun <reified T : Definition> find(identifier: Int): T = find(identifier, -1)
 
