@@ -1,6 +1,5 @@
 package rs.emulator.cache.store.index.reference
 
-import it.unimi.dsi.fastutil.ints.Int2ReferenceArrayMap
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 import rs.emulator.buffer.manipulation.DataType
@@ -41,9 +40,9 @@ class IndexReferenceTable(parent: Int)
 
     lateinit var fileCounts: IntArray
 
-    lateinit var fileIds: Int2ReferenceArrayMap<IntArray>
+    lateinit var fileIds: Array<IntArray>
 
-    lateinit var fileNameHashes: Int2ReferenceArrayMap<IntArray>
+    lateinit var fileNameHashes: Array<IntArray>
 
     lateinit var groupNameHashTable: IntHashTable
 
@@ -51,7 +50,9 @@ class IndexReferenceTable(parent: Int)
 
     private lateinit var ids: IntArray
 
-    fun loadReference() = decodeHeader(referenceTable.value.fetchIndex(parent).decompressedBuffer.copy())
+    fun loadReference() = decodeHeader(referenceTable.value.fetchIndex(parent).fetchBuffer())
+
+    fun fetchAllArchives() = (groupIds).map { lookup(it) }
 
     private fun decodeHeader(reader: BufferedReader): Int
     {
@@ -89,22 +90,20 @@ class IndexReferenceTable(parent: Int)
         groupCrcs = IntArray(var6 + 1)
         groupVersions = IntArray(var6 + 1)
         fileCounts = IntArray(var6 + 1)
-        fileIds = Int2ReferenceArrayMap(var6 + 1)
+        fileIds = Array(var6 + 1) { IntArray(0) }
 
         ids = IntArray(groupCount) { it.inc() - 1 }
-
-        println("archive count: $groupCount")
 
         return var6
 
     }
 
-    override fun loadTable(): IndexReferenceTable
+    override fun loadTable(decompressed: Boolean): IndexReferenceTable
     {
 
         val idx = referenceTable.value.fetchIndex(parent)
 
-        val reader = idx.decompressedBuffer.copy()
+        val reader = idx.decompress(idx, referenceTable.value.fetchIndex(idx.identifier).fetchBuffer())
 
         val var6 = decodeHeader(reader)
 
@@ -115,9 +114,11 @@ class IndexReferenceTable(parent: Int)
 
             (0 until groupCount).forEach { group ->
 
-                groupNameHashes[groupIds[group]] = reader.getSigned(DataType.INT).toInt()
+                val nameHash = reader.getSigned(DataType.INT).toInt()
 
-                groupNameHashTable = IntHashTable(groupNameHashes)
+                groupNameHashes[groupIds[group]] = nameHash
+
+                lookup(groupIds[group]).nameHash = nameHash
 
             }
 
@@ -125,13 +126,21 @@ class IndexReferenceTable(parent: Int)
 
         (0 until groupCount).forEach { group ->
 
-            groupCrcs[groupIds[group]] = reader.getSigned(DataType.INT).toInt()
+            val crc = reader.getSigned(DataType.INT).toInt()
+
+            groupCrcs[groupIds[group]] = crc
+
+            lookup(groupIds[group]).crc = crc
 
         }
 
         (0 until groupCount).forEach { group ->
 
-            groupVersions[groupIds[group]] = reader.getSigned(DataType.INT).toInt()
+            val version = reader.getSigned(DataType.INT).toInt()
+
+            groupVersions[groupIds[group]] = version
+
+            lookup(groupIds[group]).version = version
 
         }
 
@@ -155,11 +164,7 @@ class IndexReferenceTable(parent: Int)
 
             fileCount = fileCounts[groupId]
 
-            println("files count: " + fileIds.size)
-
             fileIds[groupId] = IntArray(fileCount)
-
-            println("count: " + fileIds[groupId].size)
 
             (0 until fileCount).forEach { file ->
 
@@ -176,6 +181,8 @@ class IndexReferenceTable(parent: Int)
 
             val archive = lookup(groupId)
 
+            archive.named = namedArchive
+
             archive.entryCount = fileIds[groupId].size
 
             submitEntry(archive)
@@ -185,7 +192,7 @@ class IndexReferenceTable(parent: Int)
         if (namedArchive)
         {
 
-            fileNameHashes = Int2ReferenceArrayMap(var6 + 1)
+            fileNameHashes = Array(var6 + 1) { IntArray(0) }
 
             fileNameHashTables = ArrayList(var6 + 1)
 
@@ -197,15 +204,38 @@ class IndexReferenceTable(parent: Int)
 
                 fileNameHashes[groupId] = IntArray(lookup(groupId).entryCount)
 
-                (0 until fileCount).forEach {  file ->
+                (0 until fileCount).forEach { file ->
 
-                    fileNameHashes[groupId][fileIds[groupId][file]] = reader.getSigned(DataType.INT).toInt()
+                    val nameHash = reader.getSigned(DataType.INT).toInt()
+
+                    //fileNameHashes[groupId][fileIds[groupId][file]] = nameHash
+
+                    lookup(groupId).table.lookup(file).nameHash = nameHash
 
                 }
 
-                fileNameHashTables[groupId] = IntHashTable((fileNameHashes[groupId]))
+            }
+
+        }
+
+        (groupIds).forEach { group ->
+
+            if(namedArchive)
+            {
+
+                val id = groupIds.indexOf(group)
+
+                if(parent == 16 || parent == 19) return@forEach //todo: see wtf is wrong with this
+
+                val hash = groupNameHashes[id]
+
+                val archive = fetchAllArchives().firstOrNull { it.nameHash == hash }
+
+                archive?.table?.loadTable(false)
 
             }
+            else
+                lookup(group).table.loadTable()
 
         }
 

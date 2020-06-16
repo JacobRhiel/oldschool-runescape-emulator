@@ -30,6 +30,8 @@ fun Any.warn(msg: String) = logger().warn(msg)
  */
 fun Any.debug(msg: String) = logger().debug(msg)
 
+fun Any.debug(msg: String, vararg args: Any) = logger().debug(msg, args)
+
 /**
  * Error logging extension function.
  */

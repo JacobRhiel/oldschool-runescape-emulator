@@ -17,7 +17,7 @@ import java.nio.file.Path
 class DataFile(
     path: Path,
     accessType: AccessType = AccessType.READ
-) : Compressible, Closeable
+) : Compressible(), Closeable
 {
 
     private val dat = RandomAccessFile(path.toFile(), accessType.rafAccess)
@@ -26,8 +26,6 @@ class DataFile(
 
     fun read(index: Int, archive: Int, sectorId: Int, size: Int): BufferedReader
     {
-
-        println("index: " + index + ", " + archive + ", " + sectorId)
 
         if (sectorId <= 0L || dat.length() / sectorSize < sectorId.toLong())
             error("bad read, index{}, dat length {}, requested sector {}", index, dat.length(), sectorId)

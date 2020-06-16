@@ -16,27 +16,25 @@ interface Compressor
 
         val data = applyHeader(algorithm, bytes, length)
 
-        val inputStream = CompressorStreamFactory.getSingleton().createCompressorInputStream(algorithm, ByteArrayInputStream(data))
+        val input = ByteArrayInputStream(data)
+
+        val inputStream = CompressorStreamFactory.getSingleton().createCompressorInputStream(algorithm, input)
 
         val outputStream = ByteArrayOutputStream()
 
-        try
-        {
+        var decompressedData: ByteArray = byteArrayOf()
 
-            val output = outputStream with algorithm
+        input.use {
 
-            val a = output read inputStream
+            (outputStream with algorithm).use {
 
-            output.close()
+                decompressedData = it read inputStream
 
-            return a
+            }
 
         }
-        finally
-        {
-            inputStream.close()
-            outputStream.close()
-        }
+
+        return decompressedData
 
     }
 

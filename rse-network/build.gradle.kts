@@ -5,4 +5,8 @@ dependencies {
 
     api("io.netty:netty-handler:5.0.0.Alpha2")
 
+    api(project(":rse-utilities"))
+
+    api(project(":rse-buffer"))
+
 }

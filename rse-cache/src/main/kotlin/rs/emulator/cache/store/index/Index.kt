@@ -1,9 +1,11 @@
 package rs.emulator.cache.store.index
 
 import io.netty.buffer.Unpooled
+import org.koin.core.get
 import rs.emulator.buffer.manipulation.DataType
 import rs.emulator.buffer.reader.BufferedReader
 import rs.emulator.cache.store.access.AccessType
+import rs.emulator.cache.store.data.DataFile
 import rs.emulator.cache.store.file.StoreFile
 import rs.emulator.cache.store.index.archive.Archive
 import rs.emulator.cache.store.index.reference.IndexReferenceTable
@@ -22,23 +24,15 @@ open class Index(
 ) : StoreFile(identifier, identifier)
 {
 
+    private val dataFile: DataFile = get()
+
     internal val raf = RandomAccessFile(path.toFile(), accessType.rafAccess)
 
     override val table: IndexReferenceTable = IndexReferenceTable(identifier)
 
-    fun fetchArchive(identifier: Int): Archive
-    {
+    internal val crc = hash
 
-        println("size: " + table.count)
-
-        val archive = table.lookup(identifier)
-
-        if(!archive.table.loaded)
-            archive.table.load()
-
-        return archive
-
-    }
+    fun fetchArchive(identifier: Int): Archive = table.lookup(identifier)
 
     fun fetchNamedArchive(name: String): Archive?
     {
@@ -106,5 +100,7 @@ open class Index(
         return storeFile
 
     }
+
+    override fun fetchBuffer(decompressed: Boolean): BufferedReader = dataFile.read(255, identifier, referenceSector, sectorLength)
 
 }

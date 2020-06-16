@@ -1,6 +1,7 @@
 plugins {
     java
     kotlin("jvm") version "1.3.72" apply false
+    `maven-publish`
 }
 
 version = "1.0-SNAPSHOT"
@@ -14,9 +15,14 @@ subprojects {
     repositories {
         jcenter()
         mavenCentral()
+        maven {
+            setUrl("http://localhost:8081/nexus/content/groups/public")
+        }
     }
 
     apply(plugin = "kotlin")
+
+    apply(plugin = "maven-publish")
 
     dependencies {
 
@@ -54,6 +60,31 @@ subprojects {
 
     configure<JavaPluginConvention> {
         sourceCompatibility = JavaVersion.VERSION_11
+    }
+
+    publishing {
+        repositories {
+            maven {
+                setUrl("http://localhost:8081/repository/snapshots/")
+                credentials {
+                    username = "admin"
+                    password = "deadmau5"
+                }
+            }
+        }
+        publications {
+            create<MavenPublication>("mavenJava") {
+                from(components["java"])
+                versionMapping {
+                    usage("java-api") {
+                        fromResolutionOf("runtimeClasspath")
+                    }
+                    usage("java-runtime") {
+                        fromResolutionResult()
+                    }
+                }
+            }
+        }
     }
 
 }

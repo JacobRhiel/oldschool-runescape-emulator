@@ -22,35 +22,31 @@ class ArchiveReferenceTable(private val idx: Int,
 
     private val dataFile: DataFile = get()
 
-    override fun loadTable(): IndependentReferenceTable<EntryFile>
+    override fun loadTable(decompressed: Boolean): IndependentReferenceTable<EntryFile>
     {
 
         val idx = referenceTable.fetchIndex(idx)
 
-        println("testing11231231")
-
         val archive = idx.readArchive(parent)
 
-        println("testing")
+        val buffer = archive.fetchBuffer(decompressed)
 
-        archive.decompressedBuffer = dataFile.read(idx.identifier, parent, archive.referenceSector, archive.sectorLength)
-
-        val buffer = archive.decompress(archive, archive.decompressedBuffer.copy())
-
-        if(archive.entryCount == 0) return this
-        else if(archive.entryCount == 1) //todo: does this actually happen? assuming mapscape/landscape
+        if(archive.entryCount == 0)
         {
-            lookup(0).decompressedBuffer = BufferedReader(buffer.toArray())
+            println("no entries")
             return this
         }
-
-        println("uh: " + buffer.readableBytes)
+        else if(archive.entryCount == 1) //todo: does this actually happen? assuming mapscape/landscape
+        {
+            val entryFile = lookup(0)
+            entryFile.referenceIndex = 0
+            entryFile.referenceLength = buffer.length
+            return this
+        }
 
         buffer.markReaderIndex(buffer.readableBytes - 1)
 
         val chunks = buffer.getUnsigned(DataType.BYTE).toInt()
-
-        println("chunks: $chunks")
 
         buffer.resetReaderIndex()
 
@@ -60,34 +56,26 @@ class ArchiveReferenceTable(private val idx: Int,
 
         val filesSize = IntArray(archive.entryCount)
 
-        println(archive.entryCount)
-
         for (chunk in 0 until chunks)
         {
             var chunkSize = 0
             for (id in 0 until archive.entryCount)
             {
+                val entryFile = lookup(id)
                 val delta: Int = buffer.getSigned(DataType.INT).toInt()
                 chunkSize += delta // size of this chunk
                 chunkSizes[id][chunk] = chunkSize // store size of chunk
                 filesSize[id] += chunkSize // add chunk size to file size
-                //if(id <= 4151)
-                //    println("delta: $delta")
-                if(id == 4151)
-                {
-                    println("delta: $delta")
-                    println("chunk size: $chunkSize")
-                    println("file size: " + filesSize[id])
-                }
+                entryFile.referenceLength = chunkSize
             }
         }
+
         val fileContents = arrayOfNulls<ByteArray>(archive.entryCount)
+
         val fileOffsets = IntArray(archive.entryCount)
 
         for (i in 0 until archive.entryCount)
             fileContents[i] = ByteArray(filesSize[i])
-
-        println("reader index: " + buffer.readerIndex())
 
         buffer.resetReaderIndex()
 
@@ -96,20 +84,17 @@ class ArchiveReferenceTable(private val idx: Int,
             for (id in 0 until archive.entryCount)
             {
                 val chunkSize = chunkSizes[id][chunk]
-                if(id == 4151)
-                    println("reader index: " + buffer.readerIndex())
+                val entryFile = lookup(id)
+                entryFile.referenceIndex = buffer.readerIndex()
                 buffer.readBytes(fileContents[id]!!, fileOffsets[id], chunkSize)
                 fileOffsets[id] += chunkSize
             }
         }
 
-        for(i in 0 until archive.entryCount)
-            lookup(i).decompressedBuffer = BufferedReader(fileContents[i]!!)
-
         return this
 
     }
 
-    override fun createEntry(identifier: Int): EntryFile = EntryFile(parent, identifier)
+    override fun createEntry(identifier: Int): EntryFile = EntryFile(idx, parent, identifier)
 
 }
