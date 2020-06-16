@@ -23,6 +23,7 @@ import rs.emulator.cache.definition.widget.script.ScriptDefinitionGenerator
 import rs.emulator.cache.definition.widget.struct.StructDefinitionGenerator
 import rs.emulator.cache.store.VirtualFileStore
 import java.util.concurrent.TimeUnit
+import kotlin.reflect.KClass
 
 /**
  *
@@ -59,10 +60,6 @@ class DefinitionRepository : KoinComponent, Repository
         .build()
 
     private fun submitType(clazz: Class<Definition>) = definitionCache.put(clazz, hashMapOf())
-
-    override fun <T : rs.emulator.Definition> findDefinition(identifier: Int, child: Int): T {
-        return find(identifier, child)
-    }
 
     inline fun <reified T : Definition> find(identifier: Int): T = find(identifier, -1)
 
