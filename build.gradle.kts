@@ -51,6 +51,10 @@ subprojects {
         implementation("com.github.ben-manes.caffeine:caffeine:2.8.4")
 
         implementation("com.google.code.gson:gson:2.8.6")
+        testImplementation("org.junit.jupiter:junit-jupiter-api:5.4.2")
+        testImplementation("org.junit.jupiter:junit-jupiter-params:5.4.2")
+
+        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.4.2")
 
     }
 

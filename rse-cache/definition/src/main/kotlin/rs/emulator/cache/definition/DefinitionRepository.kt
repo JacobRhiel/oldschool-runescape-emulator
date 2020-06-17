@@ -4,6 +4,7 @@ import com.github.benmanes.caffeine.cache.Cache
 import com.github.benmanes.caffeine.cache.Caffeine
 import org.koin.core.KoinComponent
 import org.koin.core.get
+import rs.emulator.Repository
 import rs.emulator.cache.definition.entity.loc.LocDefinitionGenerator
 import rs.emulator.cache.definition.entity.npc.NpcDefinitionGenerator
 import rs.emulator.cache.definition.entity.obj.ObjDefinitionGenerator
@@ -22,12 +23,13 @@ import rs.emulator.cache.definition.widget.script.ScriptDefinitionGenerator
 import rs.emulator.cache.definition.widget.struct.StructDefinitionGenerator
 import rs.emulator.cache.store.VirtualFileStore
 import java.util.concurrent.TimeUnit
+import kotlin.reflect.KClass
 
 /**
  *
  * @author Chk
  */
-class DefinitionRepository : KoinComponent
+class DefinitionRepository : KoinComponent, Repository
 {
 
     @PublishedApi internal val fileStore: VirtualFileStore = get()
