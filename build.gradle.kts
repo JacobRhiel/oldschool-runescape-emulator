@@ -2,6 +2,7 @@ plugins {
     java
     kotlin("jvm") version "1.3.72" apply false
     `maven-publish`
+    id("org.jetbrains.kotlin.plugin.noarg") version "1.3.72"
 }
 
 version = "1.0-SNAPSHOT"
@@ -24,6 +25,12 @@ subprojects {
 
     apply(plugin = "maven-publish")
 
+    apply(plugin = "org.jetbrains.kotlin.plugin.noarg")
+
+    noArg {
+        annotation('rs.emulator.database.annotations.NoArg')
+    }
+
     dependencies {
 
         implementation(kotlin("stdlib"))
@@ -33,10 +40,6 @@ subprojects {
         implementation("org.slf4j:slf4j-api:2.0.0-alpha1")
 
         implementation("io.github.microutils:kotlin-logging:1.7.9")
-
-        implementation("com.google.inject:guice:4.2.3")
-
-        implementation("net.onedaybeard.artemis:artemis-odb:2.2.0")
 
         implementation("it.unimi.dsi:fastutil:8.3.1")
 
@@ -51,7 +54,11 @@ subprojects {
         implementation("com.github.ben-manes.caffeine:caffeine:2.8.4")
 
         implementation("com.google.code.gson:gson:2.8.6")
+
+        implementation("io.github.classgraph:classgraph:4.8.86")
+
         testImplementation("org.junit.jupiter:junit-jupiter-api:5.4.2")
+
         testImplementation("org.junit.jupiter:junit-jupiter-params:5.4.2")
 
         testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.4.2")
