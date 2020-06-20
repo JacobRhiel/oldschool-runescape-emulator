@@ -8,4 +8,6 @@ dependencies {
 
     api(project(":rse-encryption"))
 
+    implementation(project(":rse-service-login"))
+
 }

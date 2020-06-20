@@ -30,7 +30,7 @@ open class Index(
 
     override val table: IndexReferenceTable = IndexReferenceTable(identifier)
 
-    internal val crc = hash
+    val crc = hash
 
     fun fetchArchive(identifier: Int): Archive = table.lookup(identifier)
 

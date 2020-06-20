@@ -16,6 +16,7 @@ import rs.emulator.network.SESSION_KEY
 import rs.emulator.network.world.network.channel.message.WorldHandshakeResponseMessage
 import rs.emulator.network.world.network.channel.protocol.WorldConnectionResponseProtocol
 import rs.emulator.network.world.network.channel.session.WorldSession
+import rs.emulator.service.login.network.message.LoginRequestMessage
 import java.nio.ByteBuffer
 
 /**
@@ -42,9 +43,7 @@ class WorldIsaacEncryptionDecoder
 
         val username = isaacBuffer.readString()
 
-        println("username: $username")
-
-        //session.credentials.username = username
+        session.credentials.username = username
 
         val clientSettings = isaacBuffer.readByte().toInt()
 
@@ -103,16 +102,9 @@ class WorldIsaacEncryptionDecoder
             }
         }
 
-/*        val request = LoginRequest(channel = ctx.channel(), username = username,
-                                   password = password ?: "", revision = serverRevision, xteaKeys = xteaKeys,
-                                   resizableClient = clientResizable, auth = authCode, uuid = "".toUpperCase(), clientWidth = clientWidth, clientHeight = clientHeight,
-                                   reconnecting = reconnecting)*/
+        val request = LoginRequestMessage(ctx, ctx.channel(), session.credentials)
 
-        //println("$username : ${session.credentials.password}")
-
-       // ctx.pipeline().addBefore(javaClass.simpleName, WorldLoginResponseEncoder::class.simpleName, WorldLoginResponseEncoder())
-
-       // out.add(WorldCreatePacketSessionMessage(session))
+        out.add(request)
 
         ctx.pipeline().remove(this)
 

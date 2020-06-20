@@ -1,22 +1,22 @@
 package rs.emulator.database.entry
 
 import org.hibernate.SessionFactory
+import org.koin.core.KoinComponent
+import org.koin.core.get
+import rs.emulator.database.service.JDBCPoolingService
 import rs.emulator.database.transaction.Transactor
 
 /**
  *
  * @author Chk
  */
-abstract class Entry : Transactor
+interface Entry : KoinComponent, Transactor
 {
 
-    private lateinit var sessionFactory: SessionFactory
+    private val service: JDBCPoolingService
+        get() = get()
 
-    override var factory: SessionFactory
-        get() = sessionFactory
-        set(value)
-        {
-            sessionFactory = value
-        }
+    override val factory: SessionFactory
+        get() = service.factory
 
 }

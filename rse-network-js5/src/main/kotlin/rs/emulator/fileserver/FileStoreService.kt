@@ -22,8 +22,6 @@ class FileStoreService
 
         fileStore.preload()
 
-        System.gc()
-
     }
 
     override fun shutDown()

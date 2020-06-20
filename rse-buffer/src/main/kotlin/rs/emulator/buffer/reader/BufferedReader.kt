@@ -15,14 +15,14 @@ import kotlin.math.pow
  * @author Graham
  * @author Chk
  */
-class BufferedReader
+open class BufferedReader
 {
 
     val buffer: ByteBuf
 
-    val length: Int get() { return buffer.writableBytes() }
+    open val length: Int get() { return buffer.writableBytes() }
 
-    val readableBytes: Int get() { return buffer.readableBytes() }
+    open val readableBytes: Int get() { return buffer.readableBytes() }
 
     constructor(size: Number) : this(Unpooled.buffer(size.toInt()))
 
@@ -38,10 +38,10 @@ class BufferedReader
      * @return The string.
      * @throws IllegalStateException If this reader is not in byte access mode.
      */
-    val string: String
+    open val string: String
         get() = buffer.readString()
 
-    val jagString: String
+    open val jagString: String
         get() = buffer.readJagexString()
 
     val bigSmart: Int
@@ -58,7 +58,7 @@ class BufferedReader
      * @return The smart.
      * @throws IllegalStateException If this reader is not in byte access mode.
      */
-    val unsignedSmart: Int
+    open val unsignedSmart: Int
         get()
         {
             val peek = buffer.getByte(buffer.readerIndex()).toInt()
@@ -91,7 +91,7 @@ class BufferedReader
      * @throws IllegalStateException If this reader is not in byte access mode.
      * @throws IllegalArgumentException If the combination is invalid.
      */
-    private operator fun get(type: DataType, order: DataOrder, transformation: DataTransformation) : Long
+    protected open operator fun get(type: DataType, order: DataOrder, transformation: DataTransformation) : Long
     {
 
         var longValue: Long = 0
@@ -259,7 +259,7 @@ class BufferedReader
      * @param bytes The target byte array.
      * @throws IllegalStateException If this reader is not in byte access mode.
      */
-    fun getBytes(bytes: ByteArray) = bytes.indices.forEach { bytes[it] = buffer.readByte() }
+    open fun getBytes(bytes: ByteArray) = bytes.indices.forEach { bytes[it] = buffer.readByte() }
 
     /**
      * Gets bytes with the specified transformation.
@@ -307,7 +307,7 @@ class BufferedReader
      * @param bytes The target byte array.
      * @throws IllegalStateException If this reader is not in byte access mode.
      */
-    fun getBytesReverse(bytes: ByteArray) = bytes.indices.reversed().forEach { bytes[it] = buffer.readByte() }
+    open fun getBytesReverse(bytes: ByteArray) = bytes.indices.reversed().forEach { bytes[it] = buffer.readByte() }
 
     /**
      * Copies the current buffer and returns the reversed copy of it.

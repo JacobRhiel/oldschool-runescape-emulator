@@ -6,20 +6,18 @@ import org.koin.core.context.startKoin
 import org.koin.core.get
 import org.koin.dsl.module
 import rs.emulator.cache.definition.DefinitionRepository
-import rs.emulator.cache.definition.definition
-import rs.emulator.cache.definition.entity.obj.ObjDefinition
 import rs.emulator.cache.store.VirtualFileStore
 import rs.emulator.cache.store.data.DataFile
-import rs.emulator.cache.store.index.Index
 import rs.emulator.cache.store.reference.ReferenceTable
+import rs.emulator.database.service.JDBCPoolingService
 import rs.emulator.encryption.rsa.RSAService
 import rs.emulator.fileserver.FileStoreService
 import rs.emulator.network.pipeline.DefaultPipelineProvider
 import rs.emulator.network.world.network.channel.pipeline.WorldPipelineProvider
 import rs.emulator.network.world.service.WorldService
-import java.nio.file.FileStore
+import rs.emulator.service.login.worker.LoginWorkerSchedule
+import rs.emulator.service.login.worker.LoginWorkerService
 import java.nio.file.Paths
-import java.time.Duration
 
 /**
  *
@@ -34,8 +32,11 @@ class Test : KoinComponent
 
     private val fileStoreService: FileStoreService = get()
 
+    private val databaseService: JDBCPoolingService = get()
+
     private val serviceManager: ServiceManager = get()
 
+    @ExperimentalStdlibApi
     companion object
     {
 
@@ -63,10 +64,18 @@ class Test : KoinComponent
 
                 single { RSAService() }
 
+                single { JDBCPoolingService() }
+
+                single { LoginWorkerSchedule() }
+
+                single { LoginWorkerService() }
+
                 single { ServiceManager(listOf(
+                    get<JDBCPoolingService>(),
                     get<RSAService>(),
                     get<FileStoreService>(),
-                    get<WorldService>()
+                    get<WorldService>(),
+                    get<LoginWorkerService>()
                 )) }
 
             }
@@ -82,6 +91,10 @@ class Test : KoinComponent
                     .awaitHealthy()
 
                 System.gc()
+
+                //val world = WorldBuilder().setActivity(WorldActivity.NONE).setMembers(true).setOrigin(WorldOrigin.UNITED_STATES).build()
+
+                //world.save(world)
 
             }
 

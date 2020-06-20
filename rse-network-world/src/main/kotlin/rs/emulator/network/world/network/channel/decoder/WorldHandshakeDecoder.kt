@@ -17,6 +17,7 @@ class WorldHandshakeDecoder
     : ByteToMessageDecoder()
 {
 
+    @OptIn(ExperimentalStdlibApi::class)
     override fun decode(ctx: ChannelHandlerContext, buffer: ByteBuf, out: MutableList<Any>)
     {
 
@@ -44,14 +45,6 @@ class WorldHandshakeDecoder
         ctx.pipeline().addAfter(WorldRSAEncryptionDecoder::class.simpleName, WorldAuthenticationDecoder::class.simpleName, WorldAuthenticationDecoder(protocol))
 
         ctx.pipeline().addAfter(WorldAuthenticationDecoder::class.simpleName, WorldIsaacEncryptionDecoder::class.simpleName, WorldIsaacEncryptionDecoder())
-
-/*
-
-        ctx.pipeline().addAfter(WorldRSAEncryptionDecoder::class.simpleName, WorldAuthenticationDecoder::class.simpleName, WorldAuthenticationDecoder(protocol))
-
-        ctx.pipeline().addAfter(WorldAuthenticationDecoder::class.simpleName, WorldIsaacEncryptionDecoder::class.simpleName, WorldIsaacEncryptionDecoder())
-
-*/
 
         ctx.pipeline().remove(this)
 

@@ -2,6 +2,8 @@ version = "1.0-SNAPSHOT"
 
 dependencies {
 
-    implementation("net.onedaybeard.artemis:artemis-odb:2.2.0")
+    implementation(project(":rse-database"))
+
+    implementation(project(":rse-api:collections"))
 
 }

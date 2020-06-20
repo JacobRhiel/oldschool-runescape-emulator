@@ -2,7 +2,10 @@ package rs.emulator.entity.actor
 
 import rs.emulator.entity.IEntity
 
-interface IActor : IEntity {
+import rs.emulator.database.entry.Entry
+
+interface IActor : IEntity, Entry
+{
 
 
 }

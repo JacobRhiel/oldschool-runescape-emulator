@@ -1,0 +1,20 @@
+{
+  "encoders": [
+    {
+      "opcode": 0,
+      "type": "FIXED",
+      "actionType": "NONE",
+      "length": 8,
+      "ignore": false
+    }
+  ],
+  "decoders": [
+    {
+      "opcode": 1,
+      "type": "FIXED",
+      "actionType": "NONE",
+      "length": 8,
+      "ignore": false
+    }
+  ]
+}

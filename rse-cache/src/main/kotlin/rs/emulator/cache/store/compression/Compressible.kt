@@ -90,7 +90,6 @@ abstract class Compressible : Compressor
 
         hash = crc.hash
 
-
         return BufferedReader(data)
 
     }

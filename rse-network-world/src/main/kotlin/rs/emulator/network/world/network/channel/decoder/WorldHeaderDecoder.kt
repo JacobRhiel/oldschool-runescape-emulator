@@ -4,6 +4,9 @@ import io.netty.buffer.ByteBuf
 import io.netty.channel.ChannelHandlerContext
 import io.netty.handler.codec.ByteToMessageDecoder
 import rs.emulator.network.world.network.channel.message.WorldConnectionRequestMessage
+import rs.emulator.network.world.network.channel.message.WorldHandshakeResponseMessage
+import rs.emulator.network.world.network.channel.protocol.WorldConnectionResponseProtocol
+import rs.emulator.utilities.logger.warn
 
 /**
  *
@@ -28,9 +31,22 @@ class WorldHeaderDecoder
 
         val clientType = buffer.readByte().toInt()
 
-        ctx.pipeline().remove(this)
+        val worldRevision = 189 //todo: centralize
 
-        out.add(WorldConnectionRequestMessage(revision, clientType))
+        if(revision != worldRevision)
+        {
+
+            warn("Client attempted to login to world with a different revision client. Revision $revision.")
+
+            ctx.writeAndFlush(WorldHandshakeResponseMessage(WorldConnectionResponseProtocol.REVISION_MISMATCH))
+
+            ctx.channel().closeFuture()
+
+            return
+
+        }
+
+        ctx.pipeline().remove(this)
 
     }
 

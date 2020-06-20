@@ -1,18 +1,32 @@
+@file:Suppress("UnstableApiUsage")
+
 package rs.emulator.network.world.network.channel.decoder
 
 import io.netty.buffer.ByteBuf
 import io.netty.channel.ChannelHandlerContext
 import io.netty.handler.codec.ByteToMessageDecoder
+import org.koin.core.KoinComponent
+import org.koin.core.get
 import rs.emulator.buffer.BufferUtils.readString
 import rs.emulator.network.SESSION_KEY
 import rs.emulator.network.world.network.channel.protocol.WorldConnectionRequestProtocol
 import rs.emulator.network.world.network.channel.session.WorldSession
+import rs.emulator.service.login.LoginRequest
+import rs.emulator.service.login.LoginResult
+import rs.emulator.service.login.atest.Player
+import rs.emulator.service.login.network.message.LoginRequestMessage
+import rs.emulator.service.login.worker.LoginWorkerService
+import java.time.Duration
+import java.util.concurrent.ExecutionException
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
 
 /**
  *
  * @author Chk
  */
-class WorldAuthenticationDecoder(private val protocol: WorldConnectionRequestProtocol) : ByteToMessageDecoder()
+@ExperimentalStdlibApi
+class WorldAuthenticationDecoder(private val protocol: WorldConnectionRequestProtocol) : KoinComponent, ByteToMessageDecoder()
 {
 
     override fun decode(ctx: ChannelHandlerContext, buffer: ByteBuf, out: MutableList<Any>)
@@ -30,6 +44,8 @@ class WorldAuthenticationDecoder(private val protocol: WorldConnectionRequestPro
 
             val authType = secureBuffer.readByte().toInt()
 
+            var authCode = -1
+
             if (authType == 1)
             {
 
@@ -38,21 +54,24 @@ class WorldAuthenticationDecoder(private val protocol: WorldConnectionRequestPro
             }
             else if (authType == 0 || authType == 2)
             {
+
                 secureBuffer.readUnsignedMedium()
+
                 secureBuffer.skipBytes(Byte.SIZE_BYTES)
+
             }
             else
             {
                 secureBuffer.readInt()
             }
 
+            session.credentials.authCode = authCode
+
             secureBuffer.skipBytes(Byte.SIZE_BYTES)
 
             val password = secureBuffer.readString()
 
-            println("password: $password")
-
-            //session.credentials.password = password
+            session.credentials.password = password
 
         }
 

@@ -15,7 +15,7 @@ open class BufferedWriter(protected val buffer: ByteBuf = Unpooled.buffer(0))
     /**
      * The current bit index.
      */
-    private var bitIndex: Int = 0
+    protected var bitIndex: Int = 0
 
     val byteBuf: ByteBuf = buffer
 
@@ -26,7 +26,7 @@ open class BufferedWriter(protected val buffer: ByteBuf = Unpooled.buffer(0))
      *
      * @return The length of the buffer.
      */
-    val length: Int
+    open val length: Int
         get()
         {
             return buffer.writerIndex()
@@ -41,7 +41,7 @@ open class BufferedWriter(protected val buffer: ByteBuf = Unpooled.buffer(0))
      * @param value The value.
      * @throws IllegalArgumentException If the type, order, or transformation is unknown.
      */
-    fun put(
+    open fun put(
             type: DataType,
             order: DataOrder,
             transformation: DataTransformation,
@@ -118,7 +118,7 @@ open class BufferedWriter(protected val buffer: ByteBuf = Unpooled.buffer(0))
      * @param order The byte order.
      * @param value The value.
      */
-    fun put(
+    open fun put(
             type: DataType,
             order: DataOrder,
             value: Number
@@ -131,7 +131,7 @@ open class BufferedWriter(protected val buffer: ByteBuf = Unpooled.buffer(0))
      * @param transformation The transformation.
      * @param value The value.
      */
-    fun put(
+    open fun put(
             type: DataType,
             transformation: DataTransformation,
             value: Number
@@ -143,7 +143,7 @@ open class BufferedWriter(protected val buffer: ByteBuf = Unpooled.buffer(0))
      * @param type The data type.
      * @param value The value.
      */
-    fun put(
+    open fun put(
             type: DataType,
             value: Number
     ) = put(type, DataOrder.BIG, DataTransformation.NONE, value)
@@ -153,14 +153,14 @@ open class BufferedWriter(protected val buffer: ByteBuf = Unpooled.buffer(0))
      *
      * @param bytes The byte array.
      */
-    fun putBytes(bytes: ByteArray) = buffer.writeBytes(bytes)
+    open fun putBytes(bytes: ByteArray) = buffer.writeBytes(bytes)
 
     /**
      * Puts the specified byte array into the buffer.
      *
      * @param bytes The byte array.
      */
-    fun putBytes(
+    open fun putBytes(
             bytes: ByteArray,
             position: Int,
             length: Int
@@ -175,7 +175,7 @@ open class BufferedWriter(protected val buffer: ByteBuf = Unpooled.buffer(0))
      *
      * @param bytes The byte array.
      */
-    fun putBytes(
+    open fun putBytes(
             transformation: DataTransformation,
             bytes: ByteArray,
             position: Int,
@@ -191,7 +191,7 @@ open class BufferedWriter(protected val buffer: ByteBuf = Unpooled.buffer(0))
      *
      * @param buffer The source [ByteBuf].
      */
-    fun putBytes(buffer: ByteBuf)
+    open fun putBytes(buffer: ByteBuf)
     {
         val bytes = ByteArray(buffer.readableBytes())
         buffer.markReaderIndex()
@@ -212,7 +212,7 @@ open class BufferedWriter(protected val buffer: ByteBuf = Unpooled.buffer(0))
      * @param transformation The transformation.
      * @param bytes The byte array.
      */
-    fun putBytes(
+    open fun putBytes(
             transformation: DataTransformation,
             bytes: ByteArray
     )
@@ -224,7 +224,7 @@ open class BufferedWriter(protected val buffer: ByteBuf = Unpooled.buffer(0))
                 put(DataType.BYTE, transformation, b)
     }
 
-    fun putBytes(
+    open fun putBytes(
             transformation: DataTransformation,
             buffer: ByteBuf
     )
@@ -247,7 +247,7 @@ open class BufferedWriter(protected val buffer: ByteBuf = Unpooled.buffer(0))
      *
      * @param bytes The byte array.
      */
-    fun putBytesReverse(bytes: ByteArray)
+    open fun putBytesReverse(bytes: ByteArray)
     {
 
         for (i in bytes.indices.reversed())
@@ -260,7 +260,7 @@ open class BufferedWriter(protected val buffer: ByteBuf = Unpooled.buffer(0))
      *
      * @param buffer The source [ByteBuf].
      */
-    fun putBytesReverse(buffer: ByteBuf)
+    open fun putBytesReverse(buffer: ByteBuf)
     {
         val bytes = ByteArray(buffer.readableBytes())
         buffer.markReaderIndex()
@@ -281,7 +281,7 @@ open class BufferedWriter(protected val buffer: ByteBuf = Unpooled.buffer(0))
      * @param transformation The transformation.
      * @param bytes The byte array.
      */
-    fun putBytesReverse(
+    open fun putBytesReverse(
             transformation: DataTransformation,
             bytes: ByteArray
     )
@@ -300,7 +300,7 @@ open class BufferedWriter(protected val buffer: ByteBuf = Unpooled.buffer(0))
      *
      * @param value The value.
      */
-    fun putSmart(value: Int)
+    open fun putSmart(value: Int)
     {
 
         if (value >= 0x80)
@@ -315,7 +315,7 @@ open class BufferedWriter(protected val buffer: ByteBuf = Unpooled.buffer(0))
      *
      * @param str The string.
      */
-    fun putString(str: String)
+    open fun putString(str: String)
     {
 
         val chars = str.toCharArray()

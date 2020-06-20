@@ -1,15 +1,30 @@
 package rs.emulator.world
 
+import org.koin.core.KoinComponent
+import rs.emulator.database.annotations.NoArg
+import rs.emulator.database.entry.Entry
+import javax.persistence.Column
+import javax.persistence.Entity
+import javax.persistence.Id
+import javax.persistence.Table
+
 /**
  *
  * @author Chk
  */
-data class World(
-    private val members: Boolean,
-    private val activity: WorldActivity,
-    private val origin: WorldOrigin
-)
+@NoArg
+@Entity
+@Table(name = "worlds")
+open class World(
+    @Id @Column(name = "identifier", unique = true, nullable = false) var identifier: Int,
+    @Column(name = "members") private val members: Boolean,
+    @Column(name = "access") private val access: WorldAccess,
+    @Column(name = "activity") private val activity: WorldActivity,
+    @Column(name = "origin") private val origin: WorldOrigin
+) : KoinComponent, Entry
 {
+
+    fun newBuilder() = WorldBuilder()
 
     override fun toString(): String = "[World-'insert_build'] -> attrs[members: $members, activity: $activity, origin: $origin]"
 

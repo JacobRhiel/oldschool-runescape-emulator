@@ -55,7 +55,7 @@ class VirtualFileStore(private val path: Path) : KoinComponent, Closeable
 
     }
 
-    fun fetchIndexCrcHashes() = referenceTable.fetchIndexList().filter { it.identifier <= 20 }.map { it.crc }.toIntArray()
+    fun fetchIndexCrcHashes() = referenceTable.fetchIndexList().filter { it.identifier <= 20 }.map { it.hash }.toIntArray()
 
     fun fetchIndexTableData(identifier: Int): BufferedReader
     {

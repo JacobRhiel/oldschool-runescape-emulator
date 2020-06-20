@@ -12,4 +12,10 @@ dependencies {
 
     implementation(project(":rse-encryption"))
 
+    implementation(project(":rse-database"))
+
+    implementation(project(":rse-world"))
+
+    implementation(project(":rse-service-login"))
+
 }
