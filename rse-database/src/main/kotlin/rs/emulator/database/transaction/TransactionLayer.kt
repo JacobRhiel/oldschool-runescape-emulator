@@ -22,7 +22,7 @@ class TransactionLayer(
 
     private val transaction: Transaction = session.beginTransaction()
 
-    fun fetchManager() : EntityManager = session
+    //fun fetchManager() : EntityManager = session
 
     override fun close()
     {
