@@ -1,10 +1,7 @@
 package rs.emulator.cache.definition.widget.script
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap
 import it.unimi.dsi.fastutil.ints.Int2ReferenceArrayMap
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap
-import rs.emulator.cache.definition.Definition
-import rs.emulator.cache.definition.widget.script.ScriptVarType
+import rs.emulator.definitions.Definition
 
 /**
  *

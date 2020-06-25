@@ -1,4 +1,4 @@
-package rs.emulator.cache.definition
+package rs.emulator.definitions
 
 /**
  *

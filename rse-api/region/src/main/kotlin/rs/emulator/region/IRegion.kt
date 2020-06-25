@@ -6,4 +6,5 @@ package rs.emulator.region
  */
 
 interface IRegion {
+
 }

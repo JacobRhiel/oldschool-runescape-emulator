@@ -1,6 +1,6 @@
 package rs.emulator.cache.definition.region.landscape
 
-import rs.emulator.cache.definition.Definition
+import rs.emulator.definitions.Definition
 import java.util.*
 
 /**

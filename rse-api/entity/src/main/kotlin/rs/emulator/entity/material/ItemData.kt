@@ -14,3 +14,4 @@ object ItemData {
     val EMPTY_WEARABLE: Wearable = Wearable()
 
 }
+

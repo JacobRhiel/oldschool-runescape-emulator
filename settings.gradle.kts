@@ -9,7 +9,15 @@ include("rse-network")
 include("rse-buffer")
 include("rse-service")
 include("rse-cache:definition")
-include("rse-api", "rse-api:entity", "rse-api:region", "rse-api:collections", "rse-api:definitions")
+include(
+    "rse-api",
+    "rse-api:entity",
+    "rse-api:region",
+    "rse-api:collections",
+    "rse-api:definitions",
+    "rse-api:plugins"
+)
+include("rse-plugins")
 include("rse-network-js5")
 include("rse-network-world")
 include("rse-encryption")

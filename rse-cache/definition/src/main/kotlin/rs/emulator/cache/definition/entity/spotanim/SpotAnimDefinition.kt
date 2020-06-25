@@ -1,6 +1,6 @@
 package rs.emulator.cache.definition.entity.spotanim
 
-import rs.emulator.cache.definition.Definition
+import rs.emulator.definitions.Definition
 
 /**
  *

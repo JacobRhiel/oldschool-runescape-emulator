@@ -2,7 +2,7 @@ package rs.emulator.cache.definition.generator
 
 import rs.emulator.buffer.manipulation.DataType
 import rs.emulator.buffer.reader.BufferedReader
-import rs.emulator.cache.definition.Definition
+import rs.emulator.definitions.Definition
 import rs.emulator.cache.store.index.IndexConfig
 import rs.emulator.utilities.logger.info
 

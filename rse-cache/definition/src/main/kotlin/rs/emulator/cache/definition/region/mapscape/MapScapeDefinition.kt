@@ -1,6 +1,6 @@
 package rs.emulator.cache.definition.region.mapscape
 
-import rs.emulator.cache.definition.Definition
+import rs.emulator.definitions.Definition
 
 /**
  *

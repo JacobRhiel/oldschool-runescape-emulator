@@ -5,6 +5,7 @@ import org.koin.core.KoinComponent
 import org.koin.core.context.startKoin
 import org.koin.core.get
 import org.koin.dsl.module
+import rs.emulator.Repository
 import rs.emulator.cache.definition.DefinitionRepository
 import rs.emulator.cache.store.VirtualFileStore
 import rs.emulator.cache.store.data.DataFile
@@ -54,7 +55,7 @@ class Test : KoinComponent
 
                 single { VirtualFileStore(path) }
 
-                single { DefinitionRepository() }
+                single { DefinitionRepository().apply { Repository.repository = this } }
 
                 single { DefaultPipelineProvider() }
 

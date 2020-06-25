@@ -1,6 +1,7 @@
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import rs.emulator.entity.actor.player.storage.containers.Inventory
+import rs.emulator.entity.material.EquipmentSlot
 import rs.emulator.entity.material.factories.StandardItemFactory
 import rs.emulator.entity.material.factories.WearableItemFactory
 

@@ -1,4 +1,4 @@
-package rs.emulator.cache.definition.entity.loc
+package rs.emulator.definitions.entity.loc
 
 import rs.emulator.definitions.Definition
 

@@ -1,7 +1,6 @@
 package rs.emulator.cache.definition.widget.struct
 
-import rs.emulator.cache.definition.Definition
-import rs.emulator.cache.definition.widget.script.ScriptVarType
+import rs.emulator.definitions.Definition
 
 /**
  *

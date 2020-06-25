@@ -4,6 +4,7 @@ import com.github.benmanes.caffeine.cache.Cache
 import com.github.benmanes.caffeine.cache.Caffeine
 import org.koin.core.KoinComponent
 import org.koin.core.get
+import rs.emulator.IRepository
 import rs.emulator.Repository
 import rs.emulator.cache.definition.entity.loc.LocDefinitionGenerator
 import rs.emulator.cache.definition.entity.npc.NpcDefinitionGenerator
@@ -22,14 +23,14 @@ import rs.emulator.cache.definition.widget.param.ParamDefinitionGenerator
 import rs.emulator.cache.definition.widget.script.ScriptDefinitionGenerator
 import rs.emulator.cache.definition.widget.struct.StructDefinitionGenerator
 import rs.emulator.cache.store.VirtualFileStore
+import rs.emulator.definitions.Definition
 import java.util.concurrent.TimeUnit
-import kotlin.reflect.KClass
 
 /**
  *
  * @author Chk
  */
-class DefinitionRepository : KoinComponent, Repository
+class DefinitionRepository : KoinComponent, IRepository
 {
 
     @PublishedApi internal val fileStore: VirtualFileStore = get()
@@ -58,6 +59,11 @@ class DefinitionRepository : KoinComponent, Repository
         .expireAfterAccess(2, TimeUnit.MINUTES)
         .recordStats()
         .build()
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : Definition> getDefinition(identifier: Int, child: Int): T {
+        return find<Definition>(identifier, child) as T
+    }
 
     private fun submitType(clazz: Class<Definition>) = definitionCache.put(clazz, hashMapOf())
 

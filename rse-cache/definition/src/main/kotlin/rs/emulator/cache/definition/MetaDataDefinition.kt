@@ -1,5 +1,7 @@
 package rs.emulator.cache.definition
 
+import rs.emulator.definitions.Definition
+
 /**
  *
  * @author Chk
