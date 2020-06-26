@@ -3,9 +3,17 @@ package rs.emulator.service.login.worker
 import com.google.common.util.concurrent.AbstractScheduledService
 import org.koin.core.KoinComponent
 import org.koin.core.inject
+import rs.emulator.network.SESSION_KEY
+import rs.emulator.network.channel.DefaultChannelHandler
+import rs.emulator.network.packet.decoder.GamePacketDecoder
+import rs.emulator.network.packet.encoder.GamePacketEncoder
+import rs.emulator.network.packet.encoder.GamePacketMessageEncoder
+import rs.emulator.network.packet.message.CreatePacketSessionMessage
+import rs.emulator.network.packet.session.PacketSession
 import rs.emulator.service.login.LoginResult
 import rs.emulator.service.login.LoginStatus
 import rs.emulator.service.login.network.message.LoginRequestMessage
+import rs.emulator.service.login.network.message.LoginResponseMessage
 import java.util.concurrent.*
 
 /**
@@ -58,12 +66,7 @@ class LoginWorkerService : KoinComponent, AbstractScheduledService()
                 //todo: retries?
                 val loginResult = LoginResult(worker.execute())
 
-                val buffer = loginResult.toByteBuf(worker.request.channel)
-
-                if(loginResult.status == LoginStatus.ACCEPTED)
-                    worker.request.channel.write(buffer)
-                else
-                    worker.request.channel.writeAndFlush(buffer)
+                worker.request.channel.write(LoginResponseMessage(worker.request.isaac, loginResult))
 
                 queue.remove(worker)
 

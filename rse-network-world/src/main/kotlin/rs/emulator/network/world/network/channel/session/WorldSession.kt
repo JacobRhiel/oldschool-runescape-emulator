@@ -22,8 +22,6 @@ class WorldSession : KoinComponent, NetworkSession
 
     private val seed: Long = Random.nextLong()
 
-    private val loginService: LoginWorkerService = get()
-
     internal var rsaBuffer: ByteBuf = Unpooled.EMPTY_BUFFER
 
     internal var isaacKeys: IntArray = IntArray(4)
@@ -37,15 +35,7 @@ class WorldSession : KoinComponent, NetworkSession
 
         println("msg: " + msg)
 
-        if(msg is LoginRequestMessage)
-        {
-
-            loginService.submit(msg)
-
-            return
-
-        }
-        else msg.handle(ctx)
+        msg.handle(ctx)
 
     }
 

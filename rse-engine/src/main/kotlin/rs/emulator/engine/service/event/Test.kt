@@ -23,26 +23,6 @@ object Test
 
         manager.awaitHealthy()
 
-        engine.schedule(object : CyclicEvent()
-                        {
-
-                            override fun execute(): Boolean
-                            {
-
-                                println("executing")
-
-                                Thread.sleep(Random.nextLong(450))
-
-                                return true
-
-                            }
-
-                            override fun isComplete(): Boolean
-                            {
-                                return false
-                            }
-
-                        })
 
     }
 

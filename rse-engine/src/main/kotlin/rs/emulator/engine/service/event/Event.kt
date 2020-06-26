@@ -7,8 +7,6 @@ package rs.emulator.engine.service.event
 interface Event
 {
 
-    fun execute() : Boolean
-
-    fun isComplete() : Boolean
+    fun execute()
 
 }

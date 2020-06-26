@@ -1,6 +1,6 @@
 package rs.emulator.service.login
 
-import rs.emulator.service.login.atest.Player
+import rs.emulator.entity.player.Player
 
 /**
  *

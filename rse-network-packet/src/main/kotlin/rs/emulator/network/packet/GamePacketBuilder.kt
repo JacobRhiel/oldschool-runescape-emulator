@@ -8,6 +8,7 @@ import rs.emulator.buffer.manipulation.DataOrder
 import rs.emulator.buffer.manipulation.DataTransformation
 import rs.emulator.buffer.manipulation.DataType
 import rs.emulator.buffer.writer.BufferedWriter
+import rs.emulator.network.packet.message.GamePacketMessage
 
 /**
  *
@@ -239,11 +240,27 @@ class GamePacketBuilder : BufferedWriter
     }
 
     /**
-     * Creates a [GamePacket] based on the current contents of this builder.
+     * Creates a [GamePacketMessage] based on the current contents of this builder.
      *
-     * @return The [GamePacket].
+     * @return The [GamePacketMessage].
      * @throws IllegalStateException If the builder is not in byte access mode, or if the packet is raw.
      */
+    fun toGamePacketMessage(): GamePacketMessage
+    {
+
+        Preconditions.checkState(packetType != PacketType.RAW, "Raw packets cannot be converted to a game packet.")
+
+        Preconditions.checkState(mode === AccessMode.BYTE_ACCESS, "Must be in byte access mode to convert to a packet.")
+
+        return GamePacketMessage(
+            opcode,
+            actionType,
+            packetType,
+            buffer
+        )
+
+    }
+
     fun toGamePacket(): GamePacket
     {
 
@@ -251,7 +268,12 @@ class GamePacketBuilder : BufferedWriter
 
         Preconditions.checkState(mode === AccessMode.BYTE_ACCESS, "Must be in byte access mode to convert to a packet.")
 
-        return GamePacket(opcode, actionType, packetType, buffer)
+        return GamePacket(
+            opcode,
+            actionType,
+            packetType,
+            buffer
+        )
 
     }
 

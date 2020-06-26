@@ -9,7 +9,7 @@ enum class PacketDecoderState
 
     OPCODE,
 
-    SIZE,
+    LENGTH,
 
     PAYLOAD
 

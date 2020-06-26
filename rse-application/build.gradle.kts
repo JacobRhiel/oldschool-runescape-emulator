@@ -18,4 +18,8 @@ dependencies {
 
     implementation(project(":rse-service-login"))
 
+    implementation(project(":rse-network-packet"))
+
+    implementation(project(":rse-entity:player"))
+
 }

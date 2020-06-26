@@ -45,8 +45,6 @@ class VirtualFileStore(private val path: Path) : KoinComponent, Closeable
         writer.put(DataType.INT, referenceTable.getIndexCount() * 8)
 
         referenceTable.fetchIndexList().forEach {
-            println("hash: " + it.hash)
-            println("version: " + it.table.version)
             writer.put(DataType.INT, it.hash)
             writer.put(DataType.INT, it.table.version)
         }

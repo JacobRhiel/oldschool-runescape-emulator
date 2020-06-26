@@ -275,6 +275,18 @@ open class BufferedWriter(protected val buffer: ByteBuf = Unpooled.buffer(0))
         putBytesReverse(bytes)
     }
 
+    fun putBytesReverse(transformation: DataTransformation, buffer: ByteBuf)
+    {
+        val bytes = ByteArray(buffer.readableBytes())
+        buffer.markReaderIndex()
+        try {
+            buffer.readBytes(bytes)
+        } finally {
+            buffer.resetReaderIndex()
+        }
+        putBytesReverse(transformation, bytes)
+    }
+
     /**
      * Puts the specified byte array into the buffer in reverse with the specified transformation.
      *

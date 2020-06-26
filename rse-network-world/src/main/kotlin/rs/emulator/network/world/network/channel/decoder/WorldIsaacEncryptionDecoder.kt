@@ -13,9 +13,11 @@ import rs.emulator.buffer.BufferUtils.readString
 import rs.emulator.cache.store.VirtualFileStore
 import rs.emulator.encryption.xtea.XTEA
 import rs.emulator.network.SESSION_KEY
+import rs.emulator.network.channel.DefaultChannelHandler
 import rs.emulator.network.world.network.channel.message.WorldHandshakeResponseMessage
 import rs.emulator.network.world.network.channel.protocol.WorldConnectionResponseProtocol
 import rs.emulator.network.world.network.channel.session.WorldSession
+import rs.emulator.service.login.network.encoder.LoginResponseEncoder
 import rs.emulator.service.login.network.message.LoginRequestMessage
 import java.nio.ByteBuffer
 
@@ -102,7 +104,9 @@ class WorldIsaacEncryptionDecoder
             }
         }
 
-        val request = LoginRequestMessage(ctx, ctx.channel(), session.credentials)
+        ctx.pipeline().addBefore(DefaultChannelHandler::class.simpleName, LoginResponseEncoder::class.simpleName, LoginResponseEncoder())
+
+        val request = LoginRequestMessage(ctx, ctx.channel(), session.isaacKeys, session.credentials)
 
         out.add(request)
 
