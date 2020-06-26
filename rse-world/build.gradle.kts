@@ -6,4 +6,6 @@ dependencies {
 
     implementation(project(":rse-api:collections"))
 
+    api(project(":rse-entity:player"))
+
 }

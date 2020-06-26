@@ -8,16 +8,18 @@ import org.koin.core.get
 import rs.emulator.encryption.isaac.IsaacRandom
 import rs.emulator.network.decoder.StatefulFrameDecoder
 import rs.emulator.network.packet.*
+import rs.emulator.network.packet.message.GamePacketMessage
+import rs.emulator.network.packet.repository.PacketRepository
 import rs.emulator.network.packet.state.PacketDecoderState
+import rs.emulator.network.packet.state.PacketDecoderState.*
 import rs.emulator.utilities.logger.warn
 
 /**
  *
  * @author Chk
  */
-class GamePacketDecoder(private val isaacRandom: IsaacRandom,
-                        private val packetMetaData: PacketMetaData)
-    : KoinComponent, StatefulFrameDecoder<PacketDecoderState>(PacketDecoderState.OPCODE)
+class GamePacketDecoder(private val isaacRandom: IsaacRandom)
+    : KoinComponent, StatefulFrameDecoder<PacketDecoderState>(OPCODE)
 {
 
     private val packetRepository: PacketRepository = get()
@@ -35,16 +37,28 @@ class GamePacketDecoder(private val isaacRandom: IsaacRandom,
     override fun decode(ctx: ChannelHandlerContext, buf: ByteBuf, out: MutableList<Any>, state: PacketDecoderState)
     {
 
+        when (state)
+        {
 
+            OPCODE -> decodeOpcode(ctx, buf, out)
+
+            LENGTH -> decodeLength(buf, out)
+
+            PAYLOAD -> decodePayload(buf, out)
+
+        }
 
     }
 
-    private fun decodeOpcode(ctx: ChannelHandlerContext, buf: ByteBuf, out: MutableList<Any>) {
+    private fun decodeOpcode(ctx: ChannelHandlerContext, buf: ByteBuf, out: MutableList<Any>)
+    {
 
         if (buf.isReadable)
         {
 
-            opcode = buf.readUnsignedByte().toInt() - (isaacRandom.nextInt() ?: 0) and 0xFF
+            opcode = buf.readUnsignedByte().toInt() - isaacRandom.nextInt() and 0xFF
+
+            println("decoding opcode: $opcode")
 
             val packet = packetRepository.fetchDecoder(opcode)
 
@@ -71,10 +85,10 @@ class GamePacketDecoder(private val isaacRandom: IsaacRandom,
                     size = packet.length
 
                     if (size != 0)
-                        setState(PacketDecoderState.PAYLOAD)
+                        setState(PAYLOAD)
                     else if (!ignore)
                         out.add(
-                            GamePacket(
+                            GamePacketMessage(
                                 opcode,
                                 packet.actionType,
                                 packetType,
@@ -83,14 +97,14 @@ class GamePacketDecoder(private val isaacRandom: IsaacRandom,
                         )
                 }
 
-                PacketType.VARIABLE_BYTE, PacketType.VARIABLE_SHORT -> setState(PacketDecoderState.SIZE)
-                else                                                                                                                            -> throw IllegalStateException("Unhandled packet type $packetType for opcode $opcode.")
+                PacketType.VARIABLE_BYTE, PacketType.VARIABLE_SHORT -> setState(LENGTH)
+                else -> throw IllegalStateException("Unhandled packet type $packetType for opcode $opcode.")
             }
         }
     }
 
-    private fun decodeLength(buf: ByteBuf, out: MutableList<Any>) {
-
+    private fun decodeLength(buf: ByteBuf, out: MutableList<Any>)
+    {
 
         if (buf.isReadable)
         {
@@ -100,9 +114,16 @@ class GamePacketDecoder(private val isaacRandom: IsaacRandom,
                 size = if (packetType == PacketType.VARIABLE_SHORT) buf.readUnsignedShort() else buf.readUnsignedByte().toInt()
 
                 if (size != 0)
-                    setState(PacketDecoderState.PAYLOAD)
+                    setState(PAYLOAD)
                 else if (!ignore)
-                    out.add(GamePacket(opcode, actionType, packetType, Unpooled.EMPTY_BUFFER))
+                    out.add(
+                        GamePacketMessage(
+                            opcode,
+                            actionType,
+                            packetType,
+                            Unpooled.EMPTY_BUFFER
+                        )
+                    )
 
             }
             catch(e: Exception)
@@ -122,10 +143,17 @@ class GamePacketDecoder(private val isaacRandom: IsaacRandom,
 
             val payload = buf.readBytes(size)
 
-            setState(PacketDecoderState.OPCODE)
+            setState(OPCODE)
 
             if (!ignore)
-                out.add(GamePacket(opcode, actionType, packetType, payload))
+                out.add(
+                    GamePacketMessage(
+                        opcode,
+                        actionType,
+                        packetType,
+                        payload
+                    )
+                )
 
         }
     }

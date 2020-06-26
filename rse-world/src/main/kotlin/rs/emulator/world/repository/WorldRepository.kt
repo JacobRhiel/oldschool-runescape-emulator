@@ -1,14 +1,14 @@
 package rs.emulator.world.repository
 
-import rs.emulator.collections.RandomizedIndexMap
+import rs.emulator.entity.player.Player
 
 /**
  *
  * @author Chk
  */
-class WorldRepository
+object WorldRepository
 {
 
-    val players = RandomizedIndexMap(2048)
+    val players = ArrayList<Player>(2048)//RandomizedIndexMap(2048)
 
 }

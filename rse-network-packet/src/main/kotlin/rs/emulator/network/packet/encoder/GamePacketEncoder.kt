@@ -1,40 +1,55 @@
 package rs.emulator.network.packet.encoder
 
+import io.netty.buffer.ByteBuf
 import io.netty.channel.ChannelHandlerContext
-import io.netty.handler.codec.MessageToMessageEncoder
-import org.koin.core.KoinComponent
-import org.koin.core.get
-import rs.emulator.network.packet.GamePacketBuilder
-import rs.emulator.network.packet.PacketRepository
+import io.netty.handler.codec.MessageToByteEncoder
+import rs.emulator.encryption.isaac.IsaacRandom
+import rs.emulator.network.packet.GamePacket
+import rs.emulator.network.packet.PacketType
 import rs.emulator.network.packet.message.GamePacketMessage
+import rs.emulator.utilities.logger.logger
+import java.text.DecimalFormat
 
 /**
  *
  * @author Chk
  */
-class GamePacketEncoder
-    : KoinComponent, MessageToMessageEncoder<GamePacketMessage>()
+class GamePacketEncoder(private val isaac: IsaacRandom) : MessageToByteEncoder<GamePacket>()
 {
 
-    private val packetRepository: PacketRepository = get()
-
-    override fun encode(ctx: ChannelHandlerContext, msg: GamePacketMessage, out: MutableList<Any>)
+    override fun encode(ctx: ChannelHandlerContext, msg: GamePacket, out: ByteBuf)
     {
 
-        val encoder = packetRepository.fetchEncoder(msg.opcode)
+        if (msg.type == PacketType.VARIABLE_BYTE && msg.length >= 256) {
+            logger().error("Message length {} too long for 'variable-byte' packet on channel {}.", DecimalFormat().format(msg.length), ctx.channel())
+            return
+        } else if (msg.type == PacketType.VARIABLE_SHORT && msg.length >= 65536) {
+            logger().error("Message length {} too long for 'variable-short' packet on channel {}.", DecimalFormat().format(msg.length), ctx.channel())
+            return
+        }
 
-        if(encoder == null)
+        out.writeByte((msg.opcode + (isaac.nextInt())) and 0xFF)
+
+        println(msg.type)
+
+        when (msg.type)
         {
 
-            println("null encoder for opcode: ${msg.opcode}")
+            PacketType.VARIABLE_BYTE  -> out.writeByte(msg.length)
 
-            return
+            PacketType.VARIABLE_SHORT -> out.writeShort(msg.length)
+
+            else                      -> {}
 
         }
 
-        val builder = GamePacketBuilder(encoder.opcode, encoder.packetType, encoder.actionType)
+        println("Encoding packet: ${msg.javaClass.simpleName}. ${msg.opcode}")
 
+        println("payload: " + msg.payload.array().toTypedArray().contentDeepToString())
 
+        out.writeBytes(msg.payload)
+
+        msg.release()
 
     }
 

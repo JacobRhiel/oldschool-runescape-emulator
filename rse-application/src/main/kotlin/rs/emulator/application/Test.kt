@@ -1,6 +1,7 @@
 package rs.emulator.application
 
 import com.google.common.util.concurrent.ServiceManager
+import kotlinx.coroutines.runBlocking
 import org.koin.core.KoinComponent
 import org.koin.core.context.startKoin
 import org.koin.core.get
@@ -12,7 +13,12 @@ import rs.emulator.cache.store.data.DataFile
 import rs.emulator.cache.store.reference.ReferenceTable
 import rs.emulator.database.service.JDBCPoolingService
 import rs.emulator.encryption.rsa.RSAService
+import rs.emulator.engine.service.CyclicEngineService
+import rs.emulator.engine.service.schedule.CyclicDelaySchedule
+import rs.emulator.world.task.UpdatePlayerSynchronizationTask
 import rs.emulator.fileserver.FileStoreService
+import rs.emulator.network.packet.atest.XteaKeyService
+import rs.emulator.network.packet.repository.PacketRepository
 import rs.emulator.network.pipeline.DefaultPipelineProvider
 import rs.emulator.network.world.network.channel.pipeline.WorldPipelineProvider
 import rs.emulator.network.world.service.WorldService
@@ -36,6 +42,10 @@ class Test : KoinComponent
     private val databaseService: JDBCPoolingService = get()
 
     private val serviceManager: ServiceManager = get()
+
+    private val engine: CyclicEngineService = get()
+
+    val packetRepository: PacketRepository = get()
 
     @ExperimentalStdlibApi
     companion object
@@ -71,31 +81,49 @@ class Test : KoinComponent
 
                 single { LoginWorkerService() }
 
+                single { CyclicDelaySchedule() }
+
+                single { CyclicEngineService() }
+
+                //todo move the parsing.
+                single { PacketRepository() }
+
                 single { ServiceManager(listOf(
                     get<JDBCPoolingService>(),
                     get<RSAService>(),
                     get<FileStoreService>(),
                     get<WorldService>(),
-                    get<LoginWorkerService>()
+                    get<LoginWorkerService>(),
+                    get<CyclicEngineService>()
                 )) }
 
             }
 
-            startKoin {
+            runBlocking {
 
-                modules(mod)
+                    startKoin {
 
-                val test = Test()
+                        modules(mod)
 
-                test.serviceManager
-                    .startAsync()
-                    .awaitHealthy()
+                        val test = Test()
 
-                System.gc()
+                        test.engine.schedule(UpdatePlayerSynchronizationTask)
 
-                //val world = WorldBuilder().setActivity(WorldActivity.NONE).setMembers(true).setOrigin(WorldOrigin.UNITED_STATES).build()
+                        XteaKeyService().loadKeys()
 
-                //world.save(world)
+                        test.packetRepository.construct()
+
+                        test.serviceManager
+                            .startAsync()
+                            .awaitHealthy()
+
+                        System.gc()
+
+                        //val world = WorldBuilder().setActivity(WorldActivity.NONE).setMembers(true).setOrigin(WorldOrigin.UNITED_STATES).build()
+
+                        //world.save(world)
+
+                }
 
             }
 

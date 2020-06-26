@@ -1,7 +1,10 @@
 version = "unspecified"
 
 dependencies {
-    implementation(project(":rse-api:entity"))
-    implementation(project(":rse-api:collections"))
+
+    api(project(":rse-api:entity"))
+
+    api(project(":rse-api:collections"))
+    
 }
 

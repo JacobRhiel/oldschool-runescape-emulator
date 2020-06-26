@@ -9,14 +9,15 @@ import rs.emulator.buffer.manipulation.DataOrder
 import rs.emulator.buffer.manipulation.DataTransformation
 import rs.emulator.buffer.manipulation.DataType
 import rs.emulator.buffer.reader.BufferedReader
+import rs.emulator.network.packet.message.GamePacketMessage
 
 /**
- * A utility class for reading [GamePacket]s.
+ * A utility class for reading [GamePacketMessage]s.
  *
  * @author Graham
  * @author Chk
  */
-class GamePacketReader(packet: GamePacket)
+class GamePacketReader(packet: GamePacketMessage)
     : BufferedReader(packet.payload)
 {
 

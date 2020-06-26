@@ -30,7 +30,7 @@ class HandshakeEncoder: MessageToByteEncoder<RequestHandshakePipelineMessage>()
             WORLD_SERVER_CONNECTION ->
             {
 
-                //Remove all JS5 related handlers since they are no longer required.
+                //Remove all JS5 related handlers since they are not currently required.
                 ctx.pipeline().forEach {
 
                     if(it.key.contains("js5", true))
@@ -47,6 +47,14 @@ class HandshakeEncoder: MessageToByteEncoder<RequestHandshakePipelineMessage>()
 
             FILE_SERVER_CONNECTION ->
             {
+
+                //Remove all world related handlers since they are not currently required.
+                ctx.pipeline().forEach {
+
+                    if(it.key.contains("world", true))
+                        ctx.pipeline().remove(it.value)
+
+                }
 
                // worldProvider.handlers().forEach { ctx.pipeline().remove(it::class.simpleName) }
 

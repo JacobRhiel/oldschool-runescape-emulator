@@ -47,7 +47,7 @@ class CyclicEngineService : KoinComponent, AbstractScheduledService()
 
                 val start = System.currentTimeMillis()
 
-                successful = completableFuture.get(remainingMilliseconds, TimeUnit.MILLISECONDS)
+                completableFuture.get(remainingMilliseconds, TimeUnit.MILLISECONDS)
 
                 completableFuture.join()
 
@@ -63,9 +63,6 @@ class CyclicEngineService : KoinComponent, AbstractScheduledService()
                 println("error")
 
             }
-
-            if(!successful)
-                warn("Unsuccessful event execution $event")
 
         }
 

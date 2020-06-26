@@ -9,4 +9,12 @@ dependencies {
 
     implementation(project(":rse-network"))
 
+    implementation(project(":rse-network-packet"))
+
+    implementation(project(":rse-encryption"))
+
+    implementation(project(":rse-entity:player"))
+
+    implementation(project(":rse-world"))
+
 }

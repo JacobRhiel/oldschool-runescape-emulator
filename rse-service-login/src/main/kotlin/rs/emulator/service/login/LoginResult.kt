@@ -23,15 +23,17 @@ data class LoginResult(val status: LoginStatus) : NetworkMessage
         else
         {
 
-            buffer = allocator.buffer(11)
+            buffer = allocator.buffer(12)
 
             buffer.writeByte(status.opcode)
+
+            buffer.writeByte(13)
 
             buffer.writeByte(0)
 
             buffer.writeInt(0)
 
-            buffer.writeByte(3)//rights
+            buffer.writeByte(0)
 
             buffer.writeBoolean(true)//members
 

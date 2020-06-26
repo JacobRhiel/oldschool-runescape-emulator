@@ -1,0 +1,276 @@
+package rs.emulator.world.task
+
+import rs.emulator.buffer.manipulation.DataType
+import rs.emulator.entity.player.Player
+import rs.emulator.entity.player.update.mask.PlayerAppearanceMask
+import rs.emulator.entity.player.update.sync.SyncInformation
+import rs.emulator.entity.player.viewport.Viewport
+import rs.emulator.entity.update.mask.UpdateMask
+import rs.emulator.entity.update.task.UpdateSynchronizationTask
+import rs.emulator.network.packet.GamePacket
+import rs.emulator.network.packet.GamePacketBuilder
+import rs.emulator.network.packet.PacketType
+import rs.emulator.world.repository.WorldRepository
+
+/**
+ *
+ * @author Chk
+ */
+object UpdatePlayerSynchronizationTask : UpdateSynchronizationTask<Player>
+{
+
+    override fun execute(entity: Player)
+    {
+
+        val builder = GamePacketBuilder(79, packetType = PacketType.VARIABLE_SHORT)
+
+        var flag = entity.syncInfo.fetchFlag()
+
+        builder.switchToBitAccess()
+
+        val maskBuilder = GamePacketBuilder()
+
+        if(flag >= 0x100)
+        {
+
+            flag = flag or 64
+            maskBuilder.put(DataType.BYTE, flag and 0xFF)
+            maskBuilder.put(DataType.BYTE, flag shr 8)
+
+        }
+        else
+            maskBuilder.put(DataType.BYTE, flag and 0xFF)
+
+        localNsn0(entity, builder, maskBuilder, true)
+
+        localNsn1(entity, builder, maskBuilder)
+
+        builder.switchToByteAccess()
+
+        builder.switchToBitAccess()
+
+        globalNsn0(entity, builder, true)
+
+        globalNsn1(entity, builder)
+
+        builder.switchToByteAccess()
+
+        println(builder.byteBuf.array().toTypedArray().contentDeepToString())
+
+        builder.putBytes(maskBuilder.byteBuf)
+
+        entity.channel.writeAndFlush(createGamePacket(builder))
+
+    }
+
+    private fun localNsn0(player: Player, builder: GamePacketBuilder, maskBuilder: GamePacketBuilder, inverse: Boolean = false) = localNsn1(player, builder, maskBuilder, inverse)
+
+    private fun localNsn1(player: Player, builder: GamePacketBuilder, maskBuilder: GamePacketBuilder, inverse: Boolean = false)
+    {
+
+        val viewport = player.viewport
+
+        var skipCount = 0
+
+        viewport.localPlayers.forEach { (_, viewportPlayer) ->
+
+            val syncInformation = viewportPlayer.syncInfo
+
+            if(skipPlayer(syncInformation, inverse))
+            {
+
+                return@forEach
+            }
+
+            if(skipCount > 0)
+            {
+
+                skipCount--
+
+                syncInformation.setFlag(0x2)
+
+                return@forEach
+
+            }
+
+            //todo: local scope players
+
+            val updateRequired = syncInformation.requiresUpdate()
+
+            if(updateRequired)
+            {
+
+                builder.switchToByteAccess()
+
+                generateMaskBuffer(viewportPlayer, fetchMasks(), maskBuilder)
+
+                builder.switchToBitAccess()
+
+                builder.putBits(1, 1)
+
+                builder.putBits(1, 1)
+
+                builder.putBits(2, 0)
+
+                syncInformation.resetFlag()
+
+            }
+            else
+            {
+
+                skipCount = generateSkipCount(viewport, builder, true, inverse)
+
+                println("local skip count: $skipCount")
+
+                syncInformation.setFlag(0x2)
+
+            }
+
+        }
+
+    }
+
+    private fun globalNsn0(player: Player, builder: GamePacketBuilder, inverse: Boolean = false) = globalNsn1(player, builder, inverse)
+
+    private fun globalNsn1(player: Player, builder: GamePacketBuilder, inverse: Boolean = false)
+    {
+
+        var skipCount = 0
+
+        val viewport = player.viewport
+
+        viewport.globalPlayers.forEach { (_, viewportPlayer) ->
+
+            val syncInformation = viewportPlayer.syncInfo
+
+            if(skipPlayer(syncInformation, inverse)) return@forEach
+
+            if(skipCount > 0)
+            {
+
+                skipCount--
+
+                syncInformation.setFlag(0x2)
+
+                return@forEach
+
+            }
+
+            //todo: update multi-player block
+
+            skipCount = generateSkipCount(viewport, builder, false, inverse)
+
+            println("global skip count 2: $skipCount")
+
+            syncInformation.setFlag(0x2)
+
+        }
+
+    }
+
+    private fun skipPlayer(syncInformation: SyncInformation, inverse: Boolean = false) : Boolean
+    {
+
+        return if(inverse) syncInformation.hasFlag(0x1) else syncInformation.noFlag((0x1))
+
+    }
+
+    private fun generateSkipCount(viewport: Viewport, builder: GamePacketBuilder, local: Boolean = true, inverse: Boolean = false): Int
+    {
+
+        var skipCount = 0
+
+        val viewportCount = if(local) viewport.localPlayerCount else viewport.globalPlayerCount
+
+        val playerMap = if(local) viewport.localPlayers else viewport.globalPlayers
+
+        playerMap.forEach { (index, _) ->
+
+            val nextIndex = if((index + 1) == viewportCount) index + 1 else index
+
+            val nextPlayer = playerMap[nextIndex]!! //todo: null-check required?
+
+            val syncInformation = nextPlayer.syncInfo
+
+            val skip = skipPlayer(syncInformation, inverse)
+
+            if(skip) return@forEach
+
+            skipCount++
+
+        }
+
+        skipCount = /*2048*/ 2046 - skipCount
+
+        builder.putBits(1, 0)
+
+        println("actual skip count : $skipCount ")
+
+        when
+        {
+
+            skipCount == 0 -> builder.putBits(2, 0)
+
+            skipCount < 32 ->
+            {
+                builder.putBits(2, 1)
+                builder.putBits(5, skipCount)
+            }
+
+            skipCount < 256 ->
+            {
+                builder.putBits(2, 2)
+                builder.putBits(8, skipCount)
+            }
+
+            skipCount < 2048 ->
+            {
+                builder.putBits(2, 3)
+                builder.putBits(11, skipCount)
+            }
+
+        }
+
+        return skipCount
+
+    }
+
+    override fun execute()
+    {
+
+        WorldRepository.players.forEach {
+
+            execute(it)
+
+        }
+
+    }
+
+    override fun createGamePacket(builder: GamePacketBuilder): GamePacket
+    {
+
+        println(builder.readableBytes)
+
+        return builder.toGamePacket()
+
+    }
+
+    override fun generateMaskBuffer(entity: Player, masks: List<UpdateMask<Player>>, builder: GamePacketBuilder)
+    {
+
+        masks.forEach { mask -> mask.generate(entity = entity, builder = builder) }
+
+    }
+
+    override fun fetchMasks(): List<UpdateMask<Player>>
+    {
+
+        return listOf(
+
+            PlayerAppearanceMask()
+
+        ).sortedBy { it.fetchFlag().bit }
+
+    }
+
+}

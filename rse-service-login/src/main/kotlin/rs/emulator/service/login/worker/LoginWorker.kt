@@ -1,7 +1,6 @@
 package rs.emulator.service.login.worker
 
 import rs.emulator.service.login.LoginStatus
-import rs.emulator.service.login.atest.Player
 import rs.emulator.service.login.network.message.LoginRequestMessage
 
 /**
@@ -25,7 +24,7 @@ class LoginWorker(val request: LoginRequestMessage) : Runnable
     override fun run()
     {
 
-        val player = Player(username = request.credentials.username, password = request.credentials.password)
+/*        val player = Player(username = request.credentials.username, password = request.credentials.password)
 
         //load player
         player.get()
@@ -33,11 +32,11 @@ class LoginWorker(val request: LoginRequestMessage) : Runnable
         //if(player.status.equals("banned", true))
            // result = LoginStatus.BANNED
 
-        println(player.status)
+        println(player.status)*/
 
         result = LoginStatus.ACCEPTED
 
-        println("player loaded: " + player.username)
+        println("player loaded: FINISH THIS!")// + player.username)
 
     }
 

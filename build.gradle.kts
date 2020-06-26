@@ -57,6 +57,8 @@ subprojects {
 
         implementation("io.github.classgraph:classgraph:4.8.86")
 
+        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7")
+
         testImplementation("org.junit.jupiter:junit-jupiter-api:5.4.2")
 
         testImplementation("org.junit.jupiter:junit-jupiter-params:5.4.2")
