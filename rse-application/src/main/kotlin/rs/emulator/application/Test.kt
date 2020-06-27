@@ -118,10 +118,6 @@ class Test : KoinComponent
 
                         System.gc()
 
-                        //val world = WorldBuilder().setActivity(WorldActivity.NONE).setMembers(true).setOrigin(WorldOrigin.UNITED_STATES).build()
-
-                        //world.save(world)
-
                 }
 
             }
