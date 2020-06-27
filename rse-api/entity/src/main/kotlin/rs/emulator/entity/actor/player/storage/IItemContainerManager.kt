@@ -1,6 +1,7 @@
 package rs.emulator.entity.actor.player.storage
 
 import rs.emulator.entity.actor.player.storage.container.ItemContainer
+import rs.emulator.entity.material.items.Item
 
 /**
  *
@@ -11,6 +12,6 @@ interface IItemContainerManager<T : ItemContainer<*>> {
 
     fun register(key : Int, container : T, block : T.() -> Unit = {})
 
-    fun container(key : Int) : T
+    fun <G : Item> container(key : Int) : ItemContainer<G>
 
 }

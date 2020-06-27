@@ -11,8 +11,19 @@ enum class EquipmentSlot(val slot: Int) {
     HANDS(9),
     FEET(10),
     RING(12),
-    ARROWS(13);
+    ARROWS(13),
+    NONE(-1);
 
+    companion object {
 
+        fun bySlot(slot : Int) : EquipmentSlot {
+            for(es in values()) {
+                if(es.slot == slot)
+                    return es
+            }
+            return NONE
+        }
+
+    }
 
 }

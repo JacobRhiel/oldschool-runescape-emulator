@@ -8,7 +8,7 @@ import rs.emulator.entity.material.items.StandardItem
  * @author javatar
  */
 
-class StandardItemFactory : AbstractMaterialFactory<StandardItem> {
+object StandardItemFactory : AbstractMaterialFactory<StandardItem> {
 
     val cacheMap = mutableMapOf<Int, StandardItem>()
 

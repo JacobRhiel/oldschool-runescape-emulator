@@ -9,7 +9,7 @@ import rs.emulator.entity.material.items.Wearable
  * @author javatar
  */
 
-class WearableItemFactory : AbstractMaterialFactory<Wearable> {
+object WearableItemFactory : AbstractMaterialFactory<Wearable> {
 
     val map = mutableMapOf<Int, (Int, Int, Boolean) -> Wearable>(
         20 to { id, amt, stacks -> Wearable(EquipmentSlot.SHIELD, id = id, amount = amt, stackable = stacks) }

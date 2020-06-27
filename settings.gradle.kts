@@ -3,7 +3,13 @@ include("rse-engine")
 include("rse-utilities")
 include("rse-cache")
 include("rse-application")
-include("rse-entity", "rse-entity:actor", "rse-entity:player", "rse-entity:npc", "rse-entity:update")
+include(
+    "rse-entity",
+    "rse-entity:actor",
+    "rse-entity:player",
+    "rse-entity:npc",
+    "rse-entity:update"
+)
 include("rse-world")
 include("rse-network")
 include("rse-buffer")
@@ -15,9 +21,10 @@ include(
     "rse-api:region",
     "rse-api:collections",
     "rse-api:definitions",
-    "rse-api:plugins"
+    "rse-api:plugins",
+    "rse-api:widgets"
 )
-include("rse-plugins")
+include("rse-plugins", "rse-plugins:commands")
 include("rse-network-js5")
 include("rse-network-world")
 include("rse-encryption")

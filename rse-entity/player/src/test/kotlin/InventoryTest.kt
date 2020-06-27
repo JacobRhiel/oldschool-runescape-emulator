@@ -1,16 +1,16 @@
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import rs.emulator.entity.actor.player.storage.containers.Inventory
 import rs.emulator.entity.material.EquipmentSlot
 import rs.emulator.entity.material.factories.StandardItemFactory
 import rs.emulator.entity.material.factories.WearableItemFactory
+import rs.emulator.entity.player.storage.containers.Inventory
 
 class InventoryTest {
 
     @Test
     fun addStackableItemTest() {
 
-        val factory = StandardItemFactory()
+        val factory = StandardItemFactory
         val inv = Inventory()
 
         val coins = factory.create(995, 1000, true)
@@ -34,7 +34,7 @@ class InventoryTest {
     @Test
     fun addNonStackableItemTest() {
 
-        val factory = WearableItemFactory()
+        val factory = WearableItemFactory
         val inv = Inventory()
 
         val whip = factory.create {
@@ -63,7 +63,7 @@ class InventoryTest {
     @Test
     fun publisherTest() {
 
-        val factory = WearableItemFactory()
+        val factory = WearableItemFactory
         val inv = Inventory()
 
         inv.subscribeOnceOnAdd {
@@ -93,7 +93,7 @@ class InventoryTest {
     @Test
     fun `add non-stackable item with once time subscribe`() {
 
-        val factory = WearableItemFactory()
+        val factory = WearableItemFactory
         val inv = Inventory()
 
         inv.subscribeOnceOnAdd {
@@ -117,7 +117,7 @@ class InventoryTest {
     @Test
     fun `remove stackable item`() {
 
-        val factory = StandardItemFactory()
+        val factory = StandardItemFactory
         val inv = Inventory()
 
         val coins1 = factory.create {
@@ -143,7 +143,7 @@ class InventoryTest {
     @Test
     fun `remove non stackable item`() {
 
-        val factory = WearableItemFactory()
+        val factory = WearableItemFactory
         val inv = Inventory()
 
         val santa = factory.create {
@@ -163,7 +163,7 @@ class InventoryTest {
 
     @Test
     fun `transform item on remove`() {
-        val factory = WearableItemFactory()
+        val factory = WearableItemFactory
         val inv = Inventory()
         inv.subscribeOnceOnRemove {
             if(it.item.id == 1) {
@@ -182,8 +182,8 @@ class InventoryTest {
     @Test
     fun `swap items in slots`() {
 
-        val factory = WearableItemFactory()
-        val sfactory = StandardItemFactory()
+        val factory = WearableItemFactory
+        val sfactory = StandardItemFactory
         val inv = Inventory()
 
         val whip = factory.create {

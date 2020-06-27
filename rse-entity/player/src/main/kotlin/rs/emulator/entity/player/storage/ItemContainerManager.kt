@@ -18,7 +18,9 @@ class ItemContainerManager : IItemContainerManager<ItemContainer<Item>> {
         containers[key] = container
     }
 
-    override fun container(key: Int): ItemContainer<Item> = containers[key]!!
+    override fun <G : Item> container(key: Int): ItemContainer<G> {
+        return containers[key]!! as ItemContainer<G>
+    }
 
 
 }

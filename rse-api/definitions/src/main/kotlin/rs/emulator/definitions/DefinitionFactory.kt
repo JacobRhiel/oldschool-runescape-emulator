@@ -7,6 +7,6 @@ package rs.emulator.definitions
 
 abstract class DefinitionFactory<T : Definition> {
 
-    abstract fun provide(identifier : Int, block : T.() -> Unit) : T
+    abstract fun provide(identifier : Int, block : T.() -> Unit = {}) : T
 
 }
