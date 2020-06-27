@@ -2,9 +2,6 @@ package rs.emulator.service.login.atest
 
 import rs.emulator.database.annotations.NoArg
 import rs.emulator.entity.actor.player.IPlayer
-import rs.emulator.entity.actor.player.storage.IItemContainerManager
-import rs.emulator.entity.actor.player.storage.container.ItemContainer
-import rs.emulator.entity.material.items.Item
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Id
@@ -23,16 +20,21 @@ open class Player(
     @Column(name = "displayName") open val displayName: String = username,
     @Column(name = "password") open val password: String,
     @Column(name = "status") open val status: String = "Banned"
-) : IPlayer
+) : IPlayer, Entry
 {
 
-    fun get(): Player
+    fun login(channel: Channel)
     {
         return this
     }
 
     override fun containerManager(): IItemContainerManager<ItemContainer<Item>> {
         TODO("Not yet implemented")
+
+        channel.writeAndFlush(RebuildRegionMessage(true, 1, 3087, 3497, tileHash = -1))
+
     }
+
+    fun get(): Player = this.get(this, username) as Player
 
 }

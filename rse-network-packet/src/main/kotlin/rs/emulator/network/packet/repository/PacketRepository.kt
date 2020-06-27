@@ -55,9 +55,35 @@ class PacketRepository(private val encoders: HashMap<KClass<out GamePacketMessag
             listener = AppletFocusEventListener()
         )
 
+        putDecoder(93, ConsoleCommandDecoder(), packetType = PacketType.VARIABLE_BYTE, ignore = false, clazz = ConsoleCommandMessage::class,
+            listener = ConsoleCommandListener()
+        )
+
+        putDecoder(57, IfButtonDecoder(), length = 8, ignore = false, clazz = IfButtonMessage::class,
+            listener = IfButtonListener()
+        )
+
+        putDecoder(2, MouseClickDecoder(), length = 6, ignore = false, clazz = MouseClickMessage::class,
+            listener = MouseClickListener()
+        )
+
         putEncoder(17, RebuildRegionEncoder(), packetType = PacketType.VARIABLE_SHORT, clazz = RebuildRegionMessage::class)
 
         putEncoder(60, IfOpenOverlayEncoder(), clazz = IfOpenOverlayMessage::class)
+
+        putEncoder(73, UpdateDisplayWidgetsEncoder(), packetType = PacketType.VARIABLE_SHORT, clazz = UpdateDisplayWidgetsMessage::class)
+
+        putEncoder(64, IfOpenSubEncoder(), clazz = IfOpenSubMessage::class)
+
+        putEncoder(49, RunClientScriptEncoder(), packetType = PacketType.VARIABLE_SHORT, clazz = RunClientScriptMessage::class)
+
+        putEncoder(18, VarpLargeEncoder(), clazz = VarpLargeMessage::class)
+
+        putEncoder(1, VarpSmallEncoder(), clazz = VarpSmallMessage::class)
+
+        putEncoder(70, IfCloseSubEncoder(), clazz = IfCloseSubMessage::class)
+
+        putEncoder(6, IfMoveSubEncoder(), clazz = IfMoveSubMessage::class)
 
         return this
 

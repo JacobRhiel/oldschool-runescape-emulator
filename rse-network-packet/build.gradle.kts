@@ -7,4 +7,6 @@ dependencies {
 
     implementation(project(":rse-encryption"))
 
+    implementation(project(":rse-entity:widget"))
+
 }
