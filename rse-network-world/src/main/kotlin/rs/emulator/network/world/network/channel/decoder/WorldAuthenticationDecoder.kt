@@ -6,20 +6,10 @@ import io.netty.buffer.ByteBuf
 import io.netty.channel.ChannelHandlerContext
 import io.netty.handler.codec.ByteToMessageDecoder
 import org.koin.core.KoinComponent
-import org.koin.core.get
 import rs.emulator.buffer.BufferUtils.readString
 import rs.emulator.network.SESSION_KEY
 import rs.emulator.network.world.network.channel.protocol.WorldConnectionRequestProtocol
 import rs.emulator.network.world.network.channel.session.WorldSession
-import rs.emulator.service.login.LoginRequest
-import rs.emulator.service.login.LoginResult
-import rs.emulator.service.login.atest.Player
-import rs.emulator.service.login.network.message.LoginRequestMessage
-import rs.emulator.service.login.worker.LoginWorkerService
-import java.time.Duration
-import java.util.concurrent.ExecutionException
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.TimeoutException
 
 /**
  *

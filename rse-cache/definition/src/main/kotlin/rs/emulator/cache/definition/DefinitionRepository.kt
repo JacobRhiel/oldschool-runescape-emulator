@@ -5,7 +5,6 @@ import com.github.benmanes.caffeine.cache.Caffeine
 import org.koin.core.KoinComponent
 import org.koin.core.get
 import rs.emulator.IRepository
-import rs.emulator.Repository
 import rs.emulator.cache.definition.entity.loc.LocDefinitionGenerator
 import rs.emulator.cache.definition.entity.npc.NpcDefinitionGenerator
 import rs.emulator.cache.definition.entity.obj.ObjDefinitionGenerator

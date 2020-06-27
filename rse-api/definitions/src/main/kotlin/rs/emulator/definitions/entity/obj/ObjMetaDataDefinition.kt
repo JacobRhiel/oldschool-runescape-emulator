@@ -1,6 +1,6 @@
-package rs.emulator.cache.definition.entity.obj.meta
+package rs.emulator.definitions.entity.obj
 
-import rs.emulator.cache.definition.MetaDataDefinition
+import rs.emulator.definitions.MetaDataDefinition
 
 /**
  *

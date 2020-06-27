@@ -1,4 +1,4 @@
-package rs.emulator.cache.definition.entity.npc
+package rs.emulator.definitions.entity.npc
 
 import rs.emulator.definitions.Definition
 

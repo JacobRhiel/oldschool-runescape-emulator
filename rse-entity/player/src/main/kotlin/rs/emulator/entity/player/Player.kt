@@ -18,7 +18,7 @@ class Player(val channel: Channel) : Actor(), IPlayer
 
     val syncInfo = SyncInformation().apply { this.addFlag(PlayerUpdateFlag.APPEARANCE) }
 
-    val itemContainerManager = ItemContainerManager()
+    private val itemContainerManager = ItemContainerManager()
 
     override fun containerManager(): IItemContainerManager<ItemContainer<Item>> {
         return itemContainerManager

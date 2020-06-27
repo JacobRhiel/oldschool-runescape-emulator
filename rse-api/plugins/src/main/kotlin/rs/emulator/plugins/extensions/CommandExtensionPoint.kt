@@ -11,5 +11,6 @@ import rs.emulator.entity.actor.player.IPlayer
 interface CommandExtensionPoint : ExtensionPoint {
 
     fun execute(player : IPlayer, command : String)
+    fun hasRights() : Boolean
 
 }

@@ -1,4 +1,4 @@
-package rs.emulator.cache.definition.entity.obj.meta
+package rs.emulator.definitions.entity.obj
 
 data class Requirements(
     val attack: Int,

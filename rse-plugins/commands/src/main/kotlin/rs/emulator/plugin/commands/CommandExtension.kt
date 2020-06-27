@@ -29,4 +29,8 @@ class CommandExtension : CommandExtensionPoint {
         }
 
     }
+
+    override fun hasRights(): Boolean {
+        return true
+    }
 }
