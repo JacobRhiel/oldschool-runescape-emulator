@@ -1,12 +1,9 @@
 package rs.emulator.entity.widget
 
+import rs.emulator.entity.widgets.IWidget
+
 /**
  *
  * @author Chk
  */
-abstract class Widget(val id: Int)
-{
-
-    abstract fun onDisplay()
-
-}
+abstract class Widget(override val id: Int) : IWidget
