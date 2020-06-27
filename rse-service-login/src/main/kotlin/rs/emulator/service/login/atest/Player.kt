@@ -2,6 +2,9 @@ package rs.emulator.service.login.atest
 
 import rs.emulator.database.annotations.NoArg
 import rs.emulator.entity.actor.player.IPlayer
+import rs.emulator.entity.actor.player.storage.IItemContainerManager
+import rs.emulator.entity.actor.player.storage.container.ItemContainer
+import rs.emulator.entity.material.items.Item
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Id
@@ -25,7 +28,11 @@ open class Player(
 
     fun get(): Player
     {
-        return this.get(this, username) as Player
+        return this
+    }
+
+    override fun containerManager(): IItemContainerManager<ItemContainer<Item>> {
+        TODO("Not yet implemented")
     }
 
 }
