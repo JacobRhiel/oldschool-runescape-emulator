@@ -30,7 +30,7 @@ class CommandExtension : CommandExtensionPoint {
 
     }
 
-    override fun hasRights(): Boolean {
+    override fun hasRights(player : IPlayer): Boolean {
         return true
     }
 }

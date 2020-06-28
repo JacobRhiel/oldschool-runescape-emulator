@@ -1,7 +1,12 @@
 package rs.emulator.network.packet.listener
 
 import io.netty.channel.Channel
+import rs.emulator.entity.player.Player
+import rs.emulator.network.SESSION_KEY
 import rs.emulator.network.packet.atest.*
+import rs.emulator.network.packet.session.PacketSession
+import rs.emulator.plugins.RSPluginManager
+import rs.emulator.plugins.extensions.WidgetInteractionExtensionPoint
 
 /**
  *
@@ -18,6 +23,15 @@ class IfButtonListener : GamePacketListener<IfButtonMessage>
         val component = message.hash and 0xFFFF
 
         val option = message.option + 1
+
+        val session = channel.attr(SESSION_KEY).get() as PacketSession
+        val player : Player = channel.attr(session.PLAYER_KEY).get()
+
+        val interactionExtensions = RSPluginManager.getExtensions(WidgetInteractionExtensionPoint::class.java)
+
+        interactionExtensions.forEach {
+            it.onClick(player, message.hash, message.option, message.slot, message.item)
+        }
 
         if(interfaceId == 378 && component == 78)
         {

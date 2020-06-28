@@ -2,8 +2,6 @@ package rs.emulator.packet.api
 
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.Unpooled
-import rs.emulator.packet.api.ActionType
-import rs.emulator.packet.api.PacketType
 
 /**
  *

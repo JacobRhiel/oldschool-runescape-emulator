@@ -11,6 +11,6 @@ import rs.emulator.entity.widgets.IWidget
 
 interface WidgetInteractionExtensionPoint : ExtensionPoint {
 
-    fun onClick(player : IPlayer, widget : IWidget, child : Int)
+    fun onClick(player : IPlayer, hash: Int, option: Int, slot: Int, item: Int)
 
 }
