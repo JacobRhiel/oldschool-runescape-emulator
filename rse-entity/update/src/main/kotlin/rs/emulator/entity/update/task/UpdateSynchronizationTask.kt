@@ -1,12 +1,10 @@
 package rs.emulator.entity.update.task
 
-import rs.emulator.buffer.reader.BufferedReader
 import rs.emulator.engine.service.event.Event
 import rs.emulator.entity.Entity
 import rs.emulator.entity.update.mask.UpdateMask
-import rs.emulator.network.packet.GamePacket
 import rs.emulator.network.packet.GamePacketBuilder
-import rs.emulator.network.packet.message.GamePacketMessage
+import rs.emulator.packet.api.GamePacket
 
 /**
  *

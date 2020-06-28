@@ -4,9 +4,8 @@ import io.netty.buffer.ByteBuf
 import io.netty.channel.ChannelHandlerContext
 import io.netty.handler.codec.MessageToByteEncoder
 import rs.emulator.encryption.isaac.IsaacRandom
-import rs.emulator.network.packet.GamePacket
-import rs.emulator.network.packet.PacketType
-import rs.emulator.network.packet.message.GamePacketMessage
+import rs.emulator.packet.api.GamePacket
+import rs.emulator.packet.api.PacketType
 import rs.emulator.utilities.logger.logger
 import java.text.DecimalFormat
 

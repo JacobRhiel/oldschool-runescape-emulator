@@ -8,6 +8,6 @@ dependencies {
 
     api(project(":rse-engine"))
 
-    api(project(":rse-network-packet"))
+    api(project(":rse-packet:message"))
 
 }

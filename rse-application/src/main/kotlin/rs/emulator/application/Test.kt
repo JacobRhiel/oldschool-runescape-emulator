@@ -16,11 +16,12 @@ import rs.emulator.engine.service.CyclicEngineService
 import rs.emulator.engine.service.schedule.CyclicDelaySchedule
 import rs.emulator.world.task.UpdatePlayerSynchronizationTask
 import rs.emulator.fileserver.FileStoreService
-import rs.emulator.network.packet.atest.XteaKeyService
 import rs.emulator.network.packet.repository.PacketRepository
+import rs.emulator.network.packet.repository.PacketService
 import rs.emulator.network.pipeline.DefaultPipelineProvider
 import rs.emulator.network.world.network.channel.pipeline.WorldPipelineProvider
 import rs.emulator.network.world.service.WorldService
+import rs.emulator.region.XteaKeyService
 import rs.emulator.service.login.worker.LoginWorkerSchedule
 import rs.emulator.service.login.worker.LoginWorkerService
 import java.nio.file.Paths
@@ -31,14 +32,6 @@ import java.nio.file.Paths
  */
 class Test : KoinComponent
 {
-
-    private val fs: VirtualFileStore = get()
-
-    private val world: WorldService = get()
-
-    private val fileStoreService: FileStoreService = get()
-
-    private val databaseService: JDBCPoolingService = get()
 
     private val serviceManager: ServiceManager = get()
 
@@ -72,6 +65,8 @@ class Test : KoinComponent
 
                 single { FileStoreService() }
 
+                single { XteaKeyService() }
+
                 single { RSAService() }
 
                 single { JDBCPoolingService() }
@@ -84,6 +79,8 @@ class Test : KoinComponent
 
                 single { CyclicEngineService() }
 
+                single { PacketService() }
+
                 //todo move the parsing.
                 single { PacketRepository() }
 
@@ -91,9 +88,11 @@ class Test : KoinComponent
                     get<JDBCPoolingService>(),
                     get<RSAService>(),
                     get<FileStoreService>(),
+                    get<XteaKeyService>(),
                     get<WorldService>(),
                     get<LoginWorkerService>(),
-                    get<CyclicEngineService>()
+                    get<CyclicEngineService>(),
+                    get<PacketService>()
                 )) }
 
             }
@@ -107,10 +106,6 @@ class Test : KoinComponent
                         val test = Test()
 
                         test.engine.schedule(UpdatePlayerSynchronizationTask)
-
-                        XteaKeyService().loadKeys()
-
-                        test.packetRepository.construct()
 
                         test.serviceManager
                             .startAsync()

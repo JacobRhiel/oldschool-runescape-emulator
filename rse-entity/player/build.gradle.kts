@@ -6,4 +6,6 @@ dependencies {
 
     api(project(":rse-entity:update"))
 
+    api(project(":rse-packet:message"))
+
 }

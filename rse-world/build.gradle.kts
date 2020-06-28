@@ -8,4 +8,12 @@ dependencies {
 
     api(project(":rse-entity:player"))
 
+    implementation(project(":rse-packet:message"))
+
+    implementation(project(":rse-packet:decoders"))
+
+    implementation(project(":rse-packet:encoders"))
+
+    implementation(project(":rse-network-packet"))
+
 }

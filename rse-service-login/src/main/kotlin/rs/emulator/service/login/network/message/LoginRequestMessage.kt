@@ -58,13 +58,15 @@ data class LoginRequestMessage(val ctx: ChannelHandlerContext,
 
         val player = Player(ctx.channel())
 
+        ctx.channel().attr(session.PLAYER_KEY).set(player)
+
         player.viewport.localPlayers[1] = player
 
         player.viewport.globalPlayers[1] = player
 
         WorldRepository.players.add(player)
 
-        session.test(channel)
+        player.onLogin()
 
     }
 

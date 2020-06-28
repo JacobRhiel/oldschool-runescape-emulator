@@ -1,22 +1,24 @@
 package rs.emulator.network.packet.repository
 
-import rs.emulator.network.packet.ActionType
-import rs.emulator.network.packet.PacketType
-import rs.emulator.network.packet.atest.*
-import rs.emulator.network.packet.decoder.PacketDecoder
-import rs.emulator.network.packet.encoder.PacketEncoder
-import rs.emulator.network.packet.listener.*
+import rs.emulator.entity.actor.player.IPlayer
+import rs.emulator.entity.player.Player
+import rs.emulator.network.packet.message.DecodingGamePacketMessage
+import rs.emulator.network.packet.message.EncodingGamePacketMessage
+import rs.emulator.packet.api.ActionType
+import rs.emulator.packet.api.PacketType
 import rs.emulator.network.packet.message.GamePacketMessage
-import rs.emulator.network.packet.metadata.DecodingPacketMetaData
-import rs.emulator.network.packet.metadata.EncodingPacketMetaData
+import rs.emulator.packet.api.IGamePacketListener
+import rs.emulator.packet.api.IGamePacketMessage
+import rs.emulator.packet.api.IPacketDecoder
+import rs.emulator.packet.api.IPacketEncoder
 import kotlin.reflect.KClass
 
 /**
  *
  * @author Chk
  */
-class PacketRepository(private val encoders: HashMap<KClass<out GamePacketMessage>, EncodingPacketMetaData> = hashMapOf(),
-                       private val decoders: HashMap<KClass<out GamePacketMessage>, DecodingPacketMetaData> = hashMapOf()
+class PacketRepository(private val encoders: HashMap<KClass<out GamePacketMessage>, EncodingGamePacketMessage> = hashMapOf(),
+                       private val decoders: HashMap<KClass<out GamePacketMessage>, DecodingGamePacketMessage> = hashMapOf()
 )
 {
 
@@ -24,74 +26,10 @@ class PacketRepository(private val encoders: HashMap<KClass<out GamePacketMessag
 
     fun <T : GamePacketMessage> fetchEncoder(clazz: KClass<T>) = encoders[clazz] ?: throw Error("Unknown encoder")
 
-    fun construct() : PacketRepository
-    {
+    fun <T : GamePacketMessage> putEncoder(opcode: Int, encoder: IPacketEncoder<out IGamePacketMessage, out IPlayer>, actionType: ActionType = ActionType.NONE, packetType: PacketType = PacketType.FIXED, clazz: KClass<out T>) =
+        encoders.computeIfAbsent(clazz) { EncodingGamePacketMessage(opcode, encoder, packetType = packetType, actionType = actionType) }
 
-        putDecoder(3, KeyBoardEventDecoder(), packetType = PacketType.VARIABLE_SHORT, ignore = false, clazz = KeyBoardEventMessage::class,
-            listener = KeyBoardEventListener()
-        )
-
-        putDecoder(52, WindowStatusDecoder(), length = 5, ignore = false, clazz = WindowStatusMessage::class,
-            listener = WindowStatusHandler()
-        )
-
-        putDecoder(30, KeepAliveDecoder(), length = 0, ignore = true, clazz = KeepAliveMessage::class,
-            listener = KeepAliveHandler()
-        )
-
-        putDecoder(34, MapBuildCompleteDecoder(), length = 0, ignore = false, clazz = MapBuildCompleteMessage::class,
-            listener = MapBuildCompleteHandler()
-        )
-
-        putDecoder(47, ClientModDetectionDecoder(), length = 0, ignore = true, packetType = PacketType.VARIABLE_BYTE, clazz = ClientModDetectionMessage::class,
-            listener = ClientModDetectionListener()
-        )
-
-        putDecoder(74, MousePositionUpdateDecoder(), length = 0, ignore = true, packetType = PacketType.VARIABLE_BYTE, clazz = MousePositionUpdateMessage::class,
-            listener = MousePositionUpdateListener()
-        )
-
-        putDecoder(54, AppletFocusEventDecoder(), length = 1, ignore = true, clazz = AppletFocusEventMessage::class,
-            listener = AppletFocusEventListener()
-        )
-
-        putDecoder(93, ConsoleCommandDecoder(), packetType = PacketType.VARIABLE_BYTE, ignore = false, clazz = ConsoleCommandMessage::class,
-            listener = ConsoleCommandListener()
-        )
-
-        putDecoder(57, IfButtonDecoder(), length = 8, ignore = false, clazz = IfButtonMessage::class,
-            listener = IfButtonListener()
-        )
-
-        putDecoder(2, MouseClickDecoder(), length = 6, ignore = false, clazz = MouseClickMessage::class,
-            listener = MouseClickListener()
-        )
-
-        putEncoder(17, RebuildRegionEncoder(), packetType = PacketType.VARIABLE_SHORT, clazz = RebuildRegionMessage::class)
-
-        putEncoder(60, IfOpenOverlayEncoder(), clazz = IfOpenOverlayMessage::class)
-
-        putEncoder(73, UpdateDisplayWidgetsEncoder(), packetType = PacketType.VARIABLE_SHORT, clazz = UpdateDisplayWidgetsMessage::class)
-
-        putEncoder(64, IfOpenSubEncoder(), clazz = IfOpenSubMessage::class)
-
-        putEncoder(49, RunClientScriptEncoder(), packetType = PacketType.VARIABLE_SHORT, clazz = RunClientScriptMessage::class)
-
-        putEncoder(18, VarpLargeEncoder(), clazz = VarpLargeMessage::class)
-
-        putEncoder(1, VarpSmallEncoder(), clazz = VarpSmallMessage::class)
-
-        putEncoder(70, IfCloseSubEncoder(), clazz = IfCloseSubMessage::class)
-
-        putEncoder(6, IfMoveSubEncoder(), clazz = IfMoveSubMessage::class)
-
-        return this
-
-    }
-
-    fun <T : GamePacketMessage> putEncoder(opcode: Int, encoder: PacketEncoder<out GamePacketMessage>, packetType: PacketType = PacketType.FIXED, clazz: KClass<out T>) = encoders.computeIfAbsent(clazz) { EncodingPacketMetaData(opcode, encoder, packetType) }
-
-    fun <T : GamePacketMessage> putDecoder(opcode: Int, decoder: PacketDecoder<out GamePacketMessage>, listener: GamePacketListener<out GamePacketMessage>, packetType: PacketType = PacketType.FIXED, actionType: ActionType = ActionType.NONE, length: Int = 0, ignore: Boolean = false, clazz: KClass<out T>)
-            = decoders.computeIfAbsent(clazz) { DecodingPacketMetaData(opcode, decoder, listener, packetType, actionType, length, ignore) }
+    fun <T : GamePacketMessage> putDecoder(opcode: Int, decoder: IPacketDecoder<out IGamePacketMessage, Player>, listener: IGamePacketListener<out IGamePacketMessage>, packetType: PacketType = PacketType.FIXED, actionType: ActionType = ActionType.NONE, length: Int = 0, ignore: Boolean = false, clazz: KClass<out T>)
+            = decoders.computeIfAbsent(clazz) { DecodingGamePacketMessage(opcode, decoder, listener, packetType, actionType, length, ignore) }
 
 }
