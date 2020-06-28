@@ -29,7 +29,7 @@ class PacketRepository(private val encoders: HashMap<KClass<out GamePacketMessag
     fun <T : GamePacketMessage> putEncoder(opcode: Int, encoder: IPacketEncoder<out IGamePacketMessage, out IPlayer>, actionType: ActionType = ActionType.NONE, packetType: PacketType = PacketType.FIXED, clazz: KClass<out T>) =
         encoders.computeIfAbsent(clazz) { EncodingGamePacketMessage(opcode, encoder, packetType = packetType, actionType = actionType) }
 
-    fun <T : GamePacketMessage> putDecoder(opcode: Int, decoder: IPacketDecoder<out IGamePacketMessage, Player>, listener: IGamePacketListener<out IGamePacketMessage>, packetType: PacketType = PacketType.FIXED, actionType: ActionType = ActionType.NONE, length: Int = 0, ignore: Boolean = false, clazz: KClass<out T>)
+    fun <T : GamePacketMessage> putDecoder(opcode: Int, decoder: IPacketDecoder<out IGamePacketMessage, Player>, listener: IGamePacketListener<out IGamePacketMessage, Player>, packetType: PacketType = PacketType.FIXED, actionType: ActionType = ActionType.NONE, length: Int = 0, ignore: Boolean = false, clazz: KClass<out T>)
             = decoders.computeIfAbsent(clazz) { DecodingGamePacketMessage(opcode, decoder, listener, packetType, actionType, length, ignore) }
 
 }

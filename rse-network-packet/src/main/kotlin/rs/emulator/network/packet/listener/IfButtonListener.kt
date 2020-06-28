@@ -15,7 +15,7 @@ import rs.emulator.plugins.extensions.WidgetInteractionExtensionPoint
 class IfButtonListener : GamePacketListener<IfButtonMessage>
 {
 
-    override fun handle(channel: Channel, message: IfButtonMessage)
+    override fun handle(channel: Channel, player: Player, message: IfButtonMessage)
     {
 
         val interfaceId = message.hash shr 16

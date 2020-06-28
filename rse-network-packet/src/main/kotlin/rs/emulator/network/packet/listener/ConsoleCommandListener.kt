@@ -15,7 +15,7 @@ import rs.emulator.plugins.extensions.CommandExtensionPoint
 class ConsoleCommandListener : GamePacketListener<ConsoleCommandMessage>
 {
 
-    override fun handle(channel: Channel, message: ConsoleCommandMessage)
+    override fun handle(channel: Channel, player: Player, message: ConsoleCommandMessage)
     {
 
         println("console command: ${message.args}")
