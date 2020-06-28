@@ -1,6 +1,7 @@
 package rs.emulator.network.packet.listener
 
 import io.netty.channel.Channel
+import rs.emulator.entity.player.Player
 import rs.emulator.network.packet.atest.KeyBoardEventMessage
 
 /**
@@ -10,7 +11,7 @@ import rs.emulator.network.packet.atest.KeyBoardEventMessage
 class KeyBoardEventListener : GamePacketListener<KeyBoardEventMessage>
 {
 
-    override fun handle(channel: Channel, message: KeyBoardEventMessage)
+    override fun handle(channel: Channel, player: Player, message: KeyBoardEventMessage)
     {
 
 

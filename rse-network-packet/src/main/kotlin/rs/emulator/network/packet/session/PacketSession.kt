@@ -67,7 +67,7 @@ class PacketSession(val channel: Channel,
 
             println("msg: $msg")
 
-            metaData.handle(ctx.channel(), gamePacket)
+            metaData.handle(ctx.channel(), ctx.attr(PLAYER_KEY).get(), gamePacket)
 
             msg.release()
 

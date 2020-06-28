@@ -1,6 +1,7 @@
 package rs.emulator.network.packet.listener
 
 import io.netty.channel.Channel
+import rs.emulator.entity.player.Player
 import rs.emulator.network.packet.atest.ConsoleCommandMessage
 
 /**
@@ -10,7 +11,7 @@ import rs.emulator.network.packet.atest.ConsoleCommandMessage
 class ConsoleCommandListener : GamePacketListener<ConsoleCommandMessage>
 {
 
-    override fun handle(channel: Channel, message: ConsoleCommandMessage)
+    override fun handle(channel: Channel, player: Player, message: ConsoleCommandMessage)
     {
 
         println("console command: ${message.args}")
