@@ -7,11 +7,12 @@ import org.koin.core.KoinComponent
 import org.koin.core.get
 import rs.emulator.encryption.isaac.IsaacRandom
 import rs.emulator.network.decoder.StatefulFrameDecoder
-import rs.emulator.network.packet.*
 import rs.emulator.network.packet.message.GamePacketMessage
 import rs.emulator.network.packet.repository.PacketRepository
 import rs.emulator.network.packet.state.PacketDecoderState
 import rs.emulator.network.packet.state.PacketDecoderState.*
+import rs.emulator.packet.api.ActionType
+import rs.emulator.packet.api.PacketType
 import rs.emulator.utilities.logger.warn
 
 /**
@@ -62,18 +63,9 @@ class GamePacketDecoder(private val isaacRandom: IsaacRandom)
 
             val packet = packetRepository.fetchDecoder(opcode)
 
-            if (packet == null)
-            {
-                warn("Channel ${ctx.channel()} sent message with no valid metadata: $opcode.")//, ctx.channel(), opcode)
-                buf.skipBytes(buf.readableBytes())
-                return
-            }
+            actionType = packet.action
 
-            println("decoding packet: " + opcode)
-
-            actionType = packet.actionType
-
-            packetType = packet.packetType
+            packetType = packet.type
 
             ignore = packet.ignore
 
@@ -90,9 +82,9 @@ class GamePacketDecoder(private val isaacRandom: IsaacRandom)
                         out.add(
                             GamePacketMessage(
                                 opcode,
-                                packet.actionType,
+                                packet.action,
                                 packetType,
-                                Unpooled.EMPTY_BUFFER
+                                payload = Unpooled.EMPTY_BUFFER
                             )
                         )
                 }
@@ -121,7 +113,7 @@ class GamePacketDecoder(private val isaacRandom: IsaacRandom)
                             opcode,
                             actionType,
                             packetType,
-                            Unpooled.EMPTY_BUFFER
+                            payload = Unpooled.EMPTY_BUFFER
                         )
                     )
 
@@ -151,7 +143,7 @@ class GamePacketDecoder(private val isaacRandom: IsaacRandom)
                         opcode,
                         actionType,
                         packetType,
-                        payload
+                        payload = payload
                     )
                 )
 

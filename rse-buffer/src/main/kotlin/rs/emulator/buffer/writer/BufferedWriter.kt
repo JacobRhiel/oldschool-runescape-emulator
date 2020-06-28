@@ -9,7 +9,7 @@ import rs.emulator.buffer.reader.BufferedReader
  *
  * @author Chk
  */
-open class BufferedWriter(protected val buffer: ByteBuf = Unpooled.buffer(0))
+open class BufferedWriter(val buffer: ByteBuf = Unpooled.buffer(0))
 {
 
     /**

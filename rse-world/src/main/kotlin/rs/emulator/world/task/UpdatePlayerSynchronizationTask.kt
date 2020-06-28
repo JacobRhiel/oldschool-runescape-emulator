@@ -7,9 +7,10 @@ import rs.emulator.entity.player.update.sync.SyncInformation
 import rs.emulator.entity.player.viewport.Viewport
 import rs.emulator.entity.update.mask.UpdateMask
 import rs.emulator.entity.update.task.UpdateSynchronizationTask
-import rs.emulator.network.packet.GamePacket
 import rs.emulator.network.packet.GamePacketBuilder
-import rs.emulator.network.packet.PacketType
+import rs.emulator.network.packet.ext.toGamePacket
+import rs.emulator.packet.api.GamePacket
+import rs.emulator.packet.api.PacketType
 import rs.emulator.world.repository.WorldRepository
 
 /**
