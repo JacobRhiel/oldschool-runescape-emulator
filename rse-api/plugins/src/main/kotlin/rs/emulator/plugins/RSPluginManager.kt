@@ -9,16 +9,11 @@ import java.nio.file.Paths
 object RSPluginManager : JarPluginManager (
     Paths.get(System.getProperty("user.home") + "/rs-emulator/plugins")
 ) {
-
     override fun createPluginFactory(): PluginFactory {
         return RSPluginFactory()
     }
 
     override fun createExtensionFactory(): ExtensionFactory {
         return RSExtensionFactory()
-    }
-
-    override fun createExtensionFinder(): ExtensionFinder {
-        return RSExtensionFinder(this)
     }
 }

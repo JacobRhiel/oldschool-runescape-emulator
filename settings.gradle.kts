@@ -23,7 +23,8 @@ include(
     "rse-api:collections",
     "rse-api:definitions",
     "rse-api:plugins",
-    "rse-api:widgets"
+    "rse-api:widgets",
+    "rse-api:content-core"
 )
 include("rse-plugins", "rse-plugins:commands")
 include("rse-network-js5")
