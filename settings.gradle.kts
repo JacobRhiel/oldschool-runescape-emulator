@@ -16,7 +16,6 @@ include("rse-network")
 include("rse-buffer")
 include("rse-service")
 include("rse-cache:definition")
-include("rse-api", "rse-api:entity", "rse-api:region", "rse-api:collections", "rse-api:definitions", "rse-api:packet")
 include(
     "rse-api",
     "rse-api:entity",
@@ -34,4 +33,5 @@ include("rse-encryption")
 include("rse-database")
 include("rse-service-login")
 include("rse-network-packet")
-include("rse-packet", "rse-packet:message", "rse-packet:encoders", "rse-packet:decoders")
+include("rse-messages")
+include("rse-packet", "rse-packet:message", "rse-packet:encoders", "rse-packet:decoders", "rse-packet:packet-api")

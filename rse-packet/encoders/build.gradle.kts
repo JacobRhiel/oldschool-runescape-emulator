@@ -1,6 +1,6 @@
 dependencies {
 
-    api(project(":rse-api:packet"))
+    api(project(":rse-packet:packet-api"))
 
     api(project(":rse-packet:message"))
 

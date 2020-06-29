@@ -10,6 +10,6 @@ dependencies {
 
     api(project(":rse-packet:message"))
 
-    api(project(":rse-api:packet"))
+    api(project(":rse-packet:packet-api"))
 
 }

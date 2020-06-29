@@ -4,6 +4,6 @@ dependencies {
 
     api(project(":rse-network"))
 
-    implementation(project(":rse-api:packet"))
+    implementation(project(":rse-packet:packet-api"))
 
 }
