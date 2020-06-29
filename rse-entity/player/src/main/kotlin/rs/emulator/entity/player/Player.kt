@@ -165,4 +165,28 @@ class Player(val channel: Channel) : Actor(), IPlayer
         return itemContainerManager
     }
 
+    override fun sendSmallVarp(id: Int, value: Int) {
+        channel.write(VarpSmallMessage(id, value))
+    }
+
+    override fun sendLargeVarp(id: Int, value: Int) {
+        channel.write(VarpLargeMessage(id, value))
+    }
+
+    override fun sendClientScript(scriptId: Int, vararg params: Any) {
+        channel.write(RunClientScriptMessage(scriptId, params))
+    }
+
+    override fun sendOpenOverlay(id: Int) {
+        channel.write(IfOpenOverlayMessage(id))
+    }
+
+    override fun sendOpenSub(parentId: Int, childId: Int, component: Int, interType: Int) {
+        channel.write(IfOpenSubMessage(parentId, childId, component, interType))
+    }
+
+    override fun sendDisplayWidgetUpdate() {
+        channel.write(UpdateDisplayWidgetsMessage())
+    }
+
 }
