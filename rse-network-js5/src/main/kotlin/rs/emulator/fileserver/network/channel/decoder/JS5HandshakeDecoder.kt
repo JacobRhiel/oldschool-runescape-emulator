@@ -25,7 +25,7 @@ class JS5HandshakeDecoder
 
         ctx.channel().attr(SESSION_KEY).set(JS5Session())
 
-        val currentRevision = 189//todo centralize
+        val currentRevision = 190//todo centralize
 
         println(currentRevision)
 

@@ -10,6 +10,10 @@ import org.koin.core.KoinComponent
 import org.koin.core.get
 import rs.emulator.buffer.BufferUtils.readJagexString
 import rs.emulator.buffer.BufferUtils.readString
+import rs.emulator.buffer.manipulation.DataOrder
+import rs.emulator.buffer.manipulation.DataTransformation
+import rs.emulator.buffer.manipulation.DataType
+import rs.emulator.buffer.reader.BufferedReader
 import rs.emulator.cache.store.VirtualFileStore
 import rs.emulator.encryption.xtea.XTEA
 import rs.emulator.network.SESSION_KEY
@@ -51,37 +55,50 @@ class WorldIsaacEncryptionDecoder
 
         val clientResizable = (clientSettings shr 1) == 1
 
+        val lowDetail = (clientSettings and 255) == 1
+
         val clientWidth = isaacBuffer.readUnsignedShort()
 
         val clientHeight = isaacBuffer.readUnsignedShort()
 
         isaacBuffer.skipBytes(24) // random.dat data
-        isaacBuffer.readString()
+
+        val unknown = isaacBuffer.readString()
+
         isaacBuffer.skipBytes(Int.SIZE_BYTES)
 
-        isaacBuffer.skipBytes(Byte.SIZE_BYTES * 10)
-        isaacBuffer.skipBytes(Short.SIZE_BYTES)
-        isaacBuffer.skipBytes(Byte.SIZE_BYTES)
-        isaacBuffer.skipBytes(Byte.SIZE_BYTES * 3)
-        isaacBuffer.skipBytes(Short.SIZE_BYTES)
-        isaacBuffer.readJagexString()
-        isaacBuffer.readJagexString()
-        isaacBuffer.readJagexString()
-        isaacBuffer.readJagexString()
-        isaacBuffer.skipBytes(Byte.SIZE_BYTES)
-        isaacBuffer.skipBytes(Short.SIZE_BYTES)
-        isaacBuffer.readJagexString()
-        isaacBuffer.readJagexString()
-        isaacBuffer.skipBytes(Byte.SIZE_BYTES * 2)
-        isaacBuffer.skipBytes(Int.SIZE_BYTES * 3)
-        isaacBuffer.skipBytes(Int.SIZE_BYTES)
-        isaacBuffer.readJagexString()
+        isaacBuffer.skipBytes(53)
 
-        isaacBuffer.skipBytes(Int.SIZE_BYTES * 3)
+        isaacBuffer.readByte()//client type
+
+        isaacBuffer.readInt()//always 0
 
         val crcHashes = fileStore.fetchIndexCrcHashes()
 
-        val requestedCrcHashes = IntArray(crcHashes.size) { isaacBuffer.readInt() }
+        val reader = BufferedReader(isaacBuffer)
+
+        val crcOrder = intArrayOf(6, 2, 11, 7, 8, 12, 19, 13, 18, 14, 17, 9, 5, 1, 20, 16, 15, 10, 3, 4, 0)
+
+        val requestedCrcHashes = IntArray(crcHashes.size)
+
+        crcOrder.forEach { idx ->
+
+            requestedCrcHashes[idx] = when(idx)
+            {
+
+                6, 7, 19, 14 -> reader.getSigned(DataType.INT, DataOrder.INVERSED_MIDDLE)
+
+                2, 13, 17, 5, 20, 10, 3, 0, 16 -> reader.getSigned(DataType.INT, DataOrder.LITTLE)
+
+                11, 8, 12, 18, 9, 1 -> reader.getSigned(DataType.INT, DataOrder.MIDDLE)
+
+                15, 4 -> reader.getSigned(DataType.INT)
+
+                else -> -1
+
+            }.toInt()
+
+        }
 
         for (i in requestedCrcHashes.indices)
         {

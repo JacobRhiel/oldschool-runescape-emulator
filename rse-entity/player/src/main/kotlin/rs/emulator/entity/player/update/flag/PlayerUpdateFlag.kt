@@ -9,7 +9,7 @@ import rs.emulator.entity.update.flag.UpdateFlag
 enum class PlayerUpdateFlag(override val bit: Int) : UpdateFlag
 {
 
-    APPEARANCE(0x2),
+    APPEARANCE(32),
 
     ;
 

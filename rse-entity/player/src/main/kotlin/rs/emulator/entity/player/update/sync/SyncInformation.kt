@@ -9,22 +9,28 @@ import rs.emulator.entity.player.update.flag.PlayerUpdateFlag
 class SyncInformation
 {
 
-    private var flag: Int = 0
+    private var maskFlag: Int = 0
 
-    fun setFlag(flag: Int) = apply { this.flag = (this.flag) or flag }
+    private var skipFlag: Int = 0
 
-    fun addFlag(flag: Int) = apply { this.flag = this.flag or flag }
+    fun setFlag(flag: Int) = apply { this.skipFlag = (this.skipFlag) or flag }
 
-    fun addFlag(updateFlag: PlayerUpdateFlag) = apply { this.flag = this.flag or updateFlag.bit }
+    fun addMaskFlag(flag: Int) = apply { this.skipFlag = this.skipFlag or flag }
 
-    fun hasFlag(flag: Int) = (this.flag and flag) != 0
+    fun addMaskFlag(updateFlag: PlayerUpdateFlag) = apply { this.maskFlag = this.maskFlag or updateFlag.bit }
 
-    fun noFlag(flag: Int) = (this.flag and flag) == 0
+    fun removeMaskFlag(updateFlag: PlayerUpdateFlag) = apply { this.maskFlag = this.maskFlag and updateFlag.bit }
 
-    fun fetchFlag() = this.flag
+    fun hasFlag(flag: Int) = (this.skipFlag and flag) != 0
 
-    fun requiresUpdate() = flag != 0
+    fun noFlag(flag: Int) = (this.skipFlag and flag) == 0
 
-    fun resetFlag() = apply{ this.flag = 0 }
+    fun fetchFlag() = this.skipFlag
+
+    fun fetchMaskFlag() = this.maskFlag
+
+    fun requiresUpdate() = this.maskFlag != 0
+
+    fun resetFlag() = apply{ this.skipFlag = 0 }
 
 }

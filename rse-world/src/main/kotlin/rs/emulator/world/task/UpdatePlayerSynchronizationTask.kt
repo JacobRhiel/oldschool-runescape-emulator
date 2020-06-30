@@ -23,18 +23,16 @@ object UpdatePlayerSynchronizationTask : UpdateSynchronizationTask<Player>
     override fun execute(entity: Player)
     {
 
-        val builder = GamePacketBuilder(79, packetType = PacketType.VARIABLE_SHORT)
+        val builder = GamePacketBuilder(59, packetType = PacketType.VARIABLE_SHORT)
 
-        var flag = entity.syncInfo.fetchFlag()
-
-        builder.switchToBitAccess()
+        var flag = entity.syncInfo.fetchMaskFlag()
 
         val maskBuilder = GamePacketBuilder()
 
         if(flag >= 0x100)
         {
 
-            flag = flag or 64
+            flag = flag or 16
             maskBuilder.put(DataType.BYTE, flag and 0xFF)
             maskBuilder.put(DataType.BYTE, flag shr 8)
 
@@ -42,23 +40,19 @@ object UpdatePlayerSynchronizationTask : UpdateSynchronizationTask<Player>
         else
             maskBuilder.put(DataType.BYTE, flag and 0xFF)
 
+        builder.switchToBitAccess()
+
         localNsn0(entity, builder, maskBuilder, true)
 
         localNsn1(entity, builder, maskBuilder)
-
-        builder.switchToByteAccess()
-
-        builder.switchToBitAccess()
 
         globalNsn0(entity, builder, true)
 
         globalNsn1(entity, builder)
 
-        builder.switchToByteAccess()
-
-        println(builder.byteBuf.array().toTypedArray().contentDeepToString())
-
         builder.putBytes(maskBuilder.byteBuf)
+
+        println("size: " + builder.readableBytes)
 
         entity.channel.writeAndFlush(createGamePacket(builder))
 
@@ -112,6 +106,8 @@ object UpdatePlayerSynchronizationTask : UpdateSynchronizationTask<Player>
                 builder.putBits(1, 1)
 
                 builder.putBits(2, 0)
+
+                builder.switchToByteAccess()
 
                 syncInformation.resetFlag()
 
@@ -201,11 +197,13 @@ object UpdatePlayerSynchronizationTask : UpdateSynchronizationTask<Player>
 
         }
 
+        builder.switchToBitAccess()
+
         skipCount = /*2048*/ 2046 - skipCount
 
-        builder.putBits(1, 0)
+        builder.putBits(1,  0)
 
-        println("actual skip count : $skipCount ")
+        println("actual skip count : $skipCount")
 
         when
         {
@@ -231,6 +229,8 @@ object UpdatePlayerSynchronizationTask : UpdateSynchronizationTask<Player>
             }
 
         }
+
+        builder.switchToByteAccess()
 
         return skipCount
 

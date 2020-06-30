@@ -17,9 +17,9 @@ class VarpLargeEncoder : PacketEncoder<VarpLargeMessage>()
     override fun encode(message: VarpLargeMessage, player: Player, builder: GamePacketBuilder)
     {
 
-        builder.put(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD, message.id)
+        builder.put(DataType.INT, DataOrder.INVERSED_MIDDLE, message.value)
 
-        builder.put(DataType.INT, DataOrder.MIDDLE, message.value)
+        builder.put(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD, message.id)
 
     }
 

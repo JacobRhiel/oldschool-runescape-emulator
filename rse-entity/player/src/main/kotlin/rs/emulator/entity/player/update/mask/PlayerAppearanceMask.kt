@@ -30,15 +30,12 @@ class PlayerAppearanceMask : UpdateMask<Player>
         for(index in 0 until 12)
         {
 
-                println("iteration: $index")
-
                 if(styles[index] == 0)
                     writer.put(DataType.BYTE, 0)
                 else
                 {
                     writer.put(DataType.BYTE, 1)
                     writer.put(DataType.BYTE, styles[index])
-                    println("style : " + styles[index])
                 }
 
         }
@@ -55,14 +52,16 @@ class PlayerAppearanceMask : UpdateMask<Player>
             writer.put(DataType.SHORT, anim)
         }
 
-        writer.putString("gpi")
+        writer.putString("Gpi")
         writer.put(DataType.BYTE, /*other.combatLevel*/3)
-        writer.put(DataType.SHORT, 0)//skill level
+        writer.put(DataType.SHORT,0)//skill level
         writer.put(DataType.BYTE, 0)//is hidden
 
-        builder.put(DataType.BYTE, writer.byteBuf.readableBytes())
+        builder.put(DataType.BYTE, DataTransformation.SUBTRACT, writer.byteBuf.readableBytes())
 
-        builder.putBytesReverse(DataTransformation.ADD, writer.byteBuf)
+        builder.putBytes(DataTransformation.ADD, writer.byteBuf)
+
+        entity.syncInfo.removeMaskFlag(PlayerUpdateFlag.APPEARANCE)
 
     }
 

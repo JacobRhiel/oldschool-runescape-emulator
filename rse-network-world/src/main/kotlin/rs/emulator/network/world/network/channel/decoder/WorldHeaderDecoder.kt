@@ -31,7 +31,7 @@ class WorldHeaderDecoder
 
         val clientType = buffer.readByte().toInt()
 
-        val worldRevision = 189 //todo: centralize
+        val worldRevision = 190 //todo: centralize
 
         if(revision != worldRevision)
         {
