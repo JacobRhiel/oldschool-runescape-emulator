@@ -10,11 +10,11 @@ import rs.emulator.entity.material.items.Wearable
  * @author javatar
  */
 
-fun IItemContainerManager<ItemContainer<Item>>.inventory() : ItemContainer<Item> {
+fun IItemContainerManager.inventory() : ItemContainer<Item> {
     return container(93)
 }
 
-fun IItemContainerManager<ItemContainer<Wearable>>.equipment() : ItemContainer<Wearable> {
+fun IItemContainerManager.equipment() : ItemContainer<Wearable> {
     return container(94)
 }
 

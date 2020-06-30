@@ -20,20 +20,20 @@ class Equipment : ItemContainer<Wearable>(Array(14){ItemData.EMPTY_WEARABLE}, It
         if(element.stackable && this[mainSlot] !== ItemData.EMPTY_WEARABLE) {
             val inSlot = this[mainSlot].copy()
             inSlot += element
-            val event = inSlot.createEvent()
+            val event = inSlot.createEvent(mainSlot)
             addPublisher.onNext(event)
             if(!event.cancelled) {
                 this[mainSlot] = inSlot
             }
         } else if(this[mainSlot] !== ItemData.EMPTY_WEARABLE) {
-            val event = element.createEvent()
+            val event = element.createEvent(mainSlot)
             addPublisher.onNext(event)
             if(!event.cancelled) {
                 remove(this[mainSlot])
                 this[mainSlot] = element.copy()
             }
         } else {
-            val event = element.createEvent()
+            val event = element.createEvent(mainSlot)
             addPublisher.onNext(event)
             if(!event.cancelled) {
                 this[mainSlot] = element.copy()
@@ -52,7 +52,7 @@ class Equipment : ItemContainer<Wearable>(Array(14){ItemData.EMPTY_WEARABLE}, It
         if(inSlot !== ItemData.EMPTY_WEARABLE) {
             if(element.stackable) {
                 inSlot -= element
-                val event = inSlot.copy().createEvent()
+                val event = inSlot.copy().createEvent(mainSlot)
                 removePublisher.onNext(event)
                 if(!event.cancelled) {
                     if(event.item != inSlot) {
@@ -62,7 +62,7 @@ class Equipment : ItemContainer<Wearable>(Array(14){ItemData.EMPTY_WEARABLE}, It
                     }
                 }
             } else {
-                val event = inSlot.copy().createEvent()
+                val event = inSlot.copy().createEvent(mainSlot)
                 removePublisher.onNext(event)
                 if(!event.cancelled) {
                     if(event.item != inSlot) {

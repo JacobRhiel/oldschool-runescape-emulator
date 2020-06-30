@@ -22,10 +22,10 @@ abstract class ItemContainer<ITEM : Item>(array: Array<ITEM>, default: ITEM) :
         val fromItem = this[from]
         val toItem = this[to]
 
-        removePublisher.onNext(fromItem.createEvent())
-        removePublisher.onNext(toItem.createEvent())
-        addPublisher.onNext(fromItem.createEvent())
-        addPublisher.onNext(toItem.createEvent())
+        removePublisher.onNext(fromItem.createEvent(from))
+        removePublisher.onNext(toItem.createEvent(to))
+        addPublisher.onNext(fromItem.createEvent(from))
+        addPublisher.onNext(toItem.createEvent(to))
 
         this[to] = fromItem
         this[from] = toItem
@@ -68,8 +68,8 @@ abstract class ItemContainer<ITEM : Item>(array: Array<ITEM>, default: ITEM) :
         return this to con
     }
 
-    fun ITEM.createEvent() : ContainerEvent<ITEM> {
-        return ContainerEvent(this)
+    fun ITEM.createEvent(slot : Int) : ContainerEvent<ITEM> {
+        return ContainerEvent(this, slot)
     }
 
 }

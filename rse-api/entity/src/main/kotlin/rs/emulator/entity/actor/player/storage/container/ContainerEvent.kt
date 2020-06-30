@@ -7,4 +7,4 @@ import rs.emulator.entity.material.items.Item
  * @author javatar
  */
 
-data class ContainerEvent<T : Item>(val item : T, var cancelled : Boolean = false)
+data class ContainerEvent<T : Item>(val item : T, val slot : Int, var cancelled : Boolean = false)

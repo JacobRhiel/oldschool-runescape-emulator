@@ -7,6 +7,8 @@ import rs.emulator.entity.actor.player.storage.IItemContainerManager
 import rs.emulator.entity.actor.player.storage.container.ItemContainer
 import rs.emulator.entity.material.items.Item
 import rs.emulator.entity.player.storage.ItemContainerManager
+import rs.emulator.entity.player.storage.containers.Equipment
+import rs.emulator.entity.player.storage.containers.Inventory
 import rs.emulator.entity.player.update.flag.PlayerUpdateFlag
 import rs.emulator.entity.player.update.sync.SyncInformation
 import rs.emulator.entity.player.viewport.Viewport
@@ -154,6 +156,30 @@ class Player(val channel: Channel) : Actor(), IPlayer
 
         channel.write(RunClientScriptMessage(2015, 0))
 
+        containerManager().register(93, Inventory()) {
+            onAdd {
+
+                onNext {
+                    val event = it
+                    sendItemContainerPartial(
+                        149,
+                        0,
+                        93,
+                        event.item to event.slot
+                    )
+                }
+
+                onComplete {
+                    sendItemContainerFull(149, 0, 93, *array)
+                }
+            }
+            onRemove {
+                onComplete {
+                    sendItemContainerFull(149, 0, 93, *array)
+                }
+            }
+        }
+
         if(channel.isActive)
             channel.flush()
 
@@ -161,7 +187,7 @@ class Player(val channel: Channel) : Actor(), IPlayer
 
     private val itemContainerManager = ItemContainerManager()
 
-    override fun containerManager(): IItemContainerManager<ItemContainer<Item>> {
+    override fun containerManager(): IItemContainerManager {
         return itemContainerManager
     }
 
@@ -187,6 +213,19 @@ class Player(val channel: Channel) : Actor(), IPlayer
 
     override fun sendDisplayWidgetUpdate() {
         channel.write(UpdateDisplayWidgetsMessage())
+    }
+
+    override fun sendItemContainerFull(interfaceId: Int, component: Int, containerKey: Int, vararg items: Item) {
+        channel.write(UpdateInventoryFullMessage(interfaceId, component, containerKey, items.map { it.id }.toIntArray()))
+    }
+
+    override fun sendItemContainerPartial(interfaceId: Int, component: Int, containerKey: Int, vararg item: Pair<Item, Int>) {
+        channel.write(UpdateInventoryPartialMessage(
+            HashMap(),
+            item.map { it.first.id to it.second }.toMap(HashMap()),
+            (interfaceId shl 16) and component,
+            containerKey
+        ))
     }
 
 }

@@ -9,19 +9,19 @@ import rs.emulator.entity.material.ItemData
  * @author javatar
  */
 
-class Inventory : ItemContainer<Item>(Array(28){ ItemData.EMPTY}, ItemData.EMPTY) {
+class Inventory : ItemContainer<Item>(Array(28) { ItemData.EMPTY }, ItemData.EMPTY) {
 
     override fun add(element: Item) {
-        if(isFull()) {
+        if (isFull()) {
             return
         }
         when {
             element.stackable -> {
                 val slot = indexOf(element)
-                if(slot != -1) {
+                if (slot != -1) {
                     val found = this[slot].copy()
                     found += element
-                    val event = found.createEvent()
+                    val event = found.createEvent(slot)
                     addPublisher.onNext(event)
                     if (!event.cancelled) {
                         this[slot] = found
@@ -29,7 +29,7 @@ class Inventory : ItemContainer<Item>(Array(28){ ItemData.EMPTY}, ItemData.EMPTY
                 } else {
                     val newSlot = nextSlot()
                     val item = element.copy()
-                    val event = item.createEvent()
+                    val event = item.createEvent(slot)
                     addPublisher.onNext(event)
                     if (!event.cancelled) {
                         this[newSlot] = item
@@ -39,12 +39,12 @@ class Inventory : ItemContainer<Item>(Array(28){ ItemData.EMPTY}, ItemData.EMPTY
             else -> {
                 var amt = element.amount
                 var nextSlot = nextSlot()
-                while(amt > 0 && !isFull() && nextSlot != -1) {
+                while (amt > 0 && !isFull() && nextSlot != -1) {
                     val item = element.copy(1)
-                    val event = item.createEvent()
+                    val event = item.createEvent(nextSlot)
                     addPublisher.onNext(event)
                     if (!event.cancelled) {
-                        if(item.amount > 1) {
+                        if (item.amount > 1) {
                             amt += (item.amount - 1)
                             item.amount = 1
                         }
@@ -59,7 +59,7 @@ class Inventory : ItemContainer<Item>(Array(28){ ItemData.EMPTY}, ItemData.EMPTY
     }
 
     override fun remove(element: Item) {
-        if(isEmpty())
+        if (isEmpty())
             return
         val slot = indexOf(element)
         if (slot != -1 && this[slot] !== ItemData.EMPTY) {
@@ -67,21 +67,21 @@ class Inventory : ItemContainer<Item>(Array(28){ ItemData.EMPTY}, ItemData.EMPTY
                 element.stackable -> {
                     val found = this[slot]
                     found -= element
-                    val event = found.createEvent()
+                    val event = found.createEvent(slot)
                     removePublisher.onNext(event)
-                    if(!event.cancelled && found.amount <= 0) {
+                    if (!event.cancelled && found.amount <= 0) {
                         this[slot] = ItemData.EMPTY
                     }
                 }
                 element.amount > 1 -> {
                     var amt = element.amount
                     var index = indexOf(element)
-                    while(amt > 0 && index != -1) {
+                    while (amt > 0 && index != -1) {
                         val item = this[index]
-                        val event = item.createEvent()
+                        val event = item.createEvent(index)
                         removePublisher.onNext(event)
                         if (!event.cancelled) {
-                            if(item != this[index]) {
+                            if (item != this[index]) {
                                 this[index] = item
                             } else {
                                 this[index] = ItemData.EMPTY
@@ -93,12 +93,12 @@ class Inventory : ItemContainer<Item>(Array(28){ ItemData.EMPTY}, ItemData.EMPTY
                 }
                 else -> {
                     val index = indexOf(element)
-                    if(index != -1) {
+                    if (index != -1) {
                         val item = this[index].copy()
-                        val event = item.createEvent()
+                        val event = item.createEvent(index)
                         removePublisher.onNext(event)
                         if (!event.cancelled) {
-                            if(item != this[index]) {
+                            if (item != this[index]) {
                                 this[index] = item
                             } else {
                                 this[index] = ItemData.EMPTY

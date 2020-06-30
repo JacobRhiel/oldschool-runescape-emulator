@@ -9,11 +9,12 @@ import rs.emulator.entity.material.items.Item
  * @author javatar
  */
 
-class ItemContainerManager : IItemContainerManager<ItemContainer<Item>> {
+class ItemContainerManager : IItemContainerManager {
 
-    val containers : MutableMap<Int, ItemContainer<Item>> = mutableMapOf()
+    val containers : MutableMap<Int, ItemContainer<*>> = mutableMapOf()
 
-    override fun register(key: Int, container: ItemContainer<Item>, block: ItemContainer<Item>.() -> Unit) {
+
+    override fun <I : Item, C : ItemContainer<I>> register(key: Int, container: C, block: C.() -> Unit) {
         block(container)
         containers[key] = container
     }
@@ -21,6 +22,5 @@ class ItemContainerManager : IItemContainerManager<ItemContainer<Item>> {
     override fun <G : Item> container(key: Int): ItemContainer<G> {
         return containers[key]!! as ItemContainer<G>
     }
-
 
 }

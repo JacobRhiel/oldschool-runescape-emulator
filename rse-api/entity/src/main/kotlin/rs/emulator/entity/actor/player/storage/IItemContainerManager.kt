@@ -8,9 +8,9 @@ import rs.emulator.entity.material.items.Item
  * @author javatar
  */
 
-interface IItemContainerManager<T : ItemContainer<*>> {
+interface IItemContainerManager {
 
-    fun register(key : Int, container : T, block : T.() -> Unit = {})
+    fun <I : Item, C : ItemContainer<I>> register(key : Int, container : C, block : C.() -> Unit)
 
     fun <G : Item> container(key : Int) : ItemContainer<G>
 
