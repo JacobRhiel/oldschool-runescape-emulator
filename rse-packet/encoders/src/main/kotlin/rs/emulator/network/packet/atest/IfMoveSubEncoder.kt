@@ -20,9 +20,9 @@ class IfMoveSubEncoder : PacketEncoder<IfMoveSubMessage>()
 
         val fromHash = (message.fromParent shl 16) or message.fromChild
 
-        builder.put(DataType.INT, DataOrder.MIDDLE, toHash)
+        builder.put(DataType.INT, toHash)
 
-        builder.put(DataType.INT, fromHash)
+        builder.put(DataType.INT, DataOrder.LITTLE, fromHash)
 
     }
 

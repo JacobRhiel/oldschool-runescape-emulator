@@ -1,6 +1,8 @@
 package rs.emulator.network.packet.atest
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList
+import rs.emulator.buffer.manipulation.DataOrder
+import rs.emulator.buffer.manipulation.DataTransformation
 import rs.emulator.buffer.manipulation.DataType
 import rs.emulator.entity.actor.player.IPlayer
 import rs.emulator.entity.player.Player
@@ -20,14 +22,12 @@ class KeyBoardEventDecoder : PacketDecoder<KeyBoardEventMessage>()
 
         val events = ObjectArrayList<KeyBoardEventMessage.KeyEvent>()
 
-        println("test: " + reader.readableBytes)
-
         while(reader.readableBytes > 0)
         {
 
-            val lastPress = reader.getUnsigned(DataType.TRI_BYTE)
+            val key = reader.getSigned(DataType.BYTE, DataTransformation.ADD).toChar()
 
-            val key = reader.getUnsigned(DataType.BYTE).toChar()
+            val lastPress = reader.getUnsigned(DataType.TRI_BYTE)
 
             println("last press: $lastPress - key: ${KeyStroke.getKeyStroke(key)} - $key")
 

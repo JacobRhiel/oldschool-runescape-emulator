@@ -17,12 +17,12 @@ class Player(val channel: Channel) : Actor(), IPlayer
 
     val viewport = Viewport(this)
 
-    val syncInfo = SyncInformation().apply { this.addFlag(PlayerUpdateFlag.APPEARANCE) }
+    val syncInfo = SyncInformation().apply { this.addMaskFlag(PlayerUpdateFlag.APPEARANCE) }
 
     fun onLogin()
     {
 
-        channel.write(RebuildRegionMessage(true, 1, x = 2268, z = 3070, tileHash = -1))
+        channel.write(RebuildRegionMessage(true, 1, x = 3222, z = 3218, tileHash = -1))
 
         channel.write(VarpSmallMessage(18, 1))
         channel.write(VarpLargeMessage(20, 59899954))
@@ -108,8 +108,8 @@ class Player(val channel: Channel) : Actor(), IPlayer
 
         channel.write(RunClientScriptMessage(2498, 0, 0, 0))
         channel.write(RunClientScriptMessage(2498, 0, 0, 0))
-        channel.write(RunClientScriptMessage(233, 24772664, 0/*40590*/, 5, 240, 117, 1936, 0, 1200, -1))
-        channel.write(RunClientScriptMessage(233, 24772665, 0/*40587*/, -10, 120, 105, 1747, 0, 1120, -1/*8748*/))
+        channel.write(RunClientScriptMessage(233, 24772664, 40590, 5, 240, 117, 1936, 0, 1200, -1))
+        channel.write(RunClientScriptMessage(233, 24772665, 40587, -10, 120, 105, 1747, 0, 1120, 8748))
         channel.write(RunClientScriptMessage(3092, 2243, "Subscribe Now"))
 
         channel.write(IfOpenOverlayMessage(165))

@@ -2,6 +2,7 @@ package rs.emulator.network.packet.atest
 
 import io.netty.buffer.Unpooled
 import rs.emulator.buffer.manipulation.DataOrder
+import rs.emulator.buffer.manipulation.DataTransformation
 import rs.emulator.buffer.manipulation.DataType
 import rs.emulator.entity.player.Player
 import rs.emulator.network.packet.GamePacketBuilder
@@ -51,13 +52,13 @@ class RebuildRegionEncoder : PacketEncoder<RebuildRegionMessage>()
 
         }
 
-        builder.put(DataType.SHORT, message.z shr 3)
-
-        builder.put(DataType.SHORT, DataOrder.LITTLE, message.x shr 3)
-
         val chunkX = message.x shr 3
 
         val chunkZ = message.z shr 3
+
+        builder.put(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD, chunkZ)
+
+        builder.put(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD, chunkX)
 
         val lx = (chunkX - (MAX_VIEWPORT shr 4)) shr 3
         val rx = (chunkX + (MAX_VIEWPORT shr 4)) shr 3
@@ -86,10 +87,7 @@ class RebuildRegionEncoder : PacketEncoder<RebuildRegionMessage>()
                     val region = z + (x shl 8)
                     val keys = XteaKeyService.get(region)
                     for (xteaKey in keys)
-                    {
-                        println("xtea key: $xteaKey")
                         buf.writeInt(xteaKey) // Client always reads as int
-                    }
                     count++
                 }
             }

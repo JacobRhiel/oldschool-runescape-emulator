@@ -25,7 +25,7 @@ data class WorldConnectionRequestMessage(
         if(session !is WorldSession)
             throw Error("Not world session in: ${this::class.simpleName}.")
 
-        val worldRevision = 189 //todo: centralize
+        val worldRevision = 190 //todo: centralize
 
         if(revision != worldRevision)
         {

@@ -14,4 +14,4 @@ class RebuildRegionMessage(
     val z: Int,
     val height: Int = 0,
     val tileHash: Int
-) : GamePacketMessage(17, type = PacketType.VARIABLE_SHORT)
+) : GamePacketMessage(21, type = PacketType.VARIABLE_SHORT)

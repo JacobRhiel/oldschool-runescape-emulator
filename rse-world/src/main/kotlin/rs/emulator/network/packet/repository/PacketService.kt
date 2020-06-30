@@ -19,64 +19,73 @@ class PacketService : AbstractIdleService(), KoinComponent
     private fun construct()
     {
 
-        packetRepository.putDecoder(3, KeyBoardEventDecoder(), packetType = PacketType.VARIABLE_SHORT, ignore = false, clazz = KeyBoardEventMessage::class,
+        packetRepository.putDecoder(89, KeyBoardEventDecoder(), packetType = PacketType.VARIABLE_SHORT, ignore = false, clazz = KeyBoardEventMessage::class,
             listener = KeyBoardEventListener()
         )
 
-        packetRepository.putDecoder(52, WindowStatusDecoder(), length = 5, ignore = false, clazz = WindowStatusMessage::class,
+        packetRepository.putDecoder(46, WindowStatusDecoder(), length = 5, ignore = false, clazz = WindowStatusMessage::class,
             listener = WindowStatusHandler()
         )
 
-        packetRepository.putDecoder(30, KeepAliveDecoder(), length = 0, ignore = true, clazz = KeepAliveMessage::class,
+        packetRepository.putDecoder(44, KeepAliveDecoder(), length = 0, ignore = true, clazz = KeepAliveMessage::class,
             listener = KeepAliveHandler()
         )
 
-        packetRepository.putDecoder(34, MapBuildCompleteDecoder(), length = 0, ignore = false, clazz = MapBuildCompleteMessage::class,
+        packetRepository.putDecoder(14, MapBuildCompleteDecoder(), length = 0, ignore = false, clazz = MapBuildCompleteMessage::class,
             listener = MapBuildCompleteHandler()
         )
 
-        packetRepository.putDecoder(47, ClientModDetectionDecoder(), length = 0, ignore = true, packetType = PacketType.VARIABLE_BYTE, clazz = ClientModDetectionMessage::class,
+        packetRepository.putDecoder(69, ClientModDetectionDecoder(), length = 0, ignore = true, packetType = PacketType.VARIABLE_BYTE, clazz = ClientModDetectionMessage::class,
             listener = ClientModDetectionListener()
         )
 
-        packetRepository.putDecoder(74, MousePositionUpdateDecoder(), length = 0, ignore = true, packetType = PacketType.VARIABLE_BYTE, clazz = MousePositionUpdateMessage::class,
+        packetRepository.putDecoder(16, MousePositionUpdateDecoder(), length = 0, ignore = true, packetType = PacketType.VARIABLE_BYTE, clazz = MousePositionUpdateMessage::class,
             listener = MousePositionUpdateListener()
         )
 
-        packetRepository.putDecoder(54, AppletFocusEventDecoder(), length = 1, ignore = true, clazz = AppletFocusEventMessage::class,
+        packetRepository.putDecoder(35, AppletFocusEventDecoder(), length = 1, ignore = true, clazz = AppletFocusEventMessage::class,
             listener = AppletFocusEventListener()
         )
 
-        packetRepository.putDecoder(93, ConsoleCommandDecoder(), packetType = PacketType.VARIABLE_BYTE, ignore = false, clazz = ConsoleCommandMessage::class,
+        packetRepository.putDecoder(27, ConsoleCommandDecoder(), packetType = PacketType.VARIABLE_BYTE, ignore = false, clazz = ConsoleCommandMessage::class,
             listener = ConsoleCommandListener()
         )
 
-        packetRepository.putDecoder(57, IfButtonDecoder(), length = 8, ignore = false, clazz = IfButtonMessage::class,
+        packetRepository.putDecoders(opcodes = *intArrayOf(13, 20, 23, 34, 62, 68, 76, 77, 79, 91), decoder = IfButtonDecoder(), length = 8, ignore = false, clazz = IfButtonMessage::class,
             listener = IfButtonListener()
         )
 
-        packetRepository.putDecoder(2, MouseClickDecoder(), length = 6, ignore = false, clazz = MouseClickMessage::class,
+        packetRepository.putDecoder(3, MouseClickDecoder(), length = 6, ignore = false, clazz = MouseClickMessage::class,
             listener = MouseClickListener()
         )
 
-        packetRepository.putEncoder(17, RebuildRegionEncoder(), packetType = PacketType.VARIABLE_SHORT, clazz = RebuildRegionMessage::class)
+        packetRepository.putDecoder(85, MouseIdleTickDecoder(), length = 0, ignore = true, clazz = MouseIdleTickMessage::class,
+            listener = MouseIdleTickListener()
+        )
 
-        packetRepository.putEncoder(60, IfOpenOverlayEncoder(), clazz = IfOpenOverlayMessage::class)
+        packetRepository.putEncoder(21, RebuildRegionEncoder(), packetType = PacketType.VARIABLE_SHORT, clazz = RebuildRegionMessage::class)
 
-        packetRepository.putEncoder(73, UpdateDisplayWidgetsEncoder(), packetType = PacketType.VARIABLE_SHORT, clazz = UpdateDisplayWidgetsMessage::class)
+        packetRepository.putEncoder(6, IfOpenOverlayEncoder(), clazz = IfOpenOverlayMessage::class)
 
-        packetRepository.putEncoder(64, IfOpenSubEncoder(), clazz = IfOpenSubMessage::class)
+        packetRepository.putEncoder(76, UpdateDisplayWidgetsEncoder(), packetType = PacketType.VARIABLE_SHORT, clazz = UpdateDisplayWidgetsMessage::class)
 
-        packetRepository.putEncoder(49, RunClientScriptEncoder(), packetType = PacketType.VARIABLE_SHORT, clazz = RunClientScriptMessage::class)
+        packetRepository.putEncoder(14, IfOpenSubEncoder(), clazz = IfOpenSubMessage::class)
 
-        packetRepository.putEncoder(18, VarpLargeEncoder(), clazz = VarpLargeMessage::class)
+        packetRepository.putEncoder(42, RunClientScriptEncoder(), packetType = PacketType.VARIABLE_SHORT, clazz = RunClientScriptMessage::class)
 
-        packetRepository.putEncoder(1, VarpSmallEncoder(), clazz = VarpSmallMessage::class)
+        packetRepository.putEncoder(66, VarpLargeEncoder(), clazz = VarpLargeMessage::class)
 
-        packetRepository.putEncoder(70, IfCloseSubEncoder(), clazz = IfCloseSubMessage::class)
+        packetRepository.putEncoder(32, VarpSmallEncoder(), clazz = VarpSmallMessage::class)
 
-        packetRepository.putEncoder(6, IfMoveSubEncoder(), clazz = IfMoveSubMessage::class)
+        packetRepository.putEncoder(45, IfCloseSubEncoder(), clazz = IfCloseSubMessage::class)
 
+        packetRepository.putEncoder(62, IfMoveSubEncoder(), clazz = IfMoveSubMessage::class)
+
+        packetRepository.putEncoder(84, GameMessageEncoder(), packetType = PacketType.VARIABLE_BYTE, clazz = GameMessageMessage::class)
+
+        packetRepository.putEncoder(34, UpdateInventoryFullEncoder(), packetType = PacketType.VARIABLE_SHORT, clazz = UpdateInventoryFullMessage::class)
+
+        packetRepository.putEncoder(1, UpdateInventoryPartialEncoder(), packetType = PacketType.VARIABLE_SHORT, clazz = UpdateInventoryPartialMessage::class)
 
     }
 

@@ -37,9 +37,11 @@ data class LoginResult(val status: LoginStatus) : NetworkMessage
 
             buffer.writeBoolean(true)//members
 
-            buffer.writeShort(1)//index
+            buffer.writeByte(1)//index
 
             buffer.writeBoolean(true)
+
+            buffer.writeByte(0)
 
         }
 

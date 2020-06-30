@@ -46,6 +46,8 @@ class GamePacketEncoder(private val isaac: IsaacRandom) : MessageToByteEncoder<G
 
         println("payload: " + msg.payload.array().toTypedArray().contentDeepToString())
 
+        println("payload size: " + msg.payload.readableBytes())
+
         out.writeBytes(msg.payload)
 
         msg.release()
