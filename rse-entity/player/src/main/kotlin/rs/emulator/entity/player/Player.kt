@@ -171,6 +171,10 @@ class Player(val channel: Channel) : Actor(), IPlayer
 
     private val itemContainerManager = ItemContainerManager()
 
+    override fun username(): String = "Javatar"
+
+    override fun displayName(): String = "Javatar"
+
     override fun containerManager(): IItemContainerManager {
         return itemContainerManager
     }

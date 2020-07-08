@@ -10,6 +10,8 @@ import rs.emulator.entity.material.items.Item
 
 interface IPlayer : IActor, IVarpMessage, IWidgetMessages, IContainerMessages {
 
+    fun username() : String
+    fun displayName() : String
     fun containerManager() : IItemContainerManager
 
     fun varpMessages() : IVarpMessage = this

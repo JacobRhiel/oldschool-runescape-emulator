@@ -26,7 +26,7 @@ include(
     "rse-api:widgets",
     "rse-api:content-core"
 )
-include("rse-plugins", "rse-plugins:commands")
+include("rse-plugins", "rse-plugins:commands", "rse-plugins:system")
 include("rse-network-js5")
 include("rse-network-world")
 include("rse-encryption")

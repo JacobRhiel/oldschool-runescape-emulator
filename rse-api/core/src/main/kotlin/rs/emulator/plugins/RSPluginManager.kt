@@ -1,14 +1,13 @@
 package rs.emulator.plugins
 
-import org.pf4j.ExtensionFactory
-import org.pf4j.ExtensionFinder
-import org.pf4j.JarPluginManager
-import org.pf4j.PluginFactory
+import org.pf4j.*
+import java.nio.file.Path
 import java.nio.file.Paths
 
 object RSPluginManager : JarPluginManager (
     Paths.get(System.getProperty("user.home") + "/rs-emulator/plugins")
 ) {
+
     override fun createPluginFactory(): PluginFactory {
         return RSPluginFactory()
     }
