@@ -1,5 +1,6 @@
 package rs.emulator.network.packet.atest
 
+import rs.emulator.entity.actor.player.storage.container.ItemContainer
 import rs.emulator.network.packet.message.GamePacketMessage
 import rs.emulator.packet.api.PacketType
 
@@ -7,17 +8,7 @@ import rs.emulator.packet.api.PacketType
  *
  * @author Chk
  */
-class UpdateInventoryPartialMessage(val oldItems: HashMap<Int, Int>,
-                                    val newItems: HashMap<Int, Int>,
+class UpdateInventoryPartialMessage(val container : ItemContainer<*>,
                                     val componentHash: Int,
                                     val containerKey: Int
 ) : GamePacketMessage(1, type = PacketType.VARIABLE_SHORT)
-{
-
-    constructor(interfaceId: Int, component: Int, containerKey: Int, oldItems: HashMap<Int, Int>, newItems: HashMap<Int, Int>) : this(oldItems, newItems, (interfaceId shl 16) or component, containerKey)
-
-    constructor(interfaceId: Int, component: Int, oldItems: HashMap<Int, Int>, newItems: HashMap<Int, Int>) : this(oldItems, newItems, (interfaceId shl 16) or component, 0)
-
-    constructor(containerKey: Int, oldItems: HashMap<Int, Int>, newItems: HashMap<Int, Int>) : this(oldItems, newItems, -1, containerKey)
-
-}

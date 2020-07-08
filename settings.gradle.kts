@@ -22,7 +22,7 @@ include(
     "rse-api:region",
     "rse-api:collections",
     "rse-api:definitions",
-    "rse-api:plugins",
+    "rse-api:core",
     "rse-api:widgets",
     "rse-api:content-core"
 )

@@ -4,7 +4,7 @@ import com.github.benmanes.caffeine.cache.Cache
 import com.github.benmanes.caffeine.cache.Caffeine
 import org.koin.core.KoinComponent
 import org.koin.core.get
-import rs.emulator.IRepository
+import rs.emulator.AbstractDefinitionRepository
 import rs.emulator.cache.definition.entity.loc.LocDefinitionGenerator
 import rs.emulator.cache.definition.entity.npc.NpcDefinitionGenerator
 import rs.emulator.cache.definition.entity.obj.ObjDefinitionGenerator
@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit
  *
  * @author Chk
  */
-class DefinitionRepository : KoinComponent, IRepository
+class DefinitionRepository : KoinComponent, AbstractDefinitionRepository()
 {
 
     @PublishedApi internal val fileStore: VirtualFileStore = get()
@@ -59,26 +59,19 @@ class DefinitionRepository : KoinComponent, IRepository
         .recordStats()
         .build()
 
-    @Suppress("UNCHECKED_CAST")
-    override fun <T : Definition> getDefinition(identifier: Int, child: Int): T {
-        return find<Definition>(identifier, child) as T
-    }
-
     private fun submitType(clazz: Class<Definition>) = definitionCache.put(clazz, hashMapOf())
 
-    inline fun <reified T : Definition> find(identifier: Int): T = find(identifier, -1)
-
-    inline fun <reified T : Definition> find(identifier: Int, child: Int): T
+    override fun findActual(identifier: Int, child: Int, clazz : Class<*>): Definition?
     {
 
-        val generator = generators.firstOrNull { it.definitionClass == T::class.java }
-            ?: throw Error("No generator found for definition type: ${T::class.simpleName}.")
+        val generator = generators.firstOrNull { it.definitionClass == clazz }
+            ?: throw Error("No generator found for definition type: ${clazz.simpleName}.")
 
         val shiftedId = generator.shiftedId
 
         val hasShiftedId = shiftedId != -1
 
-        println("test1")
+        println("test1 ${clazz.simpleName}")
 
         val reader = when
         {
@@ -120,9 +113,9 @@ class DefinitionRepository : KoinComponent, IRepository
 
         submitEntry(definition)
 
-        val definitions = definitionCache.getIfPresent(T::class.java)!!
+        val definitions = definitionCache.getIfPresent(clazz)!!
 
-        return definitions[identifier] as T
+        return definitions[identifier]
 
     }
 

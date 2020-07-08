@@ -1,10 +1,13 @@
 val jar: Jar by tasks
 
 dependencies {
-    implementation(project(":rse-api:plugins"))
-    implementation(project(":rse-api:entity"))
-    implementation("com.xenomachina:kotlin-argparser:2.0.7")
-    provideDependency("com.xenomachina:kotlin-argparser:2.0.7")
+    api(project(":rse-api:core"))
+    api("com.xenomachina:kotlin-argparser:2.0.7")
+    //provideDependency("com.xenomachina:kotlin-argparser:2.0.7")
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
 }
 
 jar.apply {

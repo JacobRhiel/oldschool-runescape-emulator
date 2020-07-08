@@ -56,6 +56,7 @@ class Inventory : ItemContainer<Item>(Array(28) { ItemData.EMPTY }, ItemData.EMP
             }
         }
         addPublisher.onComplete()
+        syncPublisher.onNext(this)
     }
 
     override fun remove(element: Item) {
@@ -109,6 +110,7 @@ class Inventory : ItemContainer<Item>(Array(28) { ItemData.EMPTY }, ItemData.EMP
             }
         }
         removePublisher.onComplete()
+        syncPublisher.onNext(this)
     }
 
     override fun nextSlot(): Int = indexOfFirst { it === ItemData.EMPTY }

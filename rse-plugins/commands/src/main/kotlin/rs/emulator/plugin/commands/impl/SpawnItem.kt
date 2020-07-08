@@ -8,16 +8,9 @@ import com.xenomachina.argparser.default
  * @author javatar
  */
 
-class SpawnItem(parser : ArgParser) {
+class SpawnItem (parser : ArgParser) {
 
-    val itemId by parser.storing(
-        "-id",
-        help = "the item id"
-    ) { toInt() }
-
-    val amount by parser.storing(
-        "-amt",
-        help = "the amount of the item"
-    ) { toInt() }.default(1)
+    val id by parser.positional("The item to spawn") { toInt() }
+    val amt by parser.positional("The amount to spawn") { toInt() }.default(1)
 
 }

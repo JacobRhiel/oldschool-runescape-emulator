@@ -21,27 +21,16 @@ class UpdateInventoryFullEncoder : PacketEncoder<UpdateInventoryFullMessage>()
 
         builder.put(DataType.SHORT, message.containerKey)
 
-        builder.put(DataType.SHORT, message.items.size)
+        builder.put(DataType.SHORT, message.container.array.size)
 
-        val buf = GamePacketBuilder()
-
-        message.items.forEach { item ->
-
-            buf.put(DataType.BYTE, 255.coerceAtMost(1/*item.amount*/))
-
-            buf.put(DataType.SHORT, DataOrder.LITTLE, 4152/*item.id + 1*/)
-
-            /*if (item.amount >= 255) {
-                buf.put(DataType.INT, DataOrder.LITTLE, item.amount)
-            }*/
+        message.container.forEach { item ->
+            println(item)
+            builder.put(DataType.BYTE, 255.coerceAtMost(item.amount))
+            builder.put(DataType.SHORT, DataOrder.LITTLE, item.id + 1)
+            if (item.amount >= 255) {
+                builder.put(DataType.INT, DataOrder.LITTLE, item.amount)
+            }
         }
-
-        val data = ByteArray(buf.byteBuf.readableBytes())
-
-        buf.byteBuf.readBytes(data)
-
-        builder.putBytes(data)
-
     }
 
 }

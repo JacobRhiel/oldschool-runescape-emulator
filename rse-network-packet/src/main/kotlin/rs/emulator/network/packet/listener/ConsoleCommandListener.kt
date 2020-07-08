@@ -18,12 +18,9 @@ class ConsoleCommandListener : GamePacketListener<ConsoleCommandMessage>
     override fun handle(channel: Channel, player: Player, message: ConsoleCommandMessage)
     {
 
-        println("console command: ${message.args}")
-
-        val session = channel.attr(SESSION_KEY).get() as PacketSession
-        val player : Player = channel.attr(session.PLAYER_KEY).get()
-
         val commandExtensions = RSPluginManager.getExtensions(CommandExtensionPoint::class.java)
+
+        println("running against ${commandExtensions.size} command plugins.")
 
         commandExtensions.forEach {
             if(it.hasRights(player)) {

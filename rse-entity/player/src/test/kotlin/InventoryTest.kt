@@ -1,5 +1,7 @@
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import rs.emulator.entity.actor.player.storage.container.ContainerObserver
+import rs.emulator.entity.actor.player.storage.container.ItemObserver
 import rs.emulator.entity.material.EquipmentSlot
 import rs.emulator.entity.material.factories.StandardItemFactory
 import rs.emulator.entity.material.factories.WearableItemFactory
@@ -66,12 +68,7 @@ class InventoryTest {
         val factory = WearableItemFactory
         val inv = Inventory()
 
-        inv.subscribeOnceOnAdd {
-            Assertions.assertTrue(it.item.id == 4151, "Failed to sub onAdd")
-        }
-
         inv onAdd {
-
             onNext {
                 Assertions.assertTrue(it.item.id == 4151, "failed to add observer onNext")
             }
@@ -87,30 +84,6 @@ class InventoryTest {
         }
 
         inv.add(whip)
-
-    }
-
-    @Test
-    fun `add non-stackable item with once time subscribe`() {
-
-        val factory = WearableItemFactory
-        val inv = Inventory()
-
-        inv.subscribeOnceOnAdd {
-            if (it.item.id == 4151) {
-                it.item.amount += 2
-            }
-        }
-
-        val whip = factory.create {
-            id = 4151
-            mainSlot = EquipmentSlot.WEAPON
-            secondarySlot = EquipmentSlot.WEAPON
-        }
-
-        inv.add(whip)
-
-        Assertions.assertTrue(inv.count { it.id == 4151 } == 3, "publisher failed to add two more whips. ${inv.count { it.id == 4151 }}")
 
     }
 
@@ -164,18 +137,29 @@ class InventoryTest {
     @Test
     fun `transform item on remove`() {
         val factory = WearableItemFactory
-        val inv = Inventory()
-        inv.subscribeOnceOnRemove {
-            if(it.item.id == 1) {
-                it.item.id = 1050
+        val inv = Inventory().apply {
+            syncBlock {
+                onNext {
+                    println("Sync with client")
+                }
             }
         }
         val item = factory.create {
             id = 1
         }
+        inv.onAdd {
+            onNext {
+                if(it.item.id == 1) {
+                    it.item.id = 1050
+                }
+            }
+            onComplete {
+                println("Clear observers")
+            }
+        }
+        inv.add(item)
         inv.add(item)
         inv.remove(item.copy())
-
         Assertions.assertEquals(factory.create(1050), inv[0], "Transformation failed.")
     }
 

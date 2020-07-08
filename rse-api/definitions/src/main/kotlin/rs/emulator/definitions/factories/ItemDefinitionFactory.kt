@@ -18,6 +18,4 @@ object ItemDefinitionFactory : DefinitionFactory<ObjDefinition>() {
         return def
     }
 
-
-
 }

@@ -9,3 +9,7 @@ dependencies {
     api(project(":rse-packet:message"))
 
 }
+
+tasks.withType<Test> {
+    useJUnitPlatform()
+}

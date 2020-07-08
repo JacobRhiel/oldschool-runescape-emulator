@@ -10,7 +10,7 @@ import rs.emulator.entity.material.items.Item
 object ItemProvider {
     inline fun <reified T : Item> provide(id : Int, amount : Int = 1) : T {
         val def = ItemDefinitionFactory.provide(id)
-        val meta = ItemMetaDefinitionFactory.provide(id)
+        //val meta = ItemMetaDefinitionFactory.provide(id)
         return if(def.equipSlot == -1) {
             StandardItemFactory.create {
                 this.id = id

@@ -8,10 +8,10 @@ import org.koin.core.get
 import org.koin.dsl.module
 import rs.emulator.Repository
 import rs.emulator.cache.definition.DefinitionRepository
+import rs.emulator.cache.definition.definition
 import rs.emulator.cache.store.VirtualFileStore
 import rs.emulator.cache.store.data.DataFile
 import rs.emulator.cache.store.reference.ReferenceTable
-import rs.emulator.database.service.JDBCPoolingService
 import rs.emulator.encryption.rsa.RSAService
 import rs.emulator.engine.service.CyclicEngineService
 import rs.emulator.engine.service.schedule.CyclicDelaySchedule
@@ -22,6 +22,7 @@ import rs.emulator.network.packet.repository.PacketService
 import rs.emulator.network.pipeline.DefaultPipelineProvider
 import rs.emulator.network.world.network.channel.pipeline.WorldPipelineProvider
 import rs.emulator.network.world.service.WorldService
+import rs.emulator.plugins.RSPluginManager
 import rs.emulator.region.XteaKeyService
 import rs.emulator.service.login.worker.LoginWorkerSchedule
 import rs.emulator.service.login.worker.LoginWorkerService
@@ -31,8 +32,7 @@ import java.nio.file.Paths
  *
  * @author Chk
  */
-class Test : KoinComponent
-{
+class Test : KoinComponent {
 
     private val serviceManager: ServiceManager = get()
 
@@ -41,24 +41,22 @@ class Test : KoinComponent
     val packetRepository: PacketRepository = get()
 
     @ExperimentalStdlibApi
-    companion object
-    {
+    companion object {
 
         @JvmStatic
-        fun main(args: Array<String>)
-        {
+        fun main(args: Array<String>) {
 
-            val path = Paths.get("./cache/")
+            val path = Paths.get("data/cache")
 
             val mod = module {
 
-                single { DataFile(path.resolve("main_file_cache.dat2"))  }
+                single { DataFile(path.resolve("main_file_cache.dat2")) }
 
                 single { ReferenceTable(path.resolve("main_file_cache.idx255")) }
 
                 single { VirtualFileStore(path) }
 
-                single { DefinitionRepository().apply { Repository.repository = this } }
+                single { DefinitionRepository() }
 
                 single { DefaultPipelineProvider() }
 
@@ -70,7 +68,7 @@ class Test : KoinComponent
 
                 single { RSAService() }
 
-                single { JDBCPoolingService() }
+                //single { JDBCPoolingService() }
 
                 single { LoginWorkerSchedule() }
 
@@ -85,37 +83,46 @@ class Test : KoinComponent
                 //todo move the parsing.
                 single { PacketRepository() }
 
-                single { ServiceManager(listOf(
-                    get<JDBCPoolingService>(),
-                    get<RSAService>(),
-                    get<FileStoreService>(),
-                    get<XteaKeyService>(),
-                    get<WorldService>(),
-                    get<LoginWorkerService>(),
-                    get<CyclicEngineService>(),
-                    get<PacketService>()
-                )) }
+                single {
+                    ServiceManager(
+                        listOf(
+                            // get<JDBCPoolingService>(),
+                            get<RSAService>(),
+                            get<FileStoreService>(),
+                            get<XteaKeyService>(),
+                            get<WorldService>(),
+                            get<LoginWorkerService>(),
+                            get<CyclicEngineService>(),
+                            get<PacketService>()
+                        )
+                    )
+                }
 
             }
 
             runBlocking {
+                startKoin {
 
-                    startKoin {
+                    modules(mod)
 
-                        modules(mod)
+                    val test = Test()
+                    
+                    RSPluginManager.apply {
+                        Repository.definitionRepository = definition()
+                        loadPlugins()
+                        startPlugins()
+                        println("Loaded ${plugins.size} plugins.")
+                    }
 
-                        val test = Test()
+                    test.engine.schedule(UpdatePlayerSynchronizationTask)
 
-                        test.engine.schedule(UpdatePlayerSynchronizationTask)
+                    test.serviceManager
+                        .startAsync()
+                        .awaitHealthy()
 
-                        test.serviceManager
-                            .startAsync()
-                            .awaitHealthy()
-
-                        System.gc()
+                    System.gc()
 
                 }
-
             }
 
         }

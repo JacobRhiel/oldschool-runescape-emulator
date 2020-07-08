@@ -18,12 +18,12 @@ class CommandExtension : CommandExtensionPoint {
 
     override fun execute(player: IPlayer, command: String) {
         val name = command.split(" ")[0]
-        val args = command.substringAfter(name).split(" ")
+        val args = command.substringAfter(name).trim().split(" ")
 
         when(name) {
             "item" -> {
                 val item = ArgParser(args.toTypedArray()).parseInto(::SpawnItem)
-                val spawned : Item = ItemProvider.provide(item.itemId, item.amount)
+                val spawned : Item = ItemProvider.provide(item.id, item.amt)
                 player.inventory().add(spawned)
             }
         }

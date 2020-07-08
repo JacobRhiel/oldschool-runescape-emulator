@@ -9,10 +9,10 @@ import rs.emulator.definitions.Definition
 
 object Repository {
 
-    lateinit var repository : IRepository
+    lateinit var definitionRepository : AbstractDefinitionRepository
 
     inline fun <reified T : Definition> getDefinition(id : Int, secondId : Int = -1) : T {
-        return repository.getDefinition(id, secondId)
+        return definitionRepository.find(id, secondId)
     }
 
 }

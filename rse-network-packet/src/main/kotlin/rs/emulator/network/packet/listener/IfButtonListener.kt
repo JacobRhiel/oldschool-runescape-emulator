@@ -2,6 +2,7 @@ package rs.emulator.network.packet.listener
 
 import io.netty.channel.Channel
 import rs.emulator.entity.player.Player
+import rs.emulator.entity.player.storage.containers.Inventory
 import rs.emulator.network.SESSION_KEY
 import rs.emulator.network.packet.atest.*
 import rs.emulator.network.packet.session.PacketSession
@@ -88,7 +89,6 @@ class IfButtonListener : GamePacketListener<IfButtonMessage>
 
                 channel.write(GameMessageMessage(0, message = "Welcome to GrinderScape."))
 
-                channel.write(UpdateInventoryFullMessage(interfaceId = 149, component = 0, containerKey = 93, items = intArrayOf(4151)))
 
                 //channel.write(UpdateInventoryPartialMessage(interfaceId = 149, component = 0, containerKey = 93, oldItems = hashMapOf(Pair(4151, 1)), newItems = hashMapOf(Pair(1038, 1))))
 

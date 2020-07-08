@@ -157,25 +157,9 @@ class Player(val channel: Channel) : Actor(), IPlayer
         channel.write(RunClientScriptMessage(2015, 0))
 
         containerManager().register(93, Inventory()) {
-            onAdd {
-
+            syncBlock {
                 onNext {
-                    val event = it
-                    sendItemContainerPartial(
-                        149,
-                        0,
-                        93,
-                        event.item to event.slot
-                    )
-                }
-
-                onComplete {
-                    sendItemContainerFull(149, 0, 93, *array)
-                }
-            }
-            onRemove {
-                onComplete {
-                    sendItemContainerFull(149, 0, 93, *array)
+                    sendItemContainerFull(149, 0, 93, this@register)
                 }
             }
         }
@@ -215,17 +199,25 @@ class Player(val channel: Channel) : Actor(), IPlayer
         channel.write(UpdateDisplayWidgetsMessage())
     }
 
-    override fun sendItemContainerFull(interfaceId: Int, component: Int, containerKey: Int, vararg items: Item) {
-        channel.write(UpdateInventoryFullMessage(interfaceId, component, containerKey, items.map { it.id }.toIntArray()))
+    override fun sendItemContainerFull(
+        interfaceId: Int,
+        component: Int,
+        containerKey: Int,
+        container: ItemContainer<*>
+    ) {
+        channel.write(UpdateInventoryFullMessage(interfaceId, component, containerKey, container))
     }
 
-    override fun sendItemContainerPartial(interfaceId: Int, component: Int, containerKey: Int, vararg item: Pair<Item, Int>) {
+    override fun sendItemContainerPartial(
+        interfaceId: Int,
+        component: Int,
+        containerKey: Int,
+        container: ItemContainer<*>
+    ) {
         channel.write(UpdateInventoryPartialMessage(
-            HashMap(),
-            item.map { it.first.id to it.second }.toMap(HashMap()),
-            (interfaceId shl 16) and component,
+            container,
+            interfaceId shl 16 and component,
             containerKey
         ))
     }
-
 }
