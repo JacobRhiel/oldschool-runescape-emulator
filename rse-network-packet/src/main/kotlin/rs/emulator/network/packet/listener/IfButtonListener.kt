@@ -86,7 +86,7 @@ class IfButtonListener : GamePacketListener<IfButtonMessage>
 
                 channel.write(RunClientScriptMessage(2015, 0))
 
-                channel.write(GameMessageMessage(0, message = "Welcome to GrinderScape."))
+                channel.write(GameMessageMessage(0, username = "test", message = "Welcome to GrinderScape."))
 
                 channel.write(UpdateInventoryFullMessage(interfaceId = 149, component = 0, containerKey = 93, items = intArrayOf(4151)))
 
