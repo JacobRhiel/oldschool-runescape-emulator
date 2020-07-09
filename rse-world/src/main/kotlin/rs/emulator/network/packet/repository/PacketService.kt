@@ -23,12 +23,20 @@ class PacketService : AbstractIdleService(), KoinComponent
             listener = KeyBoardEventListener()
         )
 
+        packetRepository.putDecoders(opcodes = *intArrayOf(7, 61, 74, 86, 93), decoder = ObjActionDecoder(), length = 8, ignore = false, clazz = ObjActionMessage::class,
+            listener = ObjActionListener()
+        )
+
         packetRepository.putDecoder(46, WindowStatusDecoder(), length = 5, ignore = false, clazz = WindowStatusMessage::class,
             listener = WindowStatusHandler()
         )
 
         packetRepository.putDecoder(44, KeepAliveDecoder(), length = 0, ignore = true, clazz = KeepAliveMessage::class,
             listener = KeepAliveHandler()
+        )
+
+        packetRepository.putDecoders(opcodes = *intArrayOf(8, 26, 96), decoder = ExamineEntityDecoder(), length = 2, ignore = false, clazz = ExamineEntityMessage::class,
+            listener = ExamineEntityListener()
         )
 
         packetRepository.putDecoder(14, MapBuildCompleteDecoder(), length = 0, ignore = false, clazz = MapBuildCompleteMessage::class,
