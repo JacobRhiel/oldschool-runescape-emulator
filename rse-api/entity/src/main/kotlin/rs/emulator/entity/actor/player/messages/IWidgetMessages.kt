@@ -11,5 +11,6 @@ interface IWidgetMessages {
     fun sendOpenOverlay(id : Int)
     fun sendOpenSub(parentId : Int, childId : Int, component : Int, interType : Int)
     fun sendDisplayWidgetUpdate()
+    fun sendChatMessage(message : String, messageType : Int) //TODO - refactor message type to enum
 
 }

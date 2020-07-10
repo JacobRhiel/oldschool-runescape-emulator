@@ -3,78 +3,47 @@
 package rs.emulator.engine.service
 
 import com.google.common.util.concurrent.AbstractScheduledService
-import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap
+import io.reactivex.Flowable
+import io.reactivex.rxkotlin.toFlowable
 import org.koin.core.KoinComponent
 import org.koin.core.inject
-import rs.emulator.engine.service.event.*
+import rs.emulator.engine.service.event.bus.CoreEventBus
 import rs.emulator.engine.service.schedule.CyclicDelaySchedule
-import rs.emulator.utilities.logger.warn
-import java.util.concurrent.*
+import rs.emulator.plugins.RSPluginManager
+import rs.emulator.service.event.bus.EventBusFactory
+import rs.emulator.service.event.IEvent
+import java.util.concurrent.CompletableFuture
 
 /**
  *
  * @author Chk
  */
-class CyclicEngineService : KoinComponent, AbstractScheduledService()
-{
+class CyclicEngineService : KoinComponent, AbstractScheduledService() {
 
-    private val eventList = mutableListOf<Event>()
-
-    private val storedExecutionTimes = Object2LongOpenHashMap<Event>()
+    private val staticEvents = mutableListOf<IEvent>()
 
     override fun scheduler() = inject<CyclicDelaySchedule>().value
 
-    override fun runOneIteration()
-    {
-
+    override fun runOneIteration() {
         scheduler().lastCycle = System.currentTimeMillis()
-
-        val iterator = eventList.listIterator()
-
-        while(iterator.hasNext())
-        {
-
-            val event = iterator.next()
-
-            val completableFuture = CompletableFuture.supplyAsync(event::execute)
-
-            val remainingMilliseconds = scheduler().remaining
-
-            var successful = true
-
-            try
-            {
-
-                val start = System.currentTimeMillis()
-
-                completableFuture.get(remainingMilliseconds, TimeUnit.MILLISECONDS)
-
-                completableFuture.join()
-
-                val end = System.currentTimeMillis()
-
-                //todo: verify no event is the same.
-                storedExecutionTimes[event] = (end - start)
-
-            }
-            catch (e: TimeoutException)
-            {
-
-                println("error")
-
-            }
-
-        }
-
+        Flowable.concat(
+            listOf(
+                staticEvents.toFlowable(),
+                CoreEventBus.observeEvents(),
+                Flowable.concat(RSPluginManager.getExtensions(EventBusFactory::class.java)
+                    .map { it.createEventBus().observeEvents() })
+            )
+        ).map { CompletableFuture.supplyAsync(it::execute) }.concatMap { Flowable.fromFuture(it) }.subscribe()
     }
 
-    fun schedule(event: Event)
-    {
 
-        if(eventList.contains(event))
-            warn("[Event: $event has already been scheduled.")
-        else
-            eventList.add(event)
+    fun schedule(event: IEvent, staticEvent: Boolean = false) {
+
+        if (!staticEvent) {
+            CoreEventBus.post(event)
+        } else {
+            staticEvents.add(event)
+        }
 
     }
 

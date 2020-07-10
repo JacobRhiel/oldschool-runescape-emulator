@@ -1,6 +1,7 @@
 package rs.emulator.entity.player
 
 import io.netty.channel.Channel
+import rs.emulator.engine.service.event.bus.CoreEventBus
 import rs.emulator.entity.actor.Actor
 import rs.emulator.entity.actor.player.IPlayer
 import rs.emulator.entity.actor.player.storage.IItemContainerManager
@@ -13,16 +14,17 @@ import rs.emulator.entity.player.update.flag.PlayerUpdateFlag
 import rs.emulator.entity.player.update.sync.SyncInformation
 import rs.emulator.entity.player.viewport.Viewport
 import rs.emulator.network.packet.atest.*
+import rs.emulator.plugins.RSPluginManager
+import rs.emulator.plugins.extensions.factories.ContainerRegistrationException
+import rs.emulator.plugins.extensions.factories.ItemContainerFactory
 
-class Player(val channel: Channel) : Actor(), IPlayer
-{
+class Player(val channel: Channel) : Actor(), IPlayer {
 
     val viewport = Viewport(this)
 
     val syncInfo = SyncInformation().apply { this.addMaskFlag(PlayerUpdateFlag.APPEARANCE) }
 
-    fun onLogin()
-    {
+    fun onLogin() {
 
         channel.write(RebuildRegionMessage(true, 1, x = 3222, z = 3218, tileHash = -1))
 
@@ -164,12 +166,21 @@ class Player(val channel: Channel) : Actor(), IPlayer
             }
         }
 
-        if(channel.isActive)
+
+        if (channel.isActive)
             channel.flush()
 
     }
 
-    private val itemContainerManager = ItemContainerManager()
+    private val itemContainerManager = ItemContainerManager().apply {
+        RSPluginManager.getExtensions(ItemContainerFactory::class.java).forEach {
+            if (this.containers.containsKey(it.containerKey)) {
+                throw ContainerRegistrationException(it.containerKey)
+            } else {
+                this.containers[it.containerKey] = it.registerItemContainer(this@Player)
+            }
+        }
+    }
 
     override fun username(): String = "Javatar"
 
@@ -203,6 +214,10 @@ class Player(val channel: Channel) : Actor(), IPlayer
         channel.write(UpdateDisplayWidgetsMessage())
     }
 
+    override fun sendChatMessage(message: String, messageType: Int) {
+        channel.write(GameMessageMessage(messageType, displayName(), message))
+    }
+
     override fun sendItemContainerFull(
         interfaceId: Int,
         component: Int,
@@ -218,10 +233,12 @@ class Player(val channel: Channel) : Actor(), IPlayer
         containerKey: Int,
         container: ItemContainer<*>
     ) {
-        channel.write(UpdateInventoryPartialMessage(
-            container,
-            interfaceId shl 16 and component,
-            containerKey
-        ))
+        channel.write(
+            UpdateInventoryPartialMessage(
+                container,
+                interfaceId shl 16 and component,
+                containerKey
+            )
+        )
     }
 }

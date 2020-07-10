@@ -23,9 +23,6 @@ class IfButtonListener : GamePacketListener<IfButtonMessage>
 
         val option = message.option + 1
 
-        val session = channel.attr(SESSION_KEY).get() as PacketSession
-        val player : Player = channel.attr(session.PLAYER_KEY).get()
-
         /*val interactionExtensions = RSPluginManager.getExtensions(WidgetInteractionExtensionPoint::class.java)
 
         interactionExtensions.forEach {
@@ -87,7 +84,7 @@ class IfButtonListener : GamePacketListener<IfButtonMessage>
 
                 channel.write(RunClientScriptMessage(2015, 0))
 
-                channel.write(GameMessageMessage(0, username = "test", message = "Welcome to GrinderScape."))
+                channel.write(GameMessageMessage(0, username = player.username(), message = "Welcome to GrinderScape."))
 
 
                 //channel.write(UpdateInventoryPartialMessage(interfaceId = 149, component = 0, containerKey = 93, oldItems = hashMapOf(Pair(4151, 1)), newItems = hashMapOf(Pair(1038, 1))))

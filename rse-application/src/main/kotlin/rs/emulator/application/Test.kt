@@ -111,10 +111,9 @@ class Test : KoinComponent {
                         Repository.definitionRepository = definition()
                         loadPlugins()
                         startPlugins()
-                        println("Loaded ${plugins.size} plugins.")
                     }
 
-                    test.engine.schedule(UpdatePlayerSynchronizationTask)
+                    test.engine.schedule(UpdatePlayerSynchronizationTask, true)
 
                     test.serviceManager
                         .startAsync()

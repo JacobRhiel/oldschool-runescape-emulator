@@ -1,16 +1,16 @@
 package rs.emulator.entity.update.task
 
-import rs.emulator.engine.service.event.Event
 import rs.emulator.entity.Entity
 import rs.emulator.entity.update.mask.UpdateMask
 import rs.emulator.network.packet.GamePacketBuilder
 import rs.emulator.packet.api.GamePacket
+import rs.emulator.service.event.IEvent
 
 /**
  *
  * @author Chk
  */
-interface UpdateSynchronizationTask<T : Entity> : Event
+interface UpdateSynchronizationTask<T : Entity> : IEvent
 {
 
     fun execute(entity: T)
