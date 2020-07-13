@@ -36,7 +36,7 @@ data class LoginRequestMessage(val ctx: ChannelHandlerContext,
 
         val session = ctx.channel().attr(SESSION_KEY).get() as PacketSession
 
-        var loginResult: LoginResult
+        val loginResult: LoginResult
 
         var isaac: IntArray = intArrayOf()
 
@@ -56,13 +56,22 @@ data class LoginRequestMessage(val ctx: ChannelHandlerContext,
 
         ctx.channel().write(LoginResponseMessage(isaac, loginResult))
 
-        val player = Player(ctx.channel())
+        val player = Player(ctx.channel(), session.outgoingPackets)
 
         ctx.channel().attr(session.PLAYER_KEY).set(player)
 
         player.viewport.localPlayers[1] = player
 
         player.viewport.globalPlayers[1] = player
+
+        session.outgoingPackets.subscribe {
+            ctx.channel().write(it)
+        }
+
+        session.incomingPackets.subscribe {
+            val (metaData, gamePacket) = it
+            metaData.handle(ctx.channel(), player, gamePacket)
+        }
 
         WorldRepository.players.add(player)
 

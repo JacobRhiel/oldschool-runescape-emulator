@@ -3,6 +3,7 @@ package rs.emulator.network.packet.session
 import io.netty.channel.Channel
 import io.netty.channel.ChannelHandlerContext
 import io.netty.util.AttributeKey
+import io.reactivex.processors.PublishProcessor
 import org.koin.core.KoinComponent
 import org.koin.core.get
 import rs.emulator.encryption.isaac.IsaacRandom
@@ -15,6 +16,7 @@ import rs.emulator.network.packet.encoder.GamePacketEncoder
 import rs.emulator.network.packet.encoder.GamePacketMessageEncoder
 import rs.emulator.network.packet.message.GamePacketMessage
 import rs.emulator.network.session.NetworkSession
+import rs.emulator.packet.api.IGamePacketMessage
 
 /**
  *
@@ -29,6 +31,9 @@ class PacketSession(val channel: Channel,
     val decodeRandom = IsaacRandom(isaacKeys)
 
     val encodeRandom = IsaacRandom(IntArray(isaacKeys.size) { isaacKeys[it] + 50 })
+
+    val incomingPackets = PublishProcessor.create<PacketEvent>()
+    val outgoingPackets = PublishProcessor.create<GamePacketMessage>()
 
     val PLAYER_KEY: AttributeKey<Player> = AttributeKey.valueOf("network_player")
 
@@ -65,9 +70,11 @@ class PacketSession(val channel: Channel,
 
             val gamePacket = metaData.decode(msg, ctx.attr(PLAYER_KEY).get())
 
+            incomingPackets.offer(PacketEvent(metaData, gamePacket))
+
             println("msg: $msg")
 
-            metaData.handle(ctx.channel(), ctx.attr(PLAYER_KEY).get(), gamePacket)
+            //metaData.handle(ctx.channel(), ctx.attr(PLAYER_KEY).get(), gamePacket)
 
             msg.release()
 
