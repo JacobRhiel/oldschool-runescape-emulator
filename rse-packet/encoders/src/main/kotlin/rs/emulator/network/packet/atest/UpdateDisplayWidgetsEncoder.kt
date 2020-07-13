@@ -12,7 +12,7 @@ import rs.emulator.network.packet.encoder.PacketEncoder
 class UpdateDisplayWidgetsEncoder : PacketEncoder<UpdateDisplayWidgetsMessage>()
 {
 
-    override fun encode(message: UpdateDisplayWidgetsMessage, player: Player, builder: GamePacketBuilder)
+    override fun encode(message: UpdateDisplayWidgetsMessage, builder: GamePacketBuilder)
     {
 
         builder.put(DataType.SHORT, 165) //root id

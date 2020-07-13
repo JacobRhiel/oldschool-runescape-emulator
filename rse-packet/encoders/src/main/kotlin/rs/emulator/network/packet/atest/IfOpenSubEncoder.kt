@@ -14,7 +14,7 @@ import rs.emulator.network.packet.encoder.PacketEncoder
 class IfOpenSubEncoder : PacketEncoder<IfOpenSubMessage>()
 {
 
-    override fun encode(message: IfOpenSubMessage, player: Player, builder: GamePacketBuilder)
+    override fun encode(message: IfOpenSubMessage, builder: GamePacketBuilder)
     {
 
         builder.put(DataType.BYTE, message.interType)

@@ -95,6 +95,8 @@ class PacketService : AbstractIdleService(), KoinComponent
 
         packetRepository.putEncoder(1, UpdateInventoryPartialEncoder(), packetType = PacketType.VARIABLE_SHORT, clazz = UpdateInventoryPartialMessage::class)
 
+        packetRepository.putEncoder(59, UpdatePlayerSyncEncoder(), packetType = PacketType.VARIABLE_SHORT, clazz = UpdatePlayerSyncMessage::class)
+
     }
 
     override fun startUp()

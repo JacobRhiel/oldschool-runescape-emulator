@@ -10,13 +10,13 @@ import rs.emulator.encryption.isaac.IsaacRandom
 import rs.emulator.entity.player.Player
 import rs.emulator.network.channel.DefaultChannelHandler
 import rs.emulator.network.message.NetworkMessage
-import rs.emulator.network.packet.repository.PacketRepository
 import rs.emulator.network.packet.decoder.GamePacketDecoder
 import rs.emulator.network.packet.encoder.GamePacketEncoder
 import rs.emulator.network.packet.encoder.GamePacketMessageEncoder
 import rs.emulator.network.packet.message.GamePacketMessage
+import rs.emulator.network.packet.repository.PacketRepository
 import rs.emulator.network.session.NetworkSession
-import rs.emulator.packet.api.IGamePacketMessage
+import rs.emulator.packet.api.IPacketMessage
 
 /**
  *
@@ -33,7 +33,7 @@ class PacketSession(val channel: Channel,
     val encodeRandom = IsaacRandom(IntArray(isaacKeys.size) { isaacKeys[it] + 50 })
 
     val incomingPackets = PublishProcessor.create<PacketEvent>()
-    val outgoingPackets = PublishProcessor.create<GamePacketMessage>()
+    val outgoingPackets = PublishProcessor.create<IPacketMessage>()
 
     val PLAYER_KEY: AttributeKey<Player> = AttributeKey.valueOf("network_player")
 
@@ -73,8 +73,6 @@ class PacketSession(val channel: Channel,
             incomingPackets.offer(PacketEvent(metaData, gamePacket))
 
             println("msg: $msg")
-
-            //metaData.handle(ctx.channel(), ctx.attr(PLAYER_KEY).get(), gamePacket)
 
             msg.release()
 

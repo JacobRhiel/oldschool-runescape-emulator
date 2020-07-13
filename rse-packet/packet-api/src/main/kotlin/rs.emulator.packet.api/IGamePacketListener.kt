@@ -7,7 +7,7 @@ import rs.emulator.entity.actor.player.IPlayer
  *
  * @author Chk
  */
-interface IGamePacketListener<T : IGamePacketMessage, P : IPlayer>
+interface IGamePacketListener<T : IPacketMessage, P : IPlayer>
 {
 
     fun handle(channel: Channel, player: P, message: T)

@@ -12,12 +12,12 @@ import rs.emulator.entity.player.update.flag.PlayerUpdateFlag
 import rs.emulator.entity.player.update.sync.SyncInformation
 import rs.emulator.entity.player.viewport.Viewport
 import rs.emulator.network.packet.atest.*
-import rs.emulator.network.packet.message.GamePacketMessage
+import rs.emulator.packet.api.IPacketMessage
 import rs.emulator.plugins.RSPluginManager
 import rs.emulator.plugins.extensions.factories.ContainerRegistrationException
 import rs.emulator.plugins.extensions.factories.ItemContainerFactory
 
-class Player(val channel: Channel, val outgoingPackets : PublishProcessor<GamePacketMessage>) : Actor(), IPlayer {
+class Player(val channel: Channel, val outgoingPackets : PublishProcessor<IPacketMessage>) : Actor(), IPlayer {
 
     val viewport = Viewport(this)
 

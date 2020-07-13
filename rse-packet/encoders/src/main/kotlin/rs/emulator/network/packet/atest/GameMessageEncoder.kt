@@ -12,7 +12,7 @@ import rs.emulator.network.packet.encoder.PacketEncoder
 class GameMessageEncoder : PacketEncoder<GameMessageMessage>()
 {
 
-    override fun encode(message: GameMessageMessage, player: Player, builder: GamePacketBuilder)
+    override fun encode(message: GameMessageMessage, builder: GamePacketBuilder)
     {
 
         builder.putSmart(message.messageType)

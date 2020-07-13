@@ -14,7 +14,7 @@ import rs.emulator.network.packet.encoder.PacketEncoder
 class UpdateInventoryFullEncoder : PacketEncoder<UpdateInventoryFullMessage>()
 {
 
-    override fun encode(message: UpdateInventoryFullMessage, player: Player, builder: GamePacketBuilder)
+    override fun encode(message: UpdateInventoryFullMessage, builder: GamePacketBuilder)
     {
 
         builder.put(DataType.INT, message.componentHash)

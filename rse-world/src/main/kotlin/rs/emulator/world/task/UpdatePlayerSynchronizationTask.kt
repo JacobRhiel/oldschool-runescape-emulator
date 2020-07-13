@@ -10,7 +10,9 @@ import rs.emulator.entity.player.viewport.Viewport
 import rs.emulator.entity.update.mask.UpdateMask
 import rs.emulator.entity.update.task.UpdateSynchronizationTask
 import rs.emulator.network.packet.GamePacketBuilder
+import rs.emulator.network.packet.atest.UpdatePlayerSyncMessage
 import rs.emulator.network.packet.ext.toGamePacket
+import rs.emulator.network.packet.ext.toGamePacketMessage
 import rs.emulator.packet.api.GamePacket
 import rs.emulator.packet.api.PacketType
 import rs.emulator.world.repository.WorldRepository
@@ -24,6 +26,7 @@ object UpdatePlayerSynchronizationTask : UpdateSynchronizationTask<Player>
 
     override fun execute(entity: Player)
     {
+
 
         val builder = GamePacketBuilder(59, packetType = PacketType.VARIABLE_SHORT)
 
@@ -56,7 +59,8 @@ object UpdatePlayerSynchronizationTask : UpdateSynchronizationTask<Player>
 
         println("size: " + builder.readableBytes)
 
-        entity.channel.writeAndFlush(createGamePacket(builder))
+
+        entity.channel.writeAndFlush(builder.toGamePacket())
 
     }
 
@@ -243,7 +247,8 @@ object UpdatePlayerSynchronizationTask : UpdateSynchronizationTask<Player>
 
         WorldRepository.players.forEach {
 
-            execute(it)
+            it.outgoingPackets.offer(UpdatePlayerSyncMessage(it))
+            //execute(it)
 
         }
 

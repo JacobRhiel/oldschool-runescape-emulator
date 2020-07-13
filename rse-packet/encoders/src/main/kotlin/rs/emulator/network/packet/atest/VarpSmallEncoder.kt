@@ -13,7 +13,7 @@ import rs.emulator.network.packet.encoder.PacketEncoder
 class VarpSmallEncoder : PacketEncoder<VarpSmallMessage>()
 {
 
-    override fun encode(message: VarpSmallMessage, player: Player, builder: GamePacketBuilder)
+    override fun encode(message: VarpSmallMessage, builder: GamePacketBuilder)
     {
 
         builder.put(DataType.BYTE, DataTransformation.SUBTRACT, message.value)

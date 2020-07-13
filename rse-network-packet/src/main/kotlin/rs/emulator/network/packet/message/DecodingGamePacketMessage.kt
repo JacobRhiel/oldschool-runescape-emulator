@@ -1,10 +1,8 @@
 package rs.emulator.network.packet.message
 
 import io.netty.channel.Channel
-import rs.emulator.entity.actor.player.IPlayer
 import rs.emulator.entity.player.Player
 import rs.emulator.network.packet.GamePacketReader
-import rs.emulator.packet.api.PacketType
 import rs.emulator.network.packet.listener.GamePacketListener
 import rs.emulator.packet.api.*
 
@@ -12,20 +10,20 @@ import rs.emulator.packet.api.*
  *
  * @author Chk
  */
-class DecodingGamePacketMessage(opcode: Int,
-                                private val decoder: IPacketDecoder<out IGamePacketMessage, Player>,
-                                private val handler: IGamePacketListener<out IGamePacketMessage, Player>,
-                                packetType: PacketType = PacketType.FIXED,
-                                actionType: ActionType = ActionType.NONE,
-                                length: Int = 0,
-                                ignore: Boolean
-) : GamePacketMessage(opcode, actionType, packetType, length, ignore)
+class DecodingGamePacketMessage(val opcode: Int,
+                                private val decoder: IPacketDecoder<*, Player>,
+                                private val handler: IGamePacketListener<*, Player>,
+                                val type: PacketType = PacketType.FIXED,
+                                val action: ActionType = ActionType.NONE,
+                                val length: Int = 0,
+                                val ignore: Boolean
+)
 {
 
     fun decode(msg: GamePacketMessage, player: Player) = decoder.decode(msg.opcode, player,
         GamePacketReader(msg.payload)
     )
 
-    fun handle(channel: Channel, player: Player, msg: IGamePacketMessage) = (handler as GamePacketListener<IGamePacketMessage>).handle(channel, player, msg)
+    fun handle(channel: Channel, player: Player, msg: IPacketMessage) = (handler as GamePacketListener<IPacketMessage>).handle(channel, player, msg)
 
 }

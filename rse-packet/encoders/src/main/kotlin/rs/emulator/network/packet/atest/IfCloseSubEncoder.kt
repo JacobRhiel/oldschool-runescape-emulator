@@ -12,7 +12,7 @@ import rs.emulator.network.packet.encoder.PacketEncoder
 class IfCloseSubEncoder : PacketEncoder<IfCloseSubMessage>()
 {
 
-    override fun encode(message: IfCloseSubMessage, player: Player, builder: GamePacketBuilder)
+    override fun encode(message: IfCloseSubMessage, builder: GamePacketBuilder)
     {
 
         builder.put(DataType.INT, (message.parent shl 16) or message.child)

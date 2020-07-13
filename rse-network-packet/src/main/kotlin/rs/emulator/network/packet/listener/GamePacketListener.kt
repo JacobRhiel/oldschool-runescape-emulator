@@ -1,16 +1,14 @@
 package rs.emulator.network.packet.listener
 
-import io.netty.channel.Channel
 import rs.emulator.entity.player.Player
-import rs.emulator.network.packet.message.GamePacketMessage
 import rs.emulator.packet.api.IGamePacketListener
-import rs.emulator.packet.api.IGamePacketMessage
+import rs.emulator.packet.api.IPacketMessage
 
 /**
  *
  * @author Chk
  */
-interface GamePacketListener<T : IGamePacketMessage> : IGamePacketListener<T, Player>
+interface GamePacketListener<T : IPacketMessage> : IGamePacketListener<T, Player>
 {
 
 }

@@ -11,7 +11,7 @@ import rs.emulator.network.packet.encoder.PacketEncoder
  * @author Chk
  */
 class UpdateInventoryPartialEncoder : PacketEncoder<UpdateInventoryPartialMessage>() {
-    override fun encode(message: UpdateInventoryPartialMessage, player: Player, builder: GamePacketBuilder) {
+    override fun encode(message: UpdateInventoryPartialMessage, builder: GamePacketBuilder) {
         builder.put(DataType.INT, message.componentHash)
         builder.put(DataType.SHORT, message.containerKey)
         message.container.array.forEachIndexed { index, item ->

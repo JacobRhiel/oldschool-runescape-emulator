@@ -13,13 +13,14 @@ import rs.emulator.packet.api.*
  * @author Graham
  * @author Chk
  */
-open class GamePacketMessage(val opcode: Int,
-                             val action: ActionType = ActionType.NONE,
-                             val type: PacketType = PacketType.FIXED,
-                             val length: Int = 0,
-                             val ignore: Boolean = false,
-                             val payload: ByteBuf = Unpooled.buffer(if(length == 0) 1 else length)
-) : NetworkMessage, IGamePacketMessage
+open class GamePacketMessage(
+    override val opcode: Int,
+    override val action: ActionType = ActionType.NONE,
+    override val type: PacketType = PacketType.FIXED,
+    val length: Int = 0,
+    val ignore: Boolean = false,
+    override val payload: ByteBuf = Unpooled.buffer(if(length == 0) 1 else length)
+) : NetworkMessage, IPacketMessage
 {
 
     val payloadSize: Int = payload.readableBytes()

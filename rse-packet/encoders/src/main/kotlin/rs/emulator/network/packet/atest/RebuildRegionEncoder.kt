@@ -32,7 +32,7 @@ class RebuildRegionEncoder : PacketEncoder<RebuildRegionMessage>()
      */
     val MAX_VIEWPORT = CHUNK_SIZE * CHUNKS_PER_REGION
 
-    override fun encode(message: RebuildRegionMessage, player: Player, builder: GamePacketBuilder)
+    override fun encode(message: RebuildRegionMessage, builder: GamePacketBuilder)
     {
 
         if(message.login)

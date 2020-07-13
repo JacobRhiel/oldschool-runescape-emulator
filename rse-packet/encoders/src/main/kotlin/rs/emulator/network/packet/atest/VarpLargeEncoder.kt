@@ -14,7 +14,7 @@ import rs.emulator.network.packet.encoder.PacketEncoder
 class VarpLargeEncoder : PacketEncoder<VarpLargeMessage>()
 {
 
-    override fun encode(message: VarpLargeMessage, player: Player, builder: GamePacketBuilder)
+    override fun encode(message: VarpLargeMessage, builder: GamePacketBuilder)
     {
 
         builder.put(DataType.INT, DataOrder.INVERSED_MIDDLE, message.value)

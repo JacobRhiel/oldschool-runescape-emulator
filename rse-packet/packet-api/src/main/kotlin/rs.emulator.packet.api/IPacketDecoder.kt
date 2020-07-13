@@ -7,7 +7,7 @@ import rs.emulator.network.packet.GamePacketReader
  *
  * @author Chk
  */
-interface IPacketDecoder<T : IGamePacketMessage, P : IPlayer> : IGamePacketCodec
+interface IPacketDecoder<T : IPacketMessage, P : IPlayer> : IGamePacketCodec
 {
 
     fun decode(opcode: Int, player: P, reader: GamePacketReader): T

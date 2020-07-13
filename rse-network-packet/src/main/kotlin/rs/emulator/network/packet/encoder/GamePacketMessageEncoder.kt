@@ -32,9 +32,7 @@ class GamePacketMessageEncoder
             encoder.action
         )
 
-        val session = ctx.attr(SESSION_KEY).get() as PacketSession
-
-        encoder.encode(msg, ctx.attr(session.PLAYER_KEY).get(), builder)
+        encoder.encode(msg, builder)
 
         out.add(builder.toGamePacket())
 

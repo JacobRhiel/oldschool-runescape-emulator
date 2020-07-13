@@ -3,24 +3,21 @@ package rs.emulator.network.packet.message
 import rs.emulator.entity.actor.player.IPlayer
 import rs.emulator.entity.player.Player
 import rs.emulator.network.packet.GamePacketBuilder
-import rs.emulator.packet.api.ActionType
-import rs.emulator.packet.api.IGamePacketMessage
-import rs.emulator.packet.api.IPacketEncoder
-import rs.emulator.packet.api.PacketType
+import rs.emulator.packet.api.*
 
 /**
  *
  * @author Chk
  */
-class EncodingGamePacketMessage(opcode: Int,
-                                private val encoder: IPacketEncoder<out IGamePacketMessage, out IPlayer>,
-                                packetType: PacketType = PacketType.FIXED,
-                                actionType: ActionType = ActionType.NONE,
-                                length: Int = 0,
-                                ignore: Boolean = false
-) : GamePacketMessage(opcode, actionType, packetType, length, ignore)
+class EncodingGamePacketMessage(val opcode: Int,
+                                private val encoder: IPacketEncoder<*>,
+                                val type: PacketType = PacketType.FIXED,
+                                val action: ActionType = ActionType.NONE,
+                                val length: Int = 0,
+                                val ignore: Boolean = false
+)
 {
 
-    fun encode(msg: GamePacketMessage, player: Player, builder: GamePacketBuilder) = (encoder as IPacketEncoder<IGamePacketMessage, Player>).encode(msg, player, builder)
+    fun encode(msg: IPacketMessage, builder: GamePacketBuilder) = (encoder as IPacketEncoder<IPacketMessage>).encode(msg, builder)
 
 }

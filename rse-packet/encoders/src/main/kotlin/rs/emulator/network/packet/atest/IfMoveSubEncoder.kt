@@ -13,7 +13,7 @@ import rs.emulator.network.packet.encoder.PacketEncoder
 class IfMoveSubEncoder : PacketEncoder<IfMoveSubMessage>()
 {
 
-    override fun encode(message: IfMoveSubMessage, player: Player, builder: GamePacketBuilder)
+    override fun encode(message: IfMoveSubMessage, builder: GamePacketBuilder)
     {
 
         val toHash = (message.toParent shl 16) or message.toChild

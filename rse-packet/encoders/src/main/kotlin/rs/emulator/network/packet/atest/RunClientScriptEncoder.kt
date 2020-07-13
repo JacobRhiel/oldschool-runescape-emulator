@@ -13,7 +13,7 @@ import rs.emulator.utilities.logger.logger
 class RunClientScriptEncoder : PacketEncoder<RunClientScriptMessage>()
 {
 
-    override fun encode(message: RunClientScriptMessage, player: Player, builder: GamePacketBuilder)
+    override fun encode(message: RunClientScriptMessage, builder: GamePacketBuilder)
     {
 
         val types = CharArray(message.args.size + 1)
