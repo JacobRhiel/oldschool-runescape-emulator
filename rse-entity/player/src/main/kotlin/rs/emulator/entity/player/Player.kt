@@ -157,6 +157,8 @@ class Player(val channel: Channel, val outgoingPackets : PublishProcessor<IPacke
 
         outgoingPackets.offer(RunClientScriptMessage(2015, 0))
 
+        outgoingPackets.offer(UpdateSkillMessage(3, 25, 500000))
+
         containerManager().register(93, Inventory()) {
             syncBlock {
                 onNext {

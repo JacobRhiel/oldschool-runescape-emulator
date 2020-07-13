@@ -22,9 +22,16 @@ object StandardItemFactory : AbstractMaterialFactory<StandardItem> {
     override fun create(cache: Boolean, block: StandardItem.() -> Unit): StandardItem {
         val item = StandardItem(-1)
         block(item)
-        if(cache && item.id != -1) {
+        if (cache && item.id != -1) {
             cacheMap[item.id] = item.copy()
         }
         return item
+    }
+
+    override fun createFromMetaData(id: Int, amount: Int): StandardItem {
+        return create {
+            this.id = id
+            this.amount = amount
+        }
     }
 }

@@ -2,13 +2,11 @@ package rs.emulator.network.packet.session
 
 import io.netty.channel.Channel
 import io.netty.channel.ChannelHandlerContext
-import io.netty.util.AttributeKey
 import io.reactivex.disposables.Disposable
 import io.reactivex.processors.PublishProcessor
 import org.koin.core.KoinComponent
 import org.koin.core.get
 import rs.emulator.encryption.isaac.IsaacRandom
-import rs.emulator.entity.player.Player
 import rs.emulator.network.channel.DefaultChannelHandler
 import rs.emulator.network.message.NetworkMessage
 import rs.emulator.network.packet.decoder.GamePacketDecoder
@@ -37,8 +35,6 @@ class PacketSession(val channel: Channel,
     val outgoingPackets = PublishProcessor.create<IPacketMessage>()
 
     val disposables = mutableListOf<Disposable>()
-
-    val PLAYER_KEY: AttributeKey<Player> = AttributeKey.valueOf("network_player")
 
     init {
 

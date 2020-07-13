@@ -34,4 +34,11 @@ object WearableItemFactory : AbstractMaterialFactory<Wearable> {
         }
         return item
     }
+
+    override fun createFromMetaData(id: Int, amount: Int): Wearable {
+        return create {
+            this.id = id
+            this.amount = amount
+        }
+    }
 }

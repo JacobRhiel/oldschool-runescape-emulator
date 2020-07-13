@@ -3,9 +3,9 @@ package rs.emulator.network.packet.repository
 import com.google.common.util.concurrent.AbstractIdleService
 import org.koin.core.KoinComponent
 import org.koin.core.get
-import rs.emulator.packet.api.PacketType
 import rs.emulator.network.packet.atest.*
 import rs.emulator.network.packet.listener.*
+import rs.emulator.packet.api.PacketType
 
 /**
  *
@@ -79,7 +79,12 @@ class PacketService : AbstractIdleService(), KoinComponent
 
         packetRepository.putEncoder(14, IfOpenSubEncoder(), clazz = IfOpenSubMessage::class)
 
-        packetRepository.putEncoder(42, RunClientScriptEncoder(), packetType = PacketType.VARIABLE_SHORT, clazz = RunClientScriptMessage::class)
+        packetRepository.putEncoder(
+            42,
+            RunClientScriptEncoder(),
+            packetType = PacketType.VARIABLE_SHORT,
+            clazz = RunClientScriptMessage::class
+        )
 
         packetRepository.putEncoder(66, VarpLargeEncoder(), clazz = VarpLargeMessage::class)
 
@@ -89,13 +94,35 @@ class PacketService : AbstractIdleService(), KoinComponent
 
         packetRepository.putEncoder(62, IfMoveSubEncoder(), clazz = IfMoveSubMessage::class)
 
-        packetRepository.putEncoder(84, GameMessageEncoder(), packetType = PacketType.VARIABLE_BYTE, clazz = GameMessageMessage::class)
+        packetRepository.putEncoder(
+            84,
+            GameMessageEncoder(),
+            packetType = PacketType.VARIABLE_BYTE,
+            clazz = GameMessageMessage::class
+        )
 
-        packetRepository.putEncoder(34, UpdateInventoryFullEncoder(), packetType = PacketType.VARIABLE_SHORT, clazz = UpdateInventoryFullMessage::class)
+        packetRepository.putEncoder(
+            34,
+            UpdateInventoryFullEncoder(),
+            packetType = PacketType.VARIABLE_SHORT,
+            clazz = UpdateInventoryFullMessage::class
+        )
 
-        packetRepository.putEncoder(1, UpdateInventoryPartialEncoder(), packetType = PacketType.VARIABLE_SHORT, clazz = UpdateInventoryPartialMessage::class)
+        packetRepository.putEncoder(
+            1,
+            UpdateInventoryPartialEncoder(),
+            packetType = PacketType.VARIABLE_SHORT,
+            clazz = UpdateInventoryPartialMessage::class
+        )
 
-        packetRepository.putEncoder(59, UpdatePlayerSyncEncoder(), packetType = PacketType.VARIABLE_SHORT, clazz = UpdatePlayerSyncMessage::class)
+        packetRepository.putEncoder(
+            59,
+            UpdatePlayerSyncEncoder(),
+            packetType = PacketType.VARIABLE_SHORT,
+            clazz = UpdatePlayerSyncMessage::class
+        )
+
+        packetRepository.putEncoder(12, UpdateSkillEncoder(), clazz = UpdateSkillMessage::class)
 
     }
 
