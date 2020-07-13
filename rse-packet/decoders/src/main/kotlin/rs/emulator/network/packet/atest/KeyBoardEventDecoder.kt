@@ -1,11 +1,8 @@
 package rs.emulator.network.packet.atest
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList
-import rs.emulator.buffer.manipulation.DataOrder
 import rs.emulator.buffer.manipulation.DataTransformation
 import rs.emulator.buffer.manipulation.DataType
-import rs.emulator.entity.actor.player.IPlayer
-import rs.emulator.entity.player.Player
 import rs.emulator.network.packet.GamePacketReader
 import rs.emulator.network.packet.decoder.PacketDecoder
 import javax.swing.KeyStroke
@@ -17,13 +14,11 @@ import javax.swing.KeyStroke
 class KeyBoardEventDecoder : PacketDecoder<KeyBoardEventMessage>()
 {
 
-    override fun decode(opcode: Int, player: Player, reader: GamePacketReader): KeyBoardEventMessage
-    {
+    override fun decode(opcode: Int, reader: GamePacketReader): KeyBoardEventMessage {
 
         val events = ObjectArrayList<KeyBoardEventMessage.KeyEvent>()
 
-        while(reader.readableBytes > 0)
-        {
+        while (reader.readableBytes > 0) {
 
             val key = reader.getSigned(DataType.BYTE, DataTransformation.ADD).toChar()
 

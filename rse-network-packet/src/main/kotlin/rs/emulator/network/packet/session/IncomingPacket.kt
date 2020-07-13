@@ -8,4 +8,4 @@ import rs.emulator.packet.api.IPacketMessage
  * @author javatar
  */
 
-data class PacketEvent(val metaData : DecodingGamePacketMessage, val msg : IPacketMessage)
+data class IncomingPacket(val metaData: DecodingGamePacketMessage, val msg: IPacketMessage)

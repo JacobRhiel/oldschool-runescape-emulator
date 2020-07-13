@@ -1,8 +1,6 @@
 package rs.emulator.network.packet.atest
 
 import rs.emulator.buffer.manipulation.DataType
-import rs.emulator.entity.actor.player.IPlayer
-import rs.emulator.entity.player.Player
 import rs.emulator.network.packet.GamePacketReader
 import rs.emulator.network.packet.decoder.PacketDecoder
 
@@ -13,8 +11,7 @@ import rs.emulator.network.packet.decoder.PacketDecoder
 class MouseClickDecoder : PacketDecoder<MouseClickMessage>()
 {
 
-    override fun decode(opcode: Int, player: Player, reader: GamePacketReader): MouseClickMessage
-    {
+    override fun decode(opcode: Int, reader: GamePacketReader): MouseClickMessage {
 
         val hash = reader.getSigned(DataType.SHORT).toInt()
 

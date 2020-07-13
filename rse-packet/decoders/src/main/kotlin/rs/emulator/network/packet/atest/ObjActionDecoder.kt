@@ -3,7 +3,6 @@ package rs.emulator.network.packet.atest
 import rs.emulator.buffer.manipulation.DataOrder
 import rs.emulator.buffer.manipulation.DataTransformation
 import rs.emulator.buffer.manipulation.DataType
-import rs.emulator.entity.player.Player
 import rs.emulator.network.packet.GamePacketReader
 import rs.emulator.network.packet.decoder.PacketDecoder
 
@@ -14,8 +13,7 @@ import rs.emulator.network.packet.decoder.PacketDecoder
 class ObjActionDecoder : PacketDecoder<ObjActionMessage>()
 {
 
-    override fun decode(opcode: Int, player: Player, reader: GamePacketReader): ObjActionMessage
-    {
+    override fun decode(opcode: Int, reader: GamePacketReader): ObjActionMessage {
 
         var item = 0
 
@@ -23,8 +21,7 @@ class ObjActionDecoder : PacketDecoder<ObjActionMessage>()
 
         var componentHash = 0
 
-        when(opcode)
-        {
+        when (opcode) {
 
             7 ->
             {

@@ -1,7 +1,5 @@
 package rs.emulator.network.packet.atest
 
-import rs.emulator.buffer.manipulation.DataType
-import rs.emulator.entity.player.Player
 import rs.emulator.network.packet.GamePacketReader
 import rs.emulator.network.packet.decoder.PacketDecoder
 
@@ -12,8 +10,7 @@ import rs.emulator.network.packet.decoder.PacketDecoder
 class MouseIdleTickDecoder : PacketDecoder<MouseIdleTickMessage>()
 {
 
-    override fun decode(opcode: Int, player: Player, reader: GamePacketReader): MouseIdleTickMessage
-    {
+    override fun decode(opcode: Int, reader: GamePacketReader): MouseIdleTickMessage {
 
         return MouseIdleTickMessage()
 

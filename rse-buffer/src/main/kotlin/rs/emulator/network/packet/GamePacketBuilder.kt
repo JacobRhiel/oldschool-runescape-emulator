@@ -232,7 +232,7 @@ class GamePacketBuilder : BufferedWriter
     fun switchToByteAccess()
     {
 
-        Preconditions.checkState(mode !== AccessMode.BYTE_ACCESS, "Already in bit access mode.")
+        Preconditions.checkState(mode !== AccessMode.BYTE_ACCESS, "Already in byte access mode.")
 
         mode = AccessMode.BYTE_ACCESS
 

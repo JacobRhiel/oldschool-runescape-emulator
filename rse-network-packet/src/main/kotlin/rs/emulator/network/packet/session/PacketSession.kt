@@ -3,6 +3,7 @@ package rs.emulator.network.packet.session
 import io.netty.channel.Channel
 import io.netty.channel.ChannelHandlerContext
 import io.netty.util.AttributeKey
+import io.reactivex.disposables.Disposable
 import io.reactivex.processors.PublishProcessor
 import org.koin.core.KoinComponent
 import org.koin.core.get
@@ -32,13 +33,14 @@ class PacketSession(val channel: Channel,
 
     val encodeRandom = IsaacRandom(IntArray(isaacKeys.size) { isaacKeys[it] + 50 })
 
-    val incomingPackets = PublishProcessor.create<PacketEvent>()
+    val incomingPackets = PublishProcessor.create<IncomingPacket>()
     val outgoingPackets = PublishProcessor.create<IPacketMessage>()
+
+    val disposables = mutableListOf<Disposable>()
 
     val PLAYER_KEY: AttributeKey<Player> = AttributeKey.valueOf("network_player")
 
-    init
-    {
+    init {
 
         channel.pipeline().addBefore(
             DefaultChannelHandler::class.simpleName,
@@ -68,9 +70,9 @@ class PacketSession(val channel: Channel,
 
             val metaData = packetRepository.fetchDecoder(msg.opcode)
 
-            val gamePacket = metaData.decode(msg, ctx.attr(PLAYER_KEY).get())
+            val gamePacket = metaData.decode(msg)
 
-            incomingPackets.offer(PacketEvent(metaData, gamePacket))
+            incomingPackets.offer(IncomingPacket(metaData, gamePacket))
 
             println("msg: $msg")
 
@@ -83,7 +85,7 @@ class PacketSession(val channel: Channel,
     override fun onDestroy(ctx: ChannelHandlerContext)
     {
 
-
+        disposables.forEach(Disposable::dispose)
 
     }
 

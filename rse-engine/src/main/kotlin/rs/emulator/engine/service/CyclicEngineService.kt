@@ -10,8 +10,8 @@ import org.koin.core.inject
 import rs.emulator.engine.service.event.bus.CoreEventBus
 import rs.emulator.engine.service.schedule.CyclicDelaySchedule
 import rs.emulator.plugins.RSPluginManager
-import rs.emulator.service.event.bus.EventBusFactory
 import rs.emulator.service.event.IEvent
+import rs.emulator.service.event.bus.EventBusFactory
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -33,7 +33,7 @@ class CyclicEngineService : KoinComponent, AbstractScheduledService() {
                 Flowable.concat(RSPluginManager.getExtensions(EventBusFactory::class.java)
                     .map { it.createEventBus().observeEvents() })
             )
-        ).map { CompletableFuture.supplyAsync(it::execute) }.concatMap { Flowable.fromFuture(it) }.subscribe()
+        ).map { CompletableFuture.supplyAsync(it::execute) }.concatMap { Flowable.fromFuture(it) }.subscribe().dispose()
     }
 
 

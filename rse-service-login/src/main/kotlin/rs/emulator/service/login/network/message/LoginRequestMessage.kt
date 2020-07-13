@@ -2,17 +2,12 @@ package rs.emulator.service.login.network.message
 
 import io.netty.channel.Channel
 import io.netty.channel.ChannelHandlerContext
-import io.reactivex.rxkotlin.ofType
 import org.koin.core.KoinComponent
 import org.koin.core.get
 import rs.emulator.entity.player.Player
-import rs.emulator.entity.update.task.UpdateSynchronizationTask
 import rs.emulator.network.SESSION_KEY
 import rs.emulator.network.message.NetworkMessage
-import rs.emulator.network.packet.atest.UpdatePlayerSyncMessage
-import rs.emulator.network.packet.message.GamePacketMessage
 import rs.emulator.network.packet.session.PacketSession
-import rs.emulator.packet.api.GamePacket
 import rs.emulator.service.login.LoginCredentials
 import rs.emulator.service.login.LoginResult
 import rs.emulator.service.login.worker.LoginWorker
@@ -68,24 +63,29 @@ data class LoginRequestMessage(
 
         player.viewport.globalPlayers[1] = player
 
-        session.outgoingPackets
+        val outgoingDisposable = session.outgoingPackets
+            .onBackpressureBuffer(10)
+            .onBackpressureDrop {
+                throw Error("Outgoing packet dropped : ${it.opcode}")
+            }
+            .subscribe { ctx.channel().writeAndFlush(it) }
+        val incomingDisposable = session.incomingPackets
+            .onBackpressureBuffer(10)
+            .onBackpressureDrop { throw Error("Incoming packet ${it.metaData.opcode} dropped.") }
             .subscribe {
-                if(it is UpdatePlayerSyncMessage<*>) {
-                    ctx.channel().writeAndFlush(it)
-                } else {
-                    ctx.channel().write(it)
-                }
+                val (metaData, gamePacket) = it
+                metaData.handle(ctx.channel(), player, gamePacket)
             }
 
-
-        session.incomingPackets.subscribe {
-            val (metaData, gamePacket) = it
-            metaData.handle(ctx.channel(), player, gamePacket)
-        }
+        session.disposables.addAll(listOf(outgoingDisposable, incomingDisposable))
 
         WorldRepository.players.add(player)
 
         player.onLogin()
+
+        if (ctx.channel().isActive) {
+            ctx.channel().flush()
+        }
 
     }
 

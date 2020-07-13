@@ -15,7 +15,6 @@ import rs.emulator.cache.store.reference.ReferenceTable
 import rs.emulator.encryption.rsa.RSAService
 import rs.emulator.engine.service.CyclicEngineService
 import rs.emulator.engine.service.schedule.CyclicDelaySchedule
-import rs.emulator.world.task.UpdatePlayerSynchronizationTask
 import rs.emulator.fileserver.FileStoreService
 import rs.emulator.network.packet.repository.PacketRepository
 import rs.emulator.network.packet.repository.PacketService
@@ -26,6 +25,7 @@ import rs.emulator.plugins.RSPluginManager
 import rs.emulator.region.XteaKeyService
 import rs.emulator.service.login.worker.LoginWorkerSchedule
 import rs.emulator.service.login.worker.LoginWorkerService
+import rs.emulator.world.task.UpdatePlayerSynchronizationEvent
 import java.nio.file.Paths
 
 /**
@@ -113,7 +113,7 @@ class Test : KoinComponent {
                         startPlugins()
                     }
 
-                    test.engine.schedule(UpdatePlayerSynchronizationTask, true)
+                    test.engine.schedule(UpdatePlayerSynchronizationEvent, true)
 
                     test.serviceManager
                         .startAsync()

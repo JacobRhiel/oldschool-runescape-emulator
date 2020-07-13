@@ -164,11 +164,6 @@ class Player(val channel: Channel, val outgoingPackets : PublishProcessor<IPacke
                 }
             }
         }
-
-
-        if (channel.isActive)
-            channel.flush()
-
     }
 
     private val itemContainerManager = ItemContainerManager().apply {

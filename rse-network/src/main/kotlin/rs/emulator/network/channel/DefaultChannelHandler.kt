@@ -1,6 +1,8 @@
 package rs.emulator.network.channel
 
-import io.netty.channel.*
+import io.netty.channel.ChannelHandler
+import io.netty.channel.ChannelHandlerAdapter
+import io.netty.channel.ChannelHandlerContext
 import rs.emulator.network.SESSION_KEY
 import rs.emulator.network.message.NetworkMessage
 
@@ -8,19 +10,17 @@ import rs.emulator.network.message.NetworkMessage
  *
  * @author Chk
  */
-@ChannelHandler.Sharable class DefaultChannelHandler
-    : ChannelHandlerAdapter()
-{
+@ChannelHandler.Sharable
+class DefaultChannelHandler
+    : ChannelHandlerAdapter() {
 
-    override fun channelRead(ctx: ChannelHandlerContext, msg: Any)
-    {
+    override fun channelRead(ctx: ChannelHandlerContext, msg: Any) {
 
         val sessionAttached = ctx.channel().hasAttr(SESSION_KEY)
 
-        if(!sessionAttached)
+        if (!sessionAttached)
             println("No session attached to: $msg.")
-        else if(msg is NetworkMessage)
-        {
+        else if (msg is NetworkMessage) {
 
             val session = ctx.channel().attr(SESSION_KEY).get()
 
@@ -30,30 +30,38 @@ import rs.emulator.network.message.NetworkMessage
 
     }
 
-    override fun channelActive(ctx: ChannelHandlerContext?)
-    {
+    override fun channelActive(ctx: ChannelHandlerContext?) {
         println("Channel active")
     }
 
-    override fun channelInactive(ctx: ChannelHandlerContext?)
-    {
+    override fun channelInactive(ctx: ChannelHandlerContext?) {
         println("Channel inactive")
     }
 
-    override fun channelRegistered(ctx: ChannelHandlerContext?)
-    {
+    override fun channelRegistered(ctx: ChannelHandlerContext?) {
         println("channel registered")
     }
 
-    override fun channelUnregistered(ctx: ChannelHandlerContext?)
-    {
+    override fun channelUnregistered(ctx: ChannelHandlerContext) {
         println("channel unregistered")
+
+        val sessionAttached = ctx.channel().hasAttr(SESSION_KEY)
+
+        if (!sessionAttached) {
+            println("No session attached to: $ctx.")
+        } else {
+
+            val session = ctx.channel().attr(SESSION_KEY).get()
+
+            session.onDestroy(ctx)
+
+        }
+
     }
 
-    override fun exceptionCaught(ctx: ChannelHandlerContext, cause: Throwable)
-    {
+    override fun exceptionCaught(ctx: ChannelHandlerContext, cause: Throwable) {
 
-        if(cause.localizedMessage == "An existing connection was forcibly closed by the remote host")
+        if (cause.localizedMessage == "An existing connection was forcibly closed by the remote host")
             println("Network forcibly closed by user")
         else ctx.fireExceptionCaught(cause)
 

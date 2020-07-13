@@ -1,15 +1,13 @@
 package rs.emulator.packet.api
 
-import rs.emulator.entity.actor.player.IPlayer
 import rs.emulator.network.packet.GamePacketReader
 
 /**
  *
  * @author Chk
  */
-interface IPacketDecoder<T : IPacketMessage, P : IPlayer> : IGamePacketCodec
-{
+interface IPacketDecoder<T : IPacketMessage> : IGamePacketCodec {
 
-    fun decode(opcode: Int, player: P, reader: GamePacketReader): T
+    fun decode(opcode: Int, reader: GamePacketReader): T
 
 }

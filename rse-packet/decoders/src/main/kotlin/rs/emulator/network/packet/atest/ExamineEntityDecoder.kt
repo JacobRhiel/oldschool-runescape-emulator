@@ -2,7 +2,6 @@ package rs.emulator.network.packet.atest
 
 import rs.emulator.buffer.manipulation.DataTransformation
 import rs.emulator.buffer.manipulation.DataType
-import rs.emulator.entity.player.Player
 import rs.emulator.network.packet.GamePacketReader
 import rs.emulator.network.packet.decoder.PacketDecoder
 
@@ -13,11 +12,9 @@ import rs.emulator.network.packet.decoder.PacketDecoder
 class ExamineEntityDecoder : PacketDecoder<ExamineEntityMessage>()
 {
 
-    override fun decode(opcode: Int, player: Player, reader: GamePacketReader): ExamineEntityMessage
-    {
+    override fun decode(opcode: Int, reader: GamePacketReader): ExamineEntityMessage {
 
-        val type = when(opcode)
-        {
+        val type = when (opcode) {
 
             8 -> 0
 
