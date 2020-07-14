@@ -12,6 +12,7 @@ import rs.emulator.entity.player.update.flag.PlayerUpdateFlag
 import rs.emulator.entity.player.update.sync.SyncInformation
 import rs.emulator.entity.player.viewport.Viewport
 import rs.emulator.network.packet.atest.*
+import rs.emulator.network.packet.atest.outgoing.UpdateSkillMessage
 import rs.emulator.packet.api.IPacketMessage
 import rs.emulator.plugins.RSPluginManager
 import rs.emulator.plugins.extensions.factories.ContainerRegistrationException
@@ -157,7 +158,13 @@ class Player(val channel: Channel, val outgoingPackets : PublishProcessor<IPacke
 
         outgoingPackets.offer(RunClientScriptMessage(2015, 0))
 
-        outgoingPackets.offer(UpdateSkillMessage(3, 25, 500000))
+        outgoingPackets.offer(
+            UpdateSkillMessage(
+                3,
+                25,
+                500000
+            )
+        )
 
         containerManager().register(93, Inventory()) {
             syncBlock {
