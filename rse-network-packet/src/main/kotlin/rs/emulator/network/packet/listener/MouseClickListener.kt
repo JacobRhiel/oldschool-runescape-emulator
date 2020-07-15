@@ -2,7 +2,7 @@ package rs.emulator.network.packet.listener
 
 import io.netty.channel.Channel
 import rs.emulator.entity.player.Player
-import rs.emulator.network.packet.atest.MouseClickMessage
+import rs.emulator.network.packet.message.incoming.MouseClickMessage
 import rs.emulator.plugins.RSPluginManager
 import rs.emulator.plugins.extensions.IntractableItemExtensionPoint
 

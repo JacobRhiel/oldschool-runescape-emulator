@@ -6,10 +6,6 @@ import io.netty.handler.codec.MessageToByteEncoder
 import org.koin.core.KoinComponent
 import org.koin.core.get
 import rs.emulator.encryption.isaac.IsaacRandom
-import rs.emulator.entity.player.Player
-import rs.emulator.entity.update.task.UpdateSynchronizationTask
-import rs.emulator.network.packet.GamePacketBuilder
-import rs.emulator.network.packet.atest.UpdatePlayerSyncMessage
 import rs.emulator.network.packet.repository.PacketRepository
 import rs.emulator.packet.api.GamePacket
 import rs.emulator.packet.api.PacketType

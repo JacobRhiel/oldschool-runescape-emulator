@@ -8,23 +8,23 @@ import rs.emulator.entity.material.items.Item
 import rs.emulator.entity.material.items.StandardItem
 import rs.emulator.entity.material.provider.ItemProvider
 import rs.emulator.plugin.commands.impl.SpawnItem
-import rs.emulator.plugins.extensions.CommandExtensionPoint
+import rs.emulator.plugins.extensions.factories.CommandFactory
 
 /**
  *
  * @author javatar
  */
 @Extension(plugins = ["COMMAND_PLUGIN"])
-class CommandExtension : CommandExtensionPoint {
+class CommandExtension : CommandFactory {
 
     override fun execute(player: IPlayer, command: String) {
         val name = command.split(" ")[0]
         val args = command.substringAfter(name).trim().split(" ")
 
-        when(name) {
+        when (name) {
             "item" -> {
                 val item = ArgParser(args.toTypedArray()).parseInto(::SpawnItem)
-                val spawned : Item = ItemProvider.provide(item.id, item.amt)
+                val spawned: Item = ItemProvider.provide(item.id, item.amt)
                 player.inventory().add(spawned)
             }
             "coins" -> {

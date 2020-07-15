@@ -3,9 +3,11 @@ package rs.emulator.network.packet.repository
 import com.google.common.util.concurrent.AbstractIdleService
 import org.koin.core.KoinComponent
 import org.koin.core.get
-import rs.emulator.network.packet.atest.*
-import rs.emulator.network.packet.atest.outgoing.*
+import rs.emulator.network.packet.decoder.impl.*
+import rs.emulator.network.packet.encoder.impl.*
 import rs.emulator.network.packet.listener.*
+import rs.emulator.network.packet.message.incoming.*
+import rs.emulator.network.packet.message.outgoing.*
 import rs.emulator.packet.api.PacketType
 
 /**
@@ -18,6 +20,13 @@ class PacketService : AbstractIdleService(), KoinComponent {
 
     private fun construct() {
 
+        addDecoders()
+
+        addEncoders()
+
+    }
+
+    private fun addDecoders() {
         packetRepository.putDecoder(
             89,
             KeyBoardEventDecoder(),
@@ -37,12 +46,14 @@ class PacketService : AbstractIdleService(), KoinComponent {
         )
 
         packetRepository.putDecoder(
-            46, WindowStatusDecoder(), length = 5, ignore = false, clazz = WindowStatusMessage::class,
+            46,
+            WindowStatusDecoder(), length = 5, ignore = false, clazz = WindowStatusMessage::class,
             listener = WindowStatusHandler()
         )
 
         packetRepository.putDecoder(
-            44, KeepAliveDecoder(), length = 0, ignore = true, clazz = KeepAliveMessage::class,
+            44,
+            KeepAliveDecoder(), length = 0, ignore = true, clazz = KeepAliveMessage::class,
             listener = KeepAliveHandler()
         )
 
@@ -56,7 +67,8 @@ class PacketService : AbstractIdleService(), KoinComponent {
         )
 
         packetRepository.putDecoder(
-            14, MapBuildCompleteDecoder(), length = 0, ignore = false, clazz = MapBuildCompleteMessage::class,
+            14,
+            MapBuildCompleteDecoder(), length = 0, ignore = false, clazz = MapBuildCompleteMessage::class,
             listener = MapBuildCompleteHandler()
         )
 
@@ -81,7 +93,8 @@ class PacketService : AbstractIdleService(), KoinComponent {
         )
 
         packetRepository.putDecoder(
-            35, AppletFocusEventDecoder(), length = 1, ignore = true, clazz = AppletFocusEventMessage::class,
+            35,
+            AppletFocusEventDecoder(), length = 1, ignore = true, clazz = AppletFocusEventMessage::class,
             listener = AppletFocusEventListener()
         )
 
@@ -104,15 +117,27 @@ class PacketService : AbstractIdleService(), KoinComponent {
         )
 
         packetRepository.putDecoder(
-            3, MouseClickDecoder(), length = 6, ignore = false, clazz = MouseClickMessage::class,
+            3,
+            MouseClickDecoder(), length = 6, ignore = false, clazz = MouseClickMessage::class,
             listener = MouseClickListener()
         )
 
         packetRepository.putDecoder(
-            85, MouseIdleTickDecoder(), length = 0, ignore = true, clazz = MouseIdleTickMessage::class,
+            85,
+            MouseIdleTickDecoder(), length = 0, ignore = true, clazz = MouseIdleTickMessage::class,
             listener = MouseIdleTickListener()
         )
 
+        packetRepository.putDecoder(
+            32,
+            ItemOnGroundItemDecoder(),
+            length = 15,
+            clazz = ItemOnGroundItemMessage::class,
+            listener = ItemOnGroundItemListener()
+        )
+    }
+
+    private fun addEncoders() {
         packetRepository.putEncoder(
             21,
             RebuildRegionEncoder(),
@@ -120,7 +145,10 @@ class PacketService : AbstractIdleService(), KoinComponent {
             clazz = RebuildRegionMessage::class
         )
 
-        packetRepository.putEncoder(6, IfOpenOverlayEncoder(), clazz = IfOpenOverlayMessage::class)
+        packetRepository.putEncoder(
+            6,
+            IfOpenOverlayEncoder(), clazz = IfOpenOverlayMessage::class
+        )
 
         packetRepository.putEncoder(
             76,
@@ -129,7 +157,10 @@ class PacketService : AbstractIdleService(), KoinComponent {
             clazz = UpdateDisplayWidgetsMessage::class
         )
 
-        packetRepository.putEncoder(14, IfOpenSubEncoder(), clazz = IfOpenSubMessage::class)
+        packetRepository.putEncoder(
+            14,
+            IfOpenSubEncoder(), clazz = IfOpenSubMessage::class
+        )
 
         packetRepository.putEncoder(
             42,
@@ -396,7 +427,6 @@ class PacketService : AbstractIdleService(), KoinComponent {
             GrandExchangeOfferEncoder(),
             clazz = GrandExchangeOfferMessage::class
         )
-
     }
 
     override fun startUp() {

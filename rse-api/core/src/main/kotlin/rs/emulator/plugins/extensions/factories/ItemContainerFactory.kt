@@ -16,7 +16,6 @@ interface ItemContainerFactory<ITEM : Item> : ExtensionPoint {
 
     fun registerItemContainer(manager : IPlayer) : ItemContainer<ITEM>
 
-
 }
 
-class ContainerRegistrationException(key : Int) : Exception("Container key already registered")
+class ContainerRegistrationException(key: Int) : Exception("Container key [$key] already registered")

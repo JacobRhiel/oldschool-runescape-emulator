@@ -1,0 +1,34 @@
+package rs.emulator.network.packet.decoder.impl
+
+import rs.emulator.buffer.manipulation.DataType
+import rs.emulator.network.packet.GamePacketReader
+import rs.emulator.network.packet.decoder.PacketDecoder
+import rs.emulator.network.packet.message.incoming.MouseClickMessage
+
+/**
+ *
+ * @author Chk
+ */
+class MouseClickDecoder : PacketDecoder<MouseClickMessage>()
+{
+
+    override fun decode(opcode: Int, reader: GamePacketReader): MouseClickMessage {
+
+        val hash = reader.getSigned(DataType.SHORT).toInt()
+
+        val timeStamp = (hash shr 1).toLong() //todo: + last button == 2 ? 1 : 0
+
+        val lastPressX = reader.getSigned(DataType.SHORT).toInt()
+
+        val lastPressY = reader.getSigned(DataType.SHORT).toInt()
+
+        return MouseClickMessage(
+            timeStamp,
+            lastPressX,
+            lastPressY,
+            0
+        )
+
+    }
+
+}

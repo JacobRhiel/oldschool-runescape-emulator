@@ -5,12 +5,12 @@ package rs.emulator.entity.actor.player.messages
  * @author javatar
  */
 
-interface IWidgetMessages {
+interface IWidgetMessages : IMessages {
 
-    fun sendClientScript(scriptId : Int, vararg params : Any)
-    fun sendOpenOverlay(id : Int)
-    fun sendOpenSub(parentId : Int, childId : Int, component : Int, interType : Int)
+    fun sendClientScript(scriptId: Int, vararg params: Any)
+    fun sendOpenOverlay(id: Int)
+    fun sendOpenSub(parentId: Int, childId: Int, component: Int, interType: Int)
     fun sendDisplayWidgetUpdate()
-    fun sendChatMessage(message : String, messageType : Int) //TODO - refactor message type to enum
+    fun sendChatMessage(message: String, messageType: Int) //TODO - refactor message type to enum
 
 }

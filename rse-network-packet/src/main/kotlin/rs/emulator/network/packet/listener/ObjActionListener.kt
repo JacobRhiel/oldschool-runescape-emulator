@@ -6,7 +6,7 @@ import rs.emulator.definitions.factories.ItemMetaDefinitionFactory
 import rs.emulator.entity.actor.player.storage.equipment
 import rs.emulator.entity.material.factories.WearableItemFactory
 import rs.emulator.entity.player.Player
-import rs.emulator.network.packet.atest.ObjActionMessage
+import rs.emulator.network.packet.message.incoming.ObjActionMessage
 import rs.emulator.plugins.RSPluginManager
 import rs.emulator.plugins.extensions.ItemActionExtensionPoint
 

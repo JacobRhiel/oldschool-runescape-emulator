@@ -4,7 +4,7 @@ import com.xenomachina.argparser.ArgParser
 import org.pf4j.Extension
 import rs.emulator.entity.actor.player.IPlayer
 import rs.emulator.plugins.RSPluginManager
-import rs.emulator.plugins.extensions.CommandExtensionPoint
+import rs.emulator.plugins.extensions.factories.CommandFactory
 
 /**
  * Its probably not a good idea to disable or stop this plugin, otherwise this will require
@@ -13,11 +13,11 @@ import rs.emulator.plugins.extensions.CommandExtensionPoint
  */
 
 @Extension(plugins = ["SYSTEM_PLUGIN"])
-class SystemCommands : CommandExtensionPoint {
+class SystemCommands : CommandFactory {
     override fun execute(player: IPlayer, command: String) {
         val name = command.split(" ")[0]
         val cmd = command.substringAfter(name).trim()
-        when(name) {
+        when (name) {
             "pstop" -> {
                 ArgParser(cmd.split(" ").toTypedArray()).parseInto(::PluginInfo).run {
                     RSPluginManager.stopPlugin(this.pluginId)
