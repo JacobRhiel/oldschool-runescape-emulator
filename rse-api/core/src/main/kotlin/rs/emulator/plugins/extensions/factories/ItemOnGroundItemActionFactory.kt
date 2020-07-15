@@ -10,6 +10,14 @@ import rs.emulator.plugins.extensions.factories.actions.ItemOnGroundItemAction
 
 interface ItemOnGroundItemActionFactory : ExtensionPoint {
 
-    fun registerItemOnGroundItemAction(): ItemOnGroundItemAction
+    fun registerItemOnGroundItemAction(
+        itemId: Int,
+        slot: Int,
+        groundItemId: Int,
+        widgetItemId: Int,
+        x: Int,
+        y: Int,
+        controlPressed: Boolean
+    ): ItemOnGroundItemAction
 
 }

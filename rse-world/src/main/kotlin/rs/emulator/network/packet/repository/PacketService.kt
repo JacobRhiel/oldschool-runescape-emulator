@@ -116,6 +116,33 @@ class PacketService : AbstractIdleService(), KoinComponent {
             listener = IfButtonListener()
         )
 
+        packetRepository.putDecoders(
+            opcodes = *intArrayOf(1, 42, 57, 39, 43),
+            decoder = ObjGroundActionDecoder(),
+            length = 7,
+            ignore = false,
+            clazz = ObjGroundActionMessage::class,
+            listener = ObjGroundActionListener()
+        )
+
+        packetRepository.putDecoders(
+            opcodes = *intArrayOf(81, 87, 4, 21, 94, 57, 51),
+            decoder = PlayerActionDecoder(),
+            length = 3,
+            ignore = false,
+            clazz = PlayerActionMessage::class,
+            listener = PlayerActionListener()
+        )
+
+        packetRepository.putDecoders(
+            opcodes = *intArrayOf(37, 97, 19, 10, 33),
+            decoder = NpcActionDecoder(),
+            length = 3,
+            ignore = false,
+            clazz = NpcActionMessage::class,
+            listener = NpcActionListener()
+        )
+
         packetRepository.putDecoder(
             3,
             MouseClickDecoder(), length = 6, ignore = false, clazz = MouseClickMessage::class,
@@ -130,11 +157,60 @@ class PacketService : AbstractIdleService(), KoinComponent {
 
         packetRepository.putDecoder(
             32,
-            ItemOnGroundItemDecoder(),
+            ObjOnGroundObjDecoder(),
             length = 15,
-            clazz = ItemOnGroundItemMessage::class,
+            clazz = ObjOnGroundObjMessage::class,
             listener = ItemOnGroundItemListener()
         )
+
+        packetRepository.putDecoder(
+            2,
+            ZeroSizeDecoder(),
+            length = 0,
+            clazz = IdleLogoutMessage::class,
+            listener = IdleLogoutListener()
+        )
+
+        packetRepository.putDecoder(
+            15,
+            IfSwapItemDecoder(),
+            length = 9,
+            clazz = IfSwapItemMessage::class,
+            listener = IfSwapItemListener()
+        )
+
+        packetRepository.putDecoder(
+            9,
+            ObjOnPlayerDecoder(),
+            length = 11,
+            clazz = ObjOnPlayerMessage::class,
+            listener = ItemOnPlayerListener()
+        )
+
+        packetRepository.putDecoder(
+            17,
+            CameraRotationDecoder(),
+            length = 4,
+            clazz = CameraRotationMessage::class,
+            listener = CameraRotationListener()
+        )
+
+        packetRepository.putDecoder(
+            18,
+            SpellOnLocDecoder(),
+            length = 13,
+            clazz = SpellOnLocMessage::class,
+            listener = SpellOnLocListener()
+        )
+
+        packetRepository.putDecoder(
+            54,
+            SpellOnObjDecoder(),
+            length = 14,
+            clazz = SpellOnObjMessage::class,
+            listener = SpellOnObjListener()
+        )
+
     }
 
     private fun addEncoders() {

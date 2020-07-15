@@ -7,12 +7,12 @@ import rs.emulator.network.packet.message.GamePacketMessage
  * @author javatar
  */
 
-data class ItemOnGroundItemMessage(
+data class ObjOnGroundObjMessage(
     val item: Int,
     val selectedItemSlot: Int,
     val groundItemId: Int,
     val widgetItemId: Int,
     val x: Int,
     val y: Int,
-    val crlRun: Boolean
+    val controlPressed: Boolean
 ) : GamePacketMessage(32)

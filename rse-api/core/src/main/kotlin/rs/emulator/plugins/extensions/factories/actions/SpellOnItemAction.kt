@@ -1,18 +1,19 @@
 package rs.emulator.plugins.extensions.factories.actions
 
 import rs.emulator.entity.actor.player.IPlayer
+import rs.emulator.entity.temp.ISpell
 
 /**
  *
  * @author javatar
  */
 
-interface ItemOnGroundItemAction {
+interface SpellOnItemAction {
 
-    fun handleItemOnGroundItem(
+    fun handleSpellOnItem(
         player: IPlayer,
-        item: Int,
-        groundItemId: Int
+        spell: ISpell,
+        itemId: Int
     )
 
 }

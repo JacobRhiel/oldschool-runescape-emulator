@@ -5,15 +5,15 @@ import rs.emulator.buffer.manipulation.DataTransformation
 import rs.emulator.buffer.manipulation.DataType
 import rs.emulator.network.packet.GamePacketReader
 import rs.emulator.network.packet.decoder.PacketDecoder
-import rs.emulator.network.packet.message.incoming.ItemOnGroundItemMessage
+import rs.emulator.network.packet.message.incoming.ObjOnGroundObjMessage
 
 /**
  *
  * @author javatar
  */
 
-class ItemOnGroundItemDecoder : PacketDecoder<ItemOnGroundItemMessage>() {
-    override fun decode(opcode: Int, reader: GamePacketReader): ItemOnGroundItemMessage {
+class ObjOnGroundObjDecoder : PacketDecoder<ObjOnGroundObjMessage>() {
+    override fun decode(opcode: Int, reader: GamePacketReader): ObjOnGroundObjMessage {
         val selectedItemId = reader.getUnsigned(
             DataType.SHORT,
             DataOrder.LITTLE,
@@ -37,7 +37,7 @@ class ItemOnGroundItemDecoder : PacketDecoder<ItemOnGroundItemMessage>() {
             DataOrder.LITTLE
         )
         val selectedItemSlot = reader.getUnsigned(DataType.SHORT)
-        return ItemOnGroundItemMessage(
+        return ObjOnGroundObjMessage(
             item.toInt(),
             selectedItemSlot.toInt(),
             selectedItemId.toInt(),
