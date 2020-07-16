@@ -7,6 +7,7 @@ import rs.emulator.entity.actor.player.IPlayer
 import rs.emulator.entity.actor.player.messages.AbstractMessageHandler
 import rs.emulator.entity.actor.player.messages.IMessages
 import rs.emulator.entity.actor.player.storage.IItemContainerManager
+import rs.emulator.entity.actor.player.storage.container.ItemContainer
 import rs.emulator.entity.player.storage.ItemContainerManager
 import rs.emulator.entity.player.storage.containers.Inventory
 import rs.emulator.entity.player.update.flag.PlayerUpdateFlag
@@ -18,7 +19,7 @@ import rs.emulator.plugins.RSPluginManager
 import rs.emulator.plugins.extensions.factories.ContainerRegistrationException
 import rs.emulator.plugins.extensions.factories.ItemContainerFactory
 
-class Player(val channel: Channel, val outgoingPackets: PublishProcessor<IPacketMessage>) : Actor(), IPlayer {
+class Player(val channel: Channel, val outgoingPackets : PublishProcessor<IPacketMessage>) : Actor(), IPlayer {
 
     val viewport = Viewport(this)
 
@@ -28,47 +29,14 @@ class Player(val channel: Channel, val outgoingPackets: PublishProcessor<IPacket
 
     fun onLogin() {
 
-        outgoingPackets.offer(
-            RebuildRegionMessage(
-                true,
-                1,
-                x = 3222,
-                z = 3218,
-                tileHash = -1
-            )
-        )
+        outgoingPackets.offer(RebuildRegionMessage(true, 1, x = coordinate.x, z = coordinate.z, tileHash = coordinate.as30BitInteger))
 
         outgoingPackets.offer(VarpSmallMessage(18, 1))
-        outgoingPackets.offer(
-            VarpLargeMessage(
-                20,
-                59899954
-            )
-        )
-        outgoingPackets.offer(
-            VarpLargeMessage(
-                21,
-                102084876
-            )
-        )
-        outgoingPackets.offer(
-            VarpLargeMessage(
-                22,
-                302317568
-            )
-        )
-        outgoingPackets.offer(
-            VarpLargeMessage(
-                23,
-                6619200
-            )
-        )
-        outgoingPackets.offer(
-            VarpLargeMessage(
-                24,
-                -2146434396
-            )
-        )
+        outgoingPackets.offer(VarpLargeMessage(20, 59899954))
+        outgoingPackets.offer(VarpLargeMessage(21, 102084876))
+        outgoingPackets.offer(VarpLargeMessage(22, 302317568))
+        outgoingPackets.offer(VarpLargeMessage(23, 6619200))
+        outgoingPackets.offer(VarpLargeMessage(24, -2146434396))
         outgoingPackets.offer(VarpSmallMessage(25, 2))
         outgoingPackets.offer(VarpSmallMessage(101, 0))
         outgoingPackets.offer(VarpSmallMessage(153, -1))
@@ -83,56 +51,21 @@ class Player(val channel: Channel, val outgoingPackets: PublishProcessor<IPacket
         outgoingPackets.offer(VarpLargeMessage(284, 60001))
         outgoingPackets.offer(VarpSmallMessage(287, 1))
         outgoingPackets.offer(VarpLargeMessage(300, 1000))
-        outgoingPackets.offer(
-            VarpLargeMessage(
-                304,
-                50000000
-            )
-        )
-        outgoingPackets.offer(
-            VarpLargeMessage(
-                311,
-                16777216
-            )
-        )
+        outgoingPackets.offer(VarpLargeMessage(304, 50000000))
+        outgoingPackets.offer(VarpLargeMessage(311, 16777216))
         outgoingPackets.offer(VarpSmallMessage(346, 2))
         outgoingPackets.offer(VarpSmallMessage(406, 20))
         outgoingPackets.offer(VarpSmallMessage(427, 1))
         outgoingPackets.offer(VarpSmallMessage(447, -1))
-        outgoingPackets.offer(
-            VarpLargeMessage(
-                449,
-                2097152
-            )
-        )
-        outgoingPackets.offer(
-            VarpLargeMessage(
-                464,
-                1073741824
-            )
-        )
-        outgoingPackets.offer(
-            VarpLargeMessage(
-                518,
-                536870912
-            )
-        )
+        outgoingPackets.offer(VarpLargeMessage(449, 2097152))
+        outgoingPackets.offer(VarpLargeMessage(464, 1073741824))
+        outgoingPackets.offer(VarpLargeMessage(518, 536870912))
         outgoingPackets.offer(VarpSmallMessage(520, 1))
-        outgoingPackets.offer(
-            VarpLargeMessage(
-                553,
-                -2147483648
-            )
-        )
+        outgoingPackets.offer(VarpLargeMessage(553, -2147483648))
         outgoingPackets.offer(VarpSmallMessage(664, -1))
         outgoingPackets.offer(VarpLargeMessage(721, 2048))
         outgoingPackets.offer(VarpLargeMessage(788, 128))
-        outgoingPackets.offer(
-            VarpLargeMessage(
-                810,
-                33554432
-            )
-        )
+        outgoingPackets.offer(VarpLargeMessage(810, 33554432))
         outgoingPackets.offer(VarpSmallMessage(843, 9))
         outgoingPackets.offer(VarpSmallMessage(849, -1))
         outgoingPackets.offer(VarpSmallMessage(850, -1))
@@ -145,83 +78,33 @@ class Player(val channel: Channel, val outgoingPackets: PublishProcessor<IPacket
         outgoingPackets.offer(VarpLargeMessage(867, 1034))
         outgoingPackets.offer(VarpSmallMessage(872, 4))
         outgoingPackets.offer(VarpLargeMessage(904, 277))
-        outgoingPackets.offer(
-            VarpLargeMessage(
-                913,
-                4194304
-            )
-        )
-        outgoingPackets.offer(
-            VarpLargeMessage(
-                1009,
-                2097152
-            )
-        )
+        outgoingPackets.offer(VarpLargeMessage(913, 4194304))
+        outgoingPackets.offer(VarpLargeMessage(1009, 2097152))
         outgoingPackets.offer(VarpLargeMessage(1010, 2048))
         outgoingPackets.offer(VarpLargeMessage(1017, 8192))
         outgoingPackets.offer(VarpLargeMessage(1021, 2080))
         outgoingPackets.offer(VarpLargeMessage(1042, 9856))
         outgoingPackets.offer(VarpLargeMessage(1050, 4096))
-        outgoingPackets.offer(
-            VarpLargeMessage(
-                1052,
-                1073741824
-            )
-        )
-        outgoingPackets.offer(
-            VarpLargeMessage(
-                1055,
-                -2147473856
-            )
-        )
+        outgoingPackets.offer(VarpLargeMessage(1052, 1073741824))
+        outgoingPackets.offer(VarpLargeMessage(1055, -2147473856))
         outgoingPackets.offer(VarpSmallMessage(1065, -1))
-        outgoingPackets.offer(
-            VarpLargeMessage(
-                1067,
-                -784859136
-            )
-        )
+        outgoingPackets.offer(VarpLargeMessage(1067, -784859136))
         outgoingPackets.offer(VarpSmallMessage(1074, 0))
         outgoingPackets.offer(VarpSmallMessage(1075, -1))
         outgoingPackets.offer(VarpSmallMessage(1107, 0))
         outgoingPackets.offer(VarpSmallMessage(1141, 32))
         outgoingPackets.offer(VarpSmallMessage(1151, -1))
-        outgoingPackets.offer(
-            VarpLargeMessage(
-                1224,
-                172395585
-            )
-        )
-        outgoingPackets.offer(
-            VarpLargeMessage(
-                1225,
-                379887846
-            )
-        )
-        outgoingPackets.offer(
-            VarpLargeMessage(
-                1226,
-                67207180
-            )
-        )
+        outgoingPackets.offer(VarpLargeMessage(1224, 172395585))
+        outgoingPackets.offer(VarpLargeMessage(1225, 379887846))
+        outgoingPackets.offer(VarpLargeMessage(1226, 67207180))
         outgoingPackets.offer(VarpSmallMessage(1227, 48))
         outgoingPackets.offer(VarpSmallMessage(1306, 0))
         outgoingPackets.offer(VarpSmallMessage(1427, -1))
-        outgoingPackets.offer(
-            VarpLargeMessage(
-                1429,
-                30720
-            )
-        )
+        outgoingPackets.offer(VarpLargeMessage(1429, 30720))
         outgoingPackets.offer(VarpSmallMessage(1666, 80))
         outgoingPackets.offer(VarpSmallMessage(1683, -1))
         outgoingPackets.offer(VarpSmallMessage(1706, 2))
-        outgoingPackets.offer(
-            VarpLargeMessage(
-                1737,
-                -2147483648
-            )
-        )
+        outgoingPackets.offer(VarpLargeMessage(1737, -2147483648))
         outgoingPackets.offer(VarpSmallMessage(1740, -1))
         outgoingPackets.offer(VarpSmallMessage(2657, -1))
         outgoingPackets.offer(VarpSmallMessage(2659, -1))
@@ -230,290 +113,53 @@ class Player(val channel: Channel, val outgoingPackets: PublishProcessor<IPacket
         outgoingPackets.offer(VarpSmallMessage(2674, -1))
         outgoingPackets.offer(VarpLargeMessage(2686, 1000))
 
-        outgoingPackets.offer(
-            RunClientScriptMessage(
-                2498,
-                0,
-                0,
-                0
-            )
-        )
-        outgoingPackets.offer(
-            RunClientScriptMessage(
-                2498,
-                0,
-                0,
-                0
-            )
-        )
-        outgoingPackets.offer(
-            RunClientScriptMessage(
-                233,
-                24772664,
-                40590,
-                5,
-                240,
-                117,
-                1936,
-                0,
-                1200,
-                -1
-            )
-        )
-        outgoingPackets.offer(
-            RunClientScriptMessage(
-                233,
-                24772665,
-                40587,
-                -10,
-                120,
-                105,
-                1747,
-                0,
-                1120,
-                8748
-            )
-        )
-        outgoingPackets.offer(
-            RunClientScriptMessage(
-                3092,
-                2243,
-                "Subscribe Now"
-            )
-        )
+        outgoingPackets.offer(RunClientScriptMessage(2498, 0, 0, 0))
+        outgoingPackets.offer(RunClientScriptMessage(2498, 0, 0, 0))
+        outgoingPackets.offer(RunClientScriptMessage(233, 24772664, 40590, 5, 240, 117, 1936, 0, 1200, -1))
+        outgoingPackets.offer(RunClientScriptMessage(233, 24772665, 40587, -10, 120, 105, 1747, 0, 1120, 8748))
+        outgoingPackets.offer(RunClientScriptMessage(3092, 2243, "Subscribe Now"))
 
         outgoingPackets.offer(IfOpenOverlayMessage(165))
 
-        outgoingPackets.offer(
-            IfOpenSubMessage(
-                165,
-                1,
-                162,
-                1
-            )
-        )
-        outgoingPackets.offer(
-            IfOpenSubMessage(
-                165,
-                2,
-                651,
-                1
-            )
-        )
-        outgoingPackets.offer(
-            IfOpenSubMessage(
-                165,
-                25,
-                163,
-                1
-            )
-        )
-        outgoingPackets.offer(
-            IfOpenSubMessage(
-                165,
-                26,
-                160,
-                1
-            )
-        )
-        outgoingPackets.offer(
-            IfOpenSubMessage(
-                165,
-                6,
-                122,
-                1
-            )
-        )
-        outgoingPackets.offer(
-            IfOpenSubMessage(
-                165,
-                29,
-                378,
-                0
-            )
-        )
+        outgoingPackets.offer(IfOpenSubMessage(165, 1, 162, 1))
+        outgoingPackets.offer(IfOpenSubMessage(165, 2, 651, 1))
+        outgoingPackets.offer(IfOpenSubMessage(165, 25, 163, 1))
+        outgoingPackets.offer(IfOpenSubMessage(165, 26, 160, 1))
+        outgoingPackets.offer(IfOpenSubMessage(165, 6, 122, 1))
+        outgoingPackets.offer(IfOpenSubMessage(165, 29, 378, 0))
 
-        outgoingPackets.offer(
-            RunClientScriptMessage(
-                1080,
-                "https://osrs.game/UpdateBroadcast"
-            )
-        )
+        outgoingPackets.offer(RunClientScriptMessage(1080, "https://osrs.game/UpdateBroadcast"))
 
-        outgoingPackets.offer(
-            RunClientScriptMessage(
-                828,
-                0
-            )
-        )
+        outgoingPackets.offer(RunClientScriptMessage(828, 0))
 
-        outgoingPackets.offer(
-            IfOpenSubMessage(
-                165,
-                11,
-                320,
-                1
-            )
-        )
-        outgoingPackets.offer(
-            IfOpenSubMessage(
-                165,
-                12,
-                629,
-                1
-            )
-        )
+        outgoingPackets.offer(IfOpenSubMessage(165, 11, 320, 1))
+        outgoingPackets.offer(IfOpenSubMessage(165, 12, 629, 1))
 
-        outgoingPackets.offer(
-            RunClientScriptMessage(
-                828,
-                0
-            )
-        )
+        outgoingPackets.offer(RunClientScriptMessage(828, 0))
 
-        outgoingPackets.offer(
-            IfOpenSubMessage(
-                629,
-                33,
-                76,
-                1
-            )
-        )
-        outgoingPackets.offer(
-            IfOpenSubMessage(
-                165,
-                13,
-                149,
-                1
-            )
-        )
-        outgoingPackets.offer(
-            IfOpenSubMessage(
-                165,
-                14,
-                387,
-                1
-            )
-        )
-        outgoingPackets.offer(
-            IfOpenSubMessage(
-                165,
-                15,
-                541,
-                1
-            )
-        )
-        outgoingPackets.offer(
-            IfOpenSubMessage(
-                165,
-                16,
-                218,
-                1
-            )
-        )
-        outgoingPackets.offer(
-            IfOpenSubMessage(
-                165,
-                19,
-                429,
-                1
-            )
-        )
+        outgoingPackets.offer(IfOpenSubMessage(629, 33, 76, 1))
+        outgoingPackets.offer(IfOpenSubMessage(165, 13, 149, 1))
+        outgoingPackets.offer(IfOpenSubMessage(165, 14, 387, 1))
+        outgoingPackets.offer(IfOpenSubMessage(165, 15, 541, 1))
+        outgoingPackets.offer(IfOpenSubMessage(165, 16, 218, 1))
+        outgoingPackets.offer(IfOpenSubMessage(165, 19, 429, 1))
 
-        outgoingPackets.offer(
-            RunClientScriptMessage(
-                2498,
-                0,
-                0,
-                0
-            )
-        )
+        outgoingPackets.offer(RunClientScriptMessage(2498, 0, 0, 0))
 
-        outgoingPackets.offer(
-            IfOpenSubMessage(
-                165,
-                18,
-                109,
-                1
-            )
-        )
-        outgoingPackets.offer(
-            IfOpenSubMessage(
-                165,
-                20,
-                182,
-                1
-            )
-        )
-        outgoingPackets.offer(
-            IfOpenSubMessage(
-                165,
-                21,
-                261,
-                1
-            )
-        )
-        outgoingPackets.offer(
-            IfOpenSubMessage(
-                165,
-                22,
-                216,
-                1
-            )
-        )
-        outgoingPackets.offer(
-            IfOpenSubMessage(
-                165,
-                23,
-                239,
-                1
-            )
-        )
-        outgoingPackets.offer(
-            IfOpenSubMessage(
-                165,
-                17,
-                7,
-                1
-            )
-        )
-        outgoingPackets.offer(
-            IfOpenSubMessage(
-                165,
-                10,
-                593,
-                1
-            )
-        )
-        outgoingPackets.offer(
-            IfOpenSubMessage(
-                165,
-                26,
-                160,
-                1
-            )
-        )
+        outgoingPackets.offer(IfOpenSubMessage(165, 18, 109, 1))
+        outgoingPackets.offer(IfOpenSubMessage(165, 20, 182, 1))
+        outgoingPackets.offer(IfOpenSubMessage(165, 21, 261, 1))
+        outgoingPackets.offer(IfOpenSubMessage(165, 22, 216, 1))
+        outgoingPackets.offer(IfOpenSubMessage(165, 23, 239, 1))
+        outgoingPackets.offer(IfOpenSubMessage(165, 17, 7, 1))
+        outgoingPackets.offer(IfOpenSubMessage(165, 10, 593, 1))
+        outgoingPackets.offer(IfOpenSubMessage(165, 26, 160, 1))
 
         outgoingPackets.offer(UpdateDisplayWidgetsMessage())
 
-        outgoingPackets.offer(
-            RunClientScriptMessage(
-                2014,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0
-            )
-        )
+        outgoingPackets.offer(RunClientScriptMessage(2014, 0, 0, 0, 0, 0, 0))
 
-        outgoingPackets.offer(
-            RunClientScriptMessage(
-                2015,
-                0
-            )
-        )
+        outgoingPackets.offer(RunClientScriptMessage(2015, 0))
 
         outgoingPackets.offer(
             UpdateSkillMessage(
@@ -558,4 +204,55 @@ class Player(val channel: Channel, val outgoingPackets: PublishProcessor<IPacket
         return messageHandler.ofType()
     }
 
+    fun sendSmallVarp(id: Int, value: Int) {
+        outgoingPackets.offer(VarpSmallMessage(id, value))
+    }
+
+    fun sendLargeVarp(id: Int, value: Int) {
+        outgoingPackets.offer(VarpLargeMessage(id, value))
+    }
+
+    fun sendClientScript(scriptId: Int, vararg params: Any) {
+        outgoingPackets.offer(RunClientScriptMessage(scriptId, params))
+    }
+
+    fun sendOpenOverlay(id: Int) {
+        outgoingPackets.offer(IfOpenOverlayMessage(id))
+    }
+
+    fun sendOpenSub(parentId: Int, childId: Int, component: Int, interType: Int) {
+        outgoingPackets.offer(IfOpenSubMessage(parentId, childId, component, interType))
+    }
+
+    fun sendDisplayWidgetUpdate() {
+        outgoingPackets.offer(UpdateDisplayWidgetsMessage())
+    }
+
+    fun sendChatMessage(message: String, messageType: Int) {
+        outgoingPackets.offer(GameMessageMessage(messageType, displayName(), message))
+    }
+
+    fun sendItemContainerFull(
+        interfaceId: Int,
+        component: Int,
+        containerKey: Int,
+        container: ItemContainer<*>
+    ) {
+        outgoingPackets.offer(UpdateInventoryFullMessage(interfaceId, component, containerKey, container))
+    }
+
+    fun sendItemContainerPartial(
+        interfaceId: Int,
+        component: Int,
+        containerKey: Int,
+        container: ItemContainer<*>
+    ) {
+        outgoingPackets.offer(
+            UpdateInventoryPartialMessage(
+                container,
+                interfaceId shl 16 and component,
+                containerKey
+            )
+        )
+    }
 }

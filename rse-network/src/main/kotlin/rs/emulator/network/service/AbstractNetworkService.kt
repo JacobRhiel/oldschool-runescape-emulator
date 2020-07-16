@@ -31,11 +31,11 @@ abstract class AbstractNetworkService<T : AbstractBootstrap<*,*>, S : Channel>(
     override fun startUp()
     {
 
-        future = bootstrap.bind().sync()
+        future = bootstrap.bind()//.sync()
 
         info("{} successfully bound to {}.")
 
-        future.channel().closeFuture().sync()
+        future.channel().closeFuture()//.sync()
 
     }
 

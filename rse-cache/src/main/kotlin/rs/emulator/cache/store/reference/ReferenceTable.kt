@@ -57,6 +57,6 @@ class ReferenceTable(path: Path,
         }
     }
 
-    override fun fetchBuffer(decompressed: Boolean): BufferedReader = BufferedReader(0)
+    override fun fetchBuffer(decompressed: Boolean, xtea: IntArray?): BufferedReader = BufferedReader(0)
 
 }

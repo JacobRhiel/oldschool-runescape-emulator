@@ -25,7 +25,6 @@ abstract class DefinitionGenerator<T : Definition>
 
     abstract fun generate(id: Int, reader: BufferedReader) : T
 
-
     open fun decode(definition: T, opcode: Int, reader: BufferedReader)
     {
 

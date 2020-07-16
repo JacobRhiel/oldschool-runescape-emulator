@@ -2,7 +2,9 @@ package rs.emulator.network.packet.encoder.impl
 
 import rs.emulator.buffer.manipulation.DataType
 import rs.emulator.entity.player.Player
+import rs.emulator.entity.player.update.flag.PlayerUpdateFlag
 import rs.emulator.entity.player.update.mask.PlayerAppearanceMask
+import rs.emulator.entity.player.update.mask.PlayerMovementMask
 import rs.emulator.entity.player.update.sync.SyncInformation
 import rs.emulator.entity.player.viewport.Viewport
 import rs.emulator.entity.update.mask.UpdateMask
@@ -15,27 +17,35 @@ import rs.emulator.network.packet.message.outgoing.UpdatePlayerSyncMessage
  * @author javatar
  */
 
-class UpdatePlayerSyncEncoder : PacketEncoder<UpdatePlayerSyncMessage<Player>>() {
-    override fun encode(message: UpdatePlayerSyncMessage<Player>, builder: GamePacketBuilder) {
+class UpdatePlayerSyncEncoder : PacketEncoder<UpdatePlayerSyncMessage<Player>>()
+{
+
+    override fun encode(message: UpdatePlayerSyncMessage<Player>, builder: GamePacketBuilder)
+    {
         var flag = message.player.syncInfo.fetchMaskFlag()
+
         val maskBuilder = GamePacketBuilder()
-        if (flag >= 0x100) {
+
+        if (flag >= 0x100)
+        {
 
             flag = flag or 16
             maskBuilder.put(DataType.BYTE, flag and 0xFF)
             maskBuilder.put(DataType.BYTE, flag shr 8)
 
-        } else {
-            maskBuilder.put(DataType.BYTE, flag and 0xFF)
         }
+        else
+            maskBuilder.put(DataType.BYTE, flag and 0xFF)
+
         builder.switchToBitAccess()
+
         localNsn0(message.player, builder, maskBuilder, true)
         localNsn1(message.player, builder, maskBuilder)
         globalNsn0(message.player, builder, true)
         globalNsn1(message.player, builder)
-        //builder.switchToByteAccess()
+
         builder.putBytes(maskBuilder.byteBuf)
-        println("size: " + builder.readableBytes)
+
     }
 
     private fun localNsn0(
@@ -60,12 +70,11 @@ class UpdatePlayerSyncEncoder : PacketEncoder<UpdatePlayerSyncMessage<Player>>()
 
             val syncInformation = viewportPlayer.syncInfo
 
-            if (skipPlayer(syncInformation, inverse)) {
-
+            if (skipPlayer(syncInformation, inverse))
                 return@forEach
-            }
 
-            if (skipCount > 0) {
+            if (skipCount > 0)
+            {
 
                 skipCount--
 
@@ -79,25 +88,80 @@ class UpdatePlayerSyncEncoder : PacketEncoder<UpdatePlayerSyncMessage<Player>>()
 
             val updateRequired = syncInformation.requiresUpdate()
 
-            if (updateRequired) {
+            if (updateRequired)
+            {
 
                 builder.switchToByteAccess()
+
+                val movementFlag = syncInformation.hasMaskFlag(PlayerUpdateFlag.MOVEMENT)
 
                 generateMaskBuffer(viewportPlayer, fetchMasks(), maskBuilder)
 
                 builder.switchToBitAccess()
 
-                builder.putBits(1, 1)
+                println("is movement: $movementFlag - mask: ${syncInformation.fetchMaskFlag()}")
 
-                builder.putBits(1, 1)
+                if(!movementFlag)
+                {
 
-                builder.putBits(2, 0)
+                    builder.putBits(1, 1)
+
+                    builder.putBits(1, 1)
+
+                    builder.putBits(2, 0)
+
+                }
+                else
+                {
+
+                    builder.putBits(1, 1)
+
+                    builder.putBits(1, 1)
+
+                    builder.putBits(2, 3)
+
+                    val diffX = player.coordinate.x - player.lastCoordinate.x
+
+                    val diffZ = player.coordinate.z - player.lastCoordinate.z
+
+                    val diffH = player.coordinate.plane - player.lastCoordinate.plane
+
+                    if(Math.abs(diffX) <= 15 && Math.abs(diffZ) <= 15)
+                    {
+
+                        builder.putBits(1, 0)
+
+                        builder.putBits(2, diffH and 0x3)
+
+                        builder.putBits(5, diffX and 0x1F)
+
+                        builder.putBits(5, diffZ and 0x1F)
+
+                    }
+                    else
+                    {
+
+                        builder.putBits(1, 1)
+
+                        builder.putBits(2, diffH and 0x3)
+
+                        builder.putBits(14, diffX and 0x3FFF)
+
+                        builder.putBits(14, diffZ and 0x3FFF)
+
+                    }
+
+                    println("teleport segment.")
+
+                }
 
                 builder.switchToByteAccess()
 
                 syncInformation.resetFlag()
 
-            } else {
+            }
+            else
+            {
 
                 skipCount = generateSkipCount(viewport, builder, true, inverse)
 
@@ -220,7 +284,7 @@ class UpdatePlayerSyncEncoder : PacketEncoder<UpdatePlayerSyncMessage<Player>>()
 
     private fun generateMaskBuffer(entity: Player, masks: List<UpdateMask<Player>>, builder: GamePacketBuilder) {
 
-        masks.forEach { mask -> mask.generate(entity = entity, builder = builder) }
+        masks.filter { it.shouldGenerate(entity) }.forEach { mask -> mask.generate(entity = entity, builder = builder) }
 
     }
 
@@ -228,7 +292,9 @@ class UpdatePlayerSyncEncoder : PacketEncoder<UpdatePlayerSyncMessage<Player>>()
 
         return listOf(
 
-            PlayerAppearanceMask()
+            PlayerAppearanceMask(),
+
+            PlayerMovementMask()
 
         ).sortedBy { it.fetchFlag().bit }
 

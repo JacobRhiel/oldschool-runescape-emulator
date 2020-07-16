@@ -1,4 +1,4 @@
-package rs.emulator.region
+package rs.emulator.encryption.xtea
 
 import com.google.common.util.concurrent.AbstractIdleService
 import com.google.gson.Gson

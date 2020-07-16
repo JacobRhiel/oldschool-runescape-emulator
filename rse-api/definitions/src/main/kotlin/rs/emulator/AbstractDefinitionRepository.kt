@@ -9,12 +9,16 @@ import rs.emulator.definitions.Definition
 
 abstract class AbstractDefinitionRepository {
 
-    protected abstract fun findActual(identifier: Int, child: Int, clazz : Class<*>): Definition?
+    protected abstract fun findActual(identifier: Int, child: Int, keys: IntArray? = null, clazz : Class<*>): Definition?
 
-    inline fun <reified T : Definition> find(identifier: Int, child: Int) : T {
-        return find(identifier, child, T::class.java) as T
+    inline fun <reified T : Definition> find(identifier: Int, keys: IntArray? = null) : T {
+        return find(identifier, -1, keys, T::class.java) as T
     }
 
-    @PublishedApi internal fun find(identifier: Int, child: Int, clazz: Class<*>) = this.findActual(identifier, child, clazz)
+    inline fun <reified T : Definition> find(identifier: Int, child: Int, keys: IntArray? = null) : T {
+        return find(identifier, child, keys, T::class.java) as T
+    }
+
+    @PublishedApi internal fun find(identifier: Int, child: Int, keys: IntArray? = null, clazz: Class<*>) = this.findActual(identifier, child, keys, clazz)
 
 }

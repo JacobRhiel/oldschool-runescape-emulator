@@ -11,6 +11,8 @@ enum class PlayerUpdateFlag(override val bit: Int) : UpdateFlag
 
     APPEARANCE(32),
 
+    MOVEMENT(256)
+
     ;
 
 

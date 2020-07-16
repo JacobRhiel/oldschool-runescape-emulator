@@ -11,6 +11,8 @@ import rs.emulator.network.packet.GamePacketBuilder
 interface UpdateMask<T : Entity>
 {
 
+    fun shouldGenerate(entity: T) : Boolean
+
     fun generate(entity: T, builder: GamePacketBuilder)
 
     fun fetchFlag(): UpdateFlag

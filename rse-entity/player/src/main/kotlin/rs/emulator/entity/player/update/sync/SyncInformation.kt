@@ -19,9 +19,11 @@ class SyncInformation
 
     fun addMaskFlag(updateFlag: PlayerUpdateFlag) = apply { this.maskFlag = this.maskFlag or updateFlag.bit }
 
-    fun removeMaskFlag(updateFlag: PlayerUpdateFlag) = apply { this.maskFlag = this.maskFlag and updateFlag.bit }
+    fun removeMaskFlag(updateFlag: PlayerUpdateFlag) = apply { this.maskFlag = this.maskFlag and updateFlag.bit.inv() }
 
-    fun hasFlag(flag: Int) = (this.skipFlag and flag) != 0
+    fun hasFlag(flag: Int) = (this.skipFlag and flag) == flag
+
+    fun hasMaskFlag(flag: PlayerUpdateFlag) = (this.maskFlag and flag.bit) == flag.bit
 
     fun noFlag(flag: Int) = (this.skipFlag and flag) == 0
 
