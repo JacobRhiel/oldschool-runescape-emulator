@@ -14,4 +14,6 @@ dependencies {
 
     implementation(project(":rse-entity:widget"))
 
+    implementation(project(":rse-cache"))
+
 }
