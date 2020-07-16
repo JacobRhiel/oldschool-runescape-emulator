@@ -1,4 +1,4 @@
-package rs.emulator.plugins.extensions.factories
+package rs.emulator.plugins.extensions.factories.on
 
 import org.pf4j.ExtensionPoint
 import rs.emulator.plugins.extensions.factories.actions.on.ItemOnNpcAction

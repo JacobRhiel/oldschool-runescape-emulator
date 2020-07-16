@@ -11,7 +11,7 @@ import rs.emulator.entity.player.chat.PublicChatText
 import rs.emulator.entity.player.update.flag.PlayerUpdateFlag
 import rs.emulator.network.packet.message.incoming.PublicChatMessage
 import rs.emulator.plugins.RSPluginManager
-import rs.emulator.plugins.extensions.factories.ChatTextFilterFactory
+import rs.emulator.plugins.extensions.factories.entity.chat.ChatTextFilterFactory
 
 /**
  *

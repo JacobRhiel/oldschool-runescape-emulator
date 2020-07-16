@@ -18,6 +18,7 @@ import rs.emulator.packet.api.IPacketMessage
 import rs.emulator.plugins.RSPluginManager
 import rs.emulator.plugins.extensions.factories.ContainerRegistrationException
 import rs.emulator.plugins.extensions.factories.ItemContainerFactory
+import rs.emulator.skills.SkillAttributes
 import java.util.concurrent.atomic.AtomicLong
 
 class Player(val channel: Channel, val outgoingPackets : PublishProcessor<IPacketMessage>) : Actor(), IPlayer {
@@ -32,9 +33,19 @@ class Player(val channel: Channel, val outgoingPackets : PublishProcessor<IPacke
 
     var pendingPublicChatMessage: PublicChatText? = null
 
+    override val skillAttributes: SkillAttributes = SkillAttributes()
+
     fun onLogin() {
 
-        outgoingPackets.offer(RebuildRegionMessage(true, 1, x = coordinate.x, z = coordinate.z, tileHash = coordinate.as30BitInteger))
+        outgoingPackets.offer(
+            RebuildRegionMessage(
+                true,
+                1,
+                x = coordinate.x,
+                z = coordinate.z,
+                tileHash = coordinate.as30BitInteger
+            )
+        )
 
         outgoingPackets.offer(VarpSmallMessage(18, 1))
         outgoingPackets.offer(VarpLargeMessage(20, 59899954))
@@ -166,15 +177,23 @@ class Player(val channel: Channel, val outgoingPackets : PublishProcessor<IPacke
 
         outgoingPackets.offer(RunClientScriptMessage(2015, 0))
 
-        outgoingPackets.offer(
-            UpdateSkillMessage(
-                3,
-                25,
-                500000
-            )
-        )
+        outgoingPackets.offer(UnknownMessage(true))
 
-        //outgoingPackets.offer(UnknownMessage(true))
+        skillAttributes.attributeChangedProcessor.subscribe {
+            outgoingPackets.offer(
+                UpdateSkillMessage(
+                    it.id,
+                    it.currentLevel,
+                    it.experience
+                )
+            )
+        }
+
+        skillAttributes.experienceProcessor.subscribe {
+            //Double xp
+            it.modifiedExperience = (it.baseExperience * 2)
+        }
+        skillAttributes.addExperience(3, 1000)
 
         containerManager().register(93, Inventory()) {
             syncBlock {

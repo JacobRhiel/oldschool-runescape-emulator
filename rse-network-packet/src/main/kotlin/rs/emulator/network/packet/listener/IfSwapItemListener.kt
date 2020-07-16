@@ -5,7 +5,7 @@ import io.reactivex.rxkotlin.toObservable
 import rs.emulator.entity.player.Player
 import rs.emulator.network.packet.message.incoming.IfSwapItemMessage
 import rs.emulator.plugins.RSPluginManager
-import rs.emulator.plugins.extensions.factories.ItemSwapSlotsActionFactory
+import rs.emulator.plugins.extensions.factories.entity.items.ItemSwapSlotsActionFactory
 
 /**
  *

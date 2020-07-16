@@ -7,7 +7,7 @@ import rs.emulator.entity.actor.player.messages.IWidgetMessages
 import rs.emulator.entity.player.Player
 import rs.emulator.network.packet.message.incoming.PlayerActionMessage
 import rs.emulator.plugins.RSPluginManager
-import rs.emulator.plugins.extensions.factories.PlayerActionFactory
+import rs.emulator.plugins.extensions.factories.entity.actions.PlayerActionFactory
 import rs.emulator.world.GameWorld
 
 /**

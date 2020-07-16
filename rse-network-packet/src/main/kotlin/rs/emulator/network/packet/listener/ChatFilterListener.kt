@@ -6,7 +6,7 @@ import io.reactivex.rxkotlin.toObservable
 import rs.emulator.entity.player.Player
 import rs.emulator.network.packet.message.incoming.ChatFilterMessage
 import rs.emulator.plugins.RSPluginManager
-import rs.emulator.plugins.extensions.factories.ChatFilterActionFactory
+import rs.emulator.plugins.extensions.factories.entity.chat.ChatFilterActionFactory
 
 /**
  *

@@ -6,7 +6,7 @@ import rs.emulator.entity.actor.player.messages.IWidgetMessages
 import rs.emulator.entity.player.Player
 import rs.emulator.network.packet.message.incoming.SpellOnGroundObjMessage
 import rs.emulator.plugins.RSPluginManager
-import rs.emulator.plugins.extensions.factories.SpellOnGroundItemActionFactory
+import rs.emulator.plugins.extensions.factories.spells.SpellOnGroundItemActionFactory
 import rs.emulator.world.GameWorld
 
 /**

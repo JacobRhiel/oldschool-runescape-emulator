@@ -6,7 +6,7 @@ import rs.emulator.entity.actor.player.messages.IWidgetMessages
 import rs.emulator.entity.player.Player
 import rs.emulator.network.packet.message.incoming.ObjOnNpcMessage
 import rs.emulator.plugins.RSPluginManager
-import rs.emulator.plugins.extensions.factories.ItemOnNpcActionFactory
+import rs.emulator.plugins.extensions.factories.on.ItemOnNpcActionFactory
 import rs.emulator.world.GameWorld
 
 /**

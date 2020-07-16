@@ -173,7 +173,7 @@ class PacketService : AbstractIdleService(), KoinComponent {
 
         packetRepository.putDecoder(
             2,
-            ZeroSizeDecoder(),
+            ZeroSizeDecoder { IdleLogoutMessage() },
             length = 0,
             clazz = IdleLogoutMessage::class,
             listener = IdleLogoutListener()
@@ -243,13 +243,13 @@ class PacketService : AbstractIdleService(), KoinComponent {
             listener = ObjOnNpcListener()
         )
 
-        /*packetRepository.putDecoder(
+        packetRepository.putDecoder(
             85,
-            ZeroSizeDecoder(),
+            ZeroSizeDecoder { IdleMouseTickMessage() },
             length = 0,
             clazz = IdleMouseTickMessage::class,
             listener = IdleMouseTickListener()
-        )*/
+        )
 
         packetRepository.putDecoder(
             55,
@@ -421,42 +421,42 @@ class PacketService : AbstractIdleService(), KoinComponent {
 
         packetRepository.putEncoder(
             47,
-            ZeroSizeEncoder(),
+            ZeroSizeEncoder<CameraRotationMessage>(),
             clazz = CameraResetMessage::class
         )
         packetRepository.putEncoder(
             25,
-            ZeroSizeEncoder(),
+            ZeroSizeEncoder<LogoutFullMessage>(),
             clazz = LogoutFullMessage::class
         )
 
         packetRepository.putEncoder(
             53,
-            ZeroSizeEncoder(),
+            ZeroSizeEncoder<SyncClientVarCacheMessage>(),
             clazz = SyncClientVarCacheMessage::class
         )
 
         packetRepository.putEncoder(
             56,
-            ZeroSizeEncoder(),
+            ZeroSizeEncoder<ResetClientVarCacheMessage>(),
             clazz = ResetClientVarCacheMessage::class
         )
 
         packetRepository.putEncoder(
             37,
-            ZeroSizeEncoder(),
+            ZeroSizeEncoder<FriendsListLoadedMessage>(),
             clazz = FriendsListLoadedMessage::class
         )
 
         packetRepository.putEncoder(
             72,
-            ZeroSizeEncoder(),
+            ZeroSizeEncoder<TriggerOnDialogAbortMessage>(),
             clazz = TriggerOnDialogAbortMessage::class
         )
 
         packetRepository.putEncoder(
             74,
-            ZeroSizeEncoder(),
+            ZeroSizeEncoder<ResetAnimationsMessage>(),
             clazz = ResetAnimationsMessage::class
         )
 

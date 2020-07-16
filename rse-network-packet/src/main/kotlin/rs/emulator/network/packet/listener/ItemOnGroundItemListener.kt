@@ -7,7 +7,7 @@ import rs.emulator.entity.actor.player.storage.inventory
 import rs.emulator.entity.player.Player
 import rs.emulator.network.packet.message.incoming.ObjOnGroundObjMessage
 import rs.emulator.plugins.RSPluginManager
-import rs.emulator.plugins.extensions.factories.ItemOnGroundItemActionFactory
+import rs.emulator.plugins.extensions.factories.on.ItemOnGroundItemActionFactory
 
 /**
  *

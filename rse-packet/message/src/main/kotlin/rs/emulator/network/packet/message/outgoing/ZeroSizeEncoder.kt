@@ -9,6 +9,6 @@ import rs.emulator.packet.api.IPacketMessage
  * @author javatar
  */
 
-class ZeroSizeEncoder : IPacketEncoder<IPacketMessage> {
-    override fun encode(message: IPacketMessage, builder: GamePacketBuilder) {}
+class ZeroSizeEncoder<T : IPacketMessage> : IPacketEncoder<T> {
+    override fun encode(message: T, builder: GamePacketBuilder) {}
 }

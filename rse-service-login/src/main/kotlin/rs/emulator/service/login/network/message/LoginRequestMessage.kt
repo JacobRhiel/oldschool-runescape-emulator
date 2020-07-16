@@ -2,6 +2,7 @@ package rs.emulator.service.login.network.message
 
 import io.netty.channel.Channel
 import io.netty.channel.ChannelHandlerContext
+import io.reactivex.rxkotlin.addTo
 import org.koin.core.KoinComponent
 import org.koin.core.get
 import rs.emulator.entity.player.Player
@@ -12,6 +13,7 @@ import rs.emulator.service.login.LoginCredentials
 import rs.emulator.service.login.LoginResult
 import rs.emulator.service.login.worker.LoginWorker
 import rs.emulator.service.login.worker.LoginWorkerService
+import rs.emulator.world.repository.WorldRepository
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 
@@ -60,27 +62,22 @@ data class LoginRequestMessage(
 
         player.viewport.globalPlayers[1] = player
 
-        val outgoingDisposable = session.outgoingPackets
-            .onBackpressureBuffer(10)
-            .onBackpressureDrop {
-                throw Error("Outgoing packet dropped : ${it.opcode}")
-            }
+        session.outgoingPackets
             .subscribe { ctx.channel().writeAndFlush(it) }
-        val incomingDisposable = session.incomingPackets
-            .onBackpressureBuffer(10)
-            .onBackpressureDrop { throw Error("Incoming packet ${it.metaData.opcode} dropped.") }
+            .addTo(session.composite)
+        session.incomingPackets
             .subscribe({
                 val (metaData, gamePacket) = it
                 metaData.handle(ctx.channel(), player, gamePacket)
             }, {
                 it.printStackTrace()
-            })
+            }).addTo(session.composite)
 
-        session.disposables.addAll(listOf(outgoingDisposable, incomingDisposable))
 
         player.onLogin()
 
         //TODO - add player
+        WorldRepository.players.add(player)
 
         if (ctx.channel().isActive) {
             ctx.channel().flush()
