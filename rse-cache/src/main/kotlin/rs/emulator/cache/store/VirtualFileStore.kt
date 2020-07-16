@@ -9,7 +9,9 @@ import rs.emulator.buffer.writer.BufferedWriter
 import rs.emulator.cache.store.compression.CompressionType
 import rs.emulator.cache.store.data.DataFile
 import rs.emulator.cache.store.index.Index
+import rs.emulator.cache.store.index.IndexConfig
 import rs.emulator.cache.store.reference.ReferenceTable
+import rs.emulator.encryption.huffman.HuffmanCodec
 import java.io.Closeable
 import java.nio.file.Path
 
@@ -24,10 +26,14 @@ class VirtualFileStore(private val path: Path) : KoinComponent, Closeable
 
     private val referenceTable: ReferenceTable = get()
 
+    lateinit var huffman: HuffmanCodec
+
     fun preload()
     {
 
         val idxList = referenceTable.fetchIndexList()
+
+        huffman = HuffmanCodec(fetchIndex(IndexConfig.BINARY.identifier).fetchNamedArchive("huffman")!!.fetchEntry(0).fetchBuffer(true).toArray())
 
        // idxList.forEach { it.table.fetchAllArchives() }
 

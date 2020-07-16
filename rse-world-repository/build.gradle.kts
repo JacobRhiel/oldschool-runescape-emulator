@@ -13,4 +13,6 @@ dependencies {
 
     implementation(project(":rse-network-packet"))
 
+    implementation(project(":rse-network-js5"))
+
 }

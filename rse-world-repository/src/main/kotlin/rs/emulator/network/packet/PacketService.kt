@@ -3,6 +3,7 @@ package rs.emulator.network.packet
 import com.google.common.util.concurrent.AbstractIdleService
 import org.koin.core.KoinComponent
 import org.koin.core.get
+import rs.emulator.fileserver.FileStoreService
 import rs.emulator.network.packet.decoder.impl.*
 import rs.emulator.network.packet.encoder.impl.*
 import rs.emulator.network.packet.listener.*
@@ -21,8 +22,12 @@ class PacketService : AbstractIdleService(), KoinComponent
 
     private val packetRepository: PacketRepository = get()
 
+    private val fileStoreService: FileStoreService = get()
+
     private fun construct()
     {
+
+        fileStoreService.awaitRunning()
 
         addDecoders()
 

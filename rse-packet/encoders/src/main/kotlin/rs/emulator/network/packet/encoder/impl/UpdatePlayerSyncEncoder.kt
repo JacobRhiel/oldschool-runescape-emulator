@@ -5,6 +5,7 @@ import rs.emulator.entity.player.Player
 import rs.emulator.entity.player.update.flag.PlayerUpdateFlag
 import rs.emulator.entity.player.update.mask.PlayerAppearanceMask
 import rs.emulator.entity.player.update.mask.PlayerMovementMask
+import rs.emulator.entity.player.update.mask.PlayerPublicChatMask
 import rs.emulator.entity.player.update.sync.SyncInformation
 import rs.emulator.entity.player.viewport.Viewport
 import rs.emulator.entity.update.mask.UpdateMask
@@ -294,7 +295,9 @@ class UpdatePlayerSyncEncoder : PacketEncoder<UpdatePlayerSyncMessage<Player>>()
 
             PlayerAppearanceMask(),
 
-            PlayerMovementMask()
+            PlayerMovementMask(),
+
+            PlayerPublicChatMask()
 
         ).sortedBy { it.fetchFlag().bit }
 
