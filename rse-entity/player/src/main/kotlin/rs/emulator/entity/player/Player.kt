@@ -8,6 +8,7 @@ import rs.emulator.entity.actor.player.messages.AbstractMessageHandler
 import rs.emulator.entity.actor.player.messages.IMessages
 import rs.emulator.entity.actor.player.storage.IItemContainerManager
 import rs.emulator.entity.actor.player.storage.container.ItemContainer
+import rs.emulator.entity.player.chat.PublicChatMessage
 import rs.emulator.entity.player.storage.ItemContainerManager
 import rs.emulator.entity.player.storage.containers.Inventory
 import rs.emulator.entity.player.update.flag.PlayerUpdateFlag
@@ -29,6 +30,8 @@ class Player(val channel: Channel, val outgoingPackets : PublishProcessor<IPacke
     val messageHandler = MessageHandler(this)
 
     val idleMouseTicks = AtomicLong(0L)
+
+    var pendingPublicChatMessage: PublicChatMessage? = null
 
     fun onLogin() {
 
@@ -179,9 +182,6 @@ class Player(val channel: Channel, val outgoingPackets : PublishProcessor<IPacke
                 }
             }
         }
-
-        outgoingPackets.offer(UnknownMessage(true))
-
     }
 
     private val itemContainerManager = ItemContainerManager().apply {
@@ -210,55 +210,4 @@ class Player(val channel: Channel, val outgoingPackets : PublishProcessor<IPacke
         return messageHandler.ofType()
     }
 
-    fun sendSmallVarp(id: Int, value: Int) {
-        outgoingPackets.offer(VarpSmallMessage(id, value))
-    }
-
-    fun sendLargeVarp(id: Int, value: Int) {
-        outgoingPackets.offer(VarpLargeMessage(id, value))
-    }
-
-    fun sendClientScript(scriptId: Int, vararg params: Any) {
-        outgoingPackets.offer(RunClientScriptMessage(scriptId, params))
-    }
-
-    fun sendOpenOverlay(id: Int) {
-        outgoingPackets.offer(IfOpenOverlayMessage(id))
-    }
-
-    fun sendOpenSub(parentId: Int, childId: Int, component: Int, interType: Int) {
-        outgoingPackets.offer(IfOpenSubMessage(parentId, childId, component, interType))
-    }
-
-    fun sendDisplayWidgetUpdate() {
-        outgoingPackets.offer(UpdateDisplayWidgetsMessage())
-    }
-
-    fun sendChatMessage(message: String, messageType: Int) {
-        outgoingPackets.offer(GameMessageMessage(messageType, displayName(), message))
-    }
-
-    fun sendItemContainerFull(
-        interfaceId: Int,
-        component: Int,
-        containerKey: Int,
-        container: ItemContainer<*>
-    ) {
-        outgoingPackets.offer(UpdateInventoryFullMessage(interfaceId, component, containerKey, container))
-    }
-
-    fun sendItemContainerPartial(
-        interfaceId: Int,
-        component: Int,
-        containerKey: Int,
-        container: ItemContainer<*>
-    ) {
-        outgoingPackets.offer(
-            UpdateInventoryPartialMessage(
-                container,
-                interfaceId shl 16 and component,
-                containerKey
-            )
-        )
-    }
 }

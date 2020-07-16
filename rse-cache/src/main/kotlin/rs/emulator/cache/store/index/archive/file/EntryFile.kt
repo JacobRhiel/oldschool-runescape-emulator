@@ -42,8 +42,6 @@ class EntryFile(private val idx: Int,
 
         buffer.skipBytes(referenceIndex)
 
-        println("$referenceLength - $referenceIndex")
-
         if(archive.entryCount > 1)
             buffer.readBytes(out, 0, referenceLength)
         else

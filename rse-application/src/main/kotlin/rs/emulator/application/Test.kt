@@ -89,6 +89,16 @@ class Test : KoinComponent {
 
                 single { World.newBuilder().setMembers(true).setOrigin(WorldOrigin.UNITED_STATES).setAccess(WorldAccess.DEVELOPMENT).setActivity(WorldActivity.NONE).build() }
 
+                single {
+
+                    val fileStore: VirtualFileStore = get()
+
+                    val huffmanFile = fileStore.fetchIndex(IndexConfig.BINARY.identifier).fetchNamedArchive("huffman")!!.fetchEntry(0)
+
+                    HuffmanCodec(huffmanFile.fetchBuffer(true).toArray())
+
+                }
+
                 //todo move the parsing.
                 single { PacketRepository() }
 
@@ -105,20 +115,6 @@ class Test : KoinComponent {
                             get<PacketService>()
                         )
                     )
-                }
-
-            }
-
-            val postLoadModule = module {
-
-                single {
-
-                    val fileStore: VirtualFileStore = get()
-
-                    val huffmanFile = fileStore.fetchIndex(IndexConfig.BINARY.identifier).fetchNamedArchive("huffman")!!.fetchEntry(0)
-
-                   HuffmanCodec(huffmanFile.fetchBuffer(true).toArray())
-
                 }
 
             }
@@ -144,8 +140,6 @@ class Test : KoinComponent {
                     test.serviceManager
                         .startAsync()
                         .awaitHealthy()
-
-                    modules(postLoadModule)
 
                     System.gc()
 
