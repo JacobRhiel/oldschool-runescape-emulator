@@ -4,7 +4,7 @@ package rs.emulator.entity.player.chat
  *
  * @author Chk
  */
-data class PublicChatMessage(
+data class PublicChatText(
     val text: String,
     val icon: Int,
     val type: Int,

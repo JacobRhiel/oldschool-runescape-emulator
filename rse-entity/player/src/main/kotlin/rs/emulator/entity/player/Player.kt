@@ -7,8 +7,7 @@ import rs.emulator.entity.actor.player.IPlayer
 import rs.emulator.entity.actor.player.messages.AbstractMessageHandler
 import rs.emulator.entity.actor.player.messages.IMessages
 import rs.emulator.entity.actor.player.storage.IItemContainerManager
-import rs.emulator.entity.actor.player.storage.container.ItemContainer
-import rs.emulator.entity.player.chat.PublicChatMessage
+import rs.emulator.entity.player.chat.PublicChatText
 import rs.emulator.entity.player.storage.ItemContainerManager
 import rs.emulator.entity.player.storage.containers.Inventory
 import rs.emulator.entity.player.update.flag.PlayerUpdateFlag
@@ -31,7 +30,7 @@ class Player(val channel: Channel, val outgoingPackets : PublishProcessor<IPacke
 
     val idleMouseTicks = AtomicLong(0L)
 
-    var pendingPublicChatMessage: PublicChatMessage? = null
+    var pendingPublicChatMessage: PublicChatText? = null
 
     fun onLogin() {
 
@@ -174,6 +173,8 @@ class Player(val channel: Channel, val outgoingPackets : PublishProcessor<IPacke
                 500000
             )
         )
+
+        //outgoingPackets.offer(UnknownMessage(true))
 
         containerManager().register(93, Inventory()) {
             syncBlock {

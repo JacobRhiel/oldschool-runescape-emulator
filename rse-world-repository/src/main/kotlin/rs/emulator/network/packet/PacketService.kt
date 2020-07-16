@@ -16,13 +16,11 @@ import rs.emulator.packet.api.PacketType
  *
  * @author Chk
  */
-class PacketService : AbstractIdleService(), KoinComponent
-{
+class PacketService : AbstractIdleService(), KoinComponent {
 
     private val packetRepository: PacketRepository = get()
 
-    private fun construct()
-    {
+    private fun construct() {
 
         addDecoders()
 
@@ -30,8 +28,7 @@ class PacketService : AbstractIdleService(), KoinComponent
 
     }
 
-    private fun addDecoders()
-    {
+    private fun addDecoders() {
 
         packetRepository.putDecoder(
             89,
@@ -217,13 +214,80 @@ class PacketService : AbstractIdleService(), KoinComponent
             listener = SpellOnObjListener()
         )
 
+        packetRepository.putDecoder(
+            60,
+            SpellOnGroundObjDecoder(),
+            length = 13,
+            clazz = SpellOnGroundObjMessage::class,
+            listener = SpellOnGroundObjListener()
+        )
+
+        packetRepository.putDecoder(
+            38,
+            SpellOnNpcDecoder(),
+            length = 9,
+            clazz = SpellOnNpcMessage::class,
+            listener = SpellOnNpcListener()
+        )
+
+        packetRepository.putDecoder(
+            99,
+            ObjOnNpcDecoder(),
+            length = 11,
+            clazz = ObjOnNpcMessage::class,
+            listener = ObjOnNpcListener()
+        )
+
+        /*packetRepository.putDecoder(
+            85,
+            ZeroSizeDecoder(),
+            length = 0,
+            clazz = IdleMouseTickMessage::class,
+            listener = IdleMouseTickListener()
+        )*/
+
+        packetRepository.putDecoder(
+            55,
+            SpellOnPlayerDecoder(),
+            length = 9,
+            clazz = SpellOnPlayerMessage::class,
+            listener = SpellOnPlayerListener()
+        )
+
+        packetRepository.putDecoder(
+            63,
+            ObjOnObjDecoder(),
+            length = 16,
+            clazz = ObjOnObjMessage::class,
+            listener = ObjOnObjListener()
+        )
+        packetRepository.putDecoder(
+            83,
+            ChatFilterDecoder(),
+            length = 3,
+            clazz = ChatFilterMessage::class,
+            listener = ChatFilterListener()
+        )
+
         packetRepository.putDecoders(
-            opcodes = *intArrayOf(48, 66), decoder = WalkHereDecoder(), length = 0, packetType = PacketType.VARIABLE_BYTE, ignore = false, clazz = WalkHereMessage::class,
+            opcodes = *intArrayOf(48, 66),
+            decoder = WalkHereDecoder(),
+            length = 0,
+            packetType = PacketType.VARIABLE_BYTE,
+            ignore = false,
+            clazz = WalkHereMessage::class,
             listener = WalkHereListener()
         )
 
-        packetRepository.putDecoder(12, decoder = PublicMessageDecoder(), length = 0, packetType = PacketType.VARIABLE_BYTE, ignore = false, clazz = PublicChatMessage::class,
-        listener = PublicChatListener())
+        packetRepository.putDecoder(
+            12,
+            decoder = PublicMessageDecoder(),
+            length = 0,
+            packetType = PacketType.VARIABLE_BYTE,
+            ignore = false,
+            clazz = PublicChatMessage::class,
+            listener = PublicChatListener()
+        )
 
     }
 
@@ -518,6 +582,13 @@ class PacketService : AbstractIdleService(), KoinComponent
             GrandExchangeOfferEncoder(),
             clazz = GrandExchangeOfferMessage::class
         )
+
+        packetRepository.putEncoder(
+            67,
+            UnknownEncoder(),
+            clazz = UnknownMessage::class
+        )
+
     }
 
     override fun startUp() {

@@ -12,7 +12,6 @@ import rs.emulator.service.login.LoginCredentials
 import rs.emulator.service.login.LoginResult
 import rs.emulator.service.login.worker.LoginWorker
 import rs.emulator.service.login.worker.LoginWorkerService
-import rs.emulator.world.repository.WorldRepository
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 
@@ -79,9 +78,9 @@ data class LoginRequestMessage(
 
         session.disposables.addAll(listOf(outgoingDisposable, incomingDisposable))
 
-        WorldRepository.players.add(player)
-
         player.onLogin()
+
+        //TODO - add player
 
         if (ctx.channel().isActive) {
             ctx.channel().flush()
