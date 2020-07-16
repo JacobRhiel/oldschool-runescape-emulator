@@ -4,7 +4,6 @@ import io.netty.channel.Channel
 import io.reactivex.rxkotlin.toObservable
 import org.koin.core.KoinComponent
 import org.koin.core.get
-import rs.emulator.cache.store.VirtualFileStore
 import rs.emulator.encryption.huffman.HuffmanCodec
 import rs.emulator.entity.player.Player
 import rs.emulator.entity.player.chat.PublicChatText
@@ -19,9 +18,7 @@ import rs.emulator.plugins.extensions.factories.entity.chat.ChatTextFilterFactor
  */
 class PublicChatListener : GamePacketListener<PublicChatMessage>, KoinComponent {
 
-    private val fileStore: VirtualFileStore = get()
-
-    private val huffman: HuffmanCodec = fileStore.huffman
+    private val huffman: HuffmanCodec = get()
 
     override fun handle(channel: Channel, player: Player, message: PublicChatMessage) {
 
