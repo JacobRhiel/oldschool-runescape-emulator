@@ -16,22 +16,16 @@ import rs.emulator.network.packet.message.incoming.PublicChatMessage
 class PublicChatListener : GamePacketListener<PublicChatMessage>, KoinComponent
 {
 
-    private val fileStore: VirtualFileStore = get()
-
-    private val huffman: HuffmanCodec = fileStore.huffman
+    private val huffman: HuffmanCodec = get()
 
     override fun handle(channel: Channel, player: Player, message: PublicChatMessage)
     {
 
         val decompressedString = ByteArray(256)
 
-        println("message length: " + message.messageLength)
-
         huffman.decompress(message.data, decompressedString, message.messageLength)
 
-        val unpackedString = String(decompressedString, 0, message.length)
-
-        println("unpacked string...: $unpackedString")
+        val unpackedString = String(decompressedString, 0, message.messageLength)
 
         //todo: CHANGE RIGHTS
         player.pendingPublicChatMessage = rs.emulator.entity.player.chat.PublicChatMessage(unpackedString, 0, message.chatType, message.effect, message.color)

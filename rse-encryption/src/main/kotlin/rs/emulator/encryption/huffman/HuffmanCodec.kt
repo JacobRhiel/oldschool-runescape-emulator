@@ -1,6 +1,6 @@
 package rs.emulator.encryption.huffman
 
-class HuffmanCodec(private val sizes: ByteArray)
+class HuffmanCodec(val sizes: ByteArray)
 {
 
     var masks: IntArray

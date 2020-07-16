@@ -20,9 +20,7 @@ import rs.emulator.network.packet.GamePacketBuilder
 class PlayerPublicChatMask : UpdateMask<Player>, KoinComponent
 {
 
-    private val fileStore: VirtualFileStore = get()
-
-    private val huffman: HuffmanCodec = fileStore.huffman
+    private val huffman: HuffmanCodec = get()
 
     override fun shouldGenerate(entity: Player): Boolean = (entity.pendingPublicChatMessage != null && entity.syncInfo.hasMaskFlag(PlayerUpdateFlag.PUBLIC_CHAT))
 
@@ -43,11 +41,11 @@ class PlayerPublicChatMask : UpdateMask<Player>, KoinComponent
 
         builder.put(DataType.BYTE, if(auto) 1 else 0)
 
-        builder.put(DataType.BYTE, DataTransformation.ADD, length)
+        builder.put(DataType.BYTE, DataTransformation.ADD, length + 1)
+
+        builder.putSmart(message.text.length)
 
         builder.putBytes(compressedString, 0, length)
-
-        println("----------------: " + builder.byteBuf.array().size)
 
         entity.syncInfo.removeMaskFlag(PlayerUpdateFlag.PUBLIC_CHAT)
 
