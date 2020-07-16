@@ -26,7 +26,7 @@ class EntryFile(private val idx: Int,
     override val table: IndependentReferenceTable<StoreFile>
         get() = TODO("Not yet implemented")
 
-    override fun fetchBuffer(decompressed: Boolean) : BufferedReader
+    override fun fetchBuffer(decompressed: Boolean, xtea: IntArray?) : BufferedReader
     {
 
         val idx = referenceTable.fetchIndex(idx)
@@ -38,11 +38,16 @@ class EntryFile(private val idx: Int,
         if(decompressed)
             buffer = archive.decompress(archive, buffer)
 
-        val out = ByteArray(referenceLength)
+        val out = ByteArray(if(archive.entryCount == 1) buffer.readableBytes else referenceLength)
 
         buffer.skipBytes(referenceIndex)
 
-        buffer.readBytes(out, 0, referenceLength)
+        println("$referenceLength - $referenceIndex")
+
+        if(archive.entryCount > 1)
+            buffer.readBytes(out, 0, referenceLength)
+        else
+            buffer.readBytes(out, 0, buffer.readableBytes)
 
         return BufferedReader(out)
 

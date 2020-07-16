@@ -61,7 +61,7 @@ class DefinitionRepository : KoinComponent, AbstractDefinitionRepository()
 
     private fun submitType(clazz: Class<Definition>) = definitionCache.put(clazz, hashMapOf())
 
-    override fun findActual(identifier: Int, child: Int, clazz : Class<*>): Definition?
+    override fun findActual(identifier: Int, child: Int, keys: IntArray?, clazz : Class<*>): Definition?
     {
 
         val generator = generators.firstOrNull { it.definitionClass == clazz }
@@ -75,12 +75,15 @@ class DefinitionRepository : KoinComponent, AbstractDefinitionRepository()
 
         val reader = when
         {
+
             generator.namedArchive ->
             {
 
                 val archiveName = generator.generateArchiveName(identifier)
 
-                fileStore.fetchIndex(generator.indexConfig.identifier).fetchNamedArchive(archiveName)?.fetchBuffer()!!
+                val foundArchive = fileStore.fetchIndex(generator.indexConfig.identifier).fetchNamedArchive(archiveName)!!
+
+                foundArchive.fetchBuffer(true, keys)
 
             }
             else                   ->

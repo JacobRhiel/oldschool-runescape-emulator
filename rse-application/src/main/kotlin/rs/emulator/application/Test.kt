@@ -11,21 +11,28 @@ import rs.emulator.cache.definition.DefinitionRepository
 import rs.emulator.cache.definition.definition
 import rs.emulator.cache.store.VirtualFileStore
 import rs.emulator.cache.store.data.DataFile
+import rs.emulator.cache.store.index.IndexConfig
 import rs.emulator.cache.store.reference.ReferenceTable
+import rs.emulator.encryption.huffman.HuffmanCodec
 import rs.emulator.encryption.rsa.RSAService
+import rs.emulator.encryption.xtea.XteaKeyService
 import rs.emulator.engine.service.CyclicEngineService
 import rs.emulator.engine.service.schedule.CyclicDelaySchedule
 import rs.emulator.fileserver.FileStoreService
 import rs.emulator.network.packet.repository.PacketRepository
-import rs.emulator.network.packet.repository.PacketService
+import rs.emulator.network.packet.PacketService
 import rs.emulator.network.pipeline.DefaultPipelineProvider
 import rs.emulator.network.world.network.channel.pipeline.WorldPipelineProvider
 import rs.emulator.network.world.service.WorldService
 import rs.emulator.plugins.RSPluginManager
-import rs.emulator.region.XteaKeyService
 import rs.emulator.service.login.worker.LoginWorkerSchedule
 import rs.emulator.service.login.worker.LoginWorkerService
-import rs.emulator.world.task.UpdatePlayerSynchronizationEvent
+import rs.emulator.world.World
+import rs.emulator.world.WorldAccess
+import rs.emulator.world.WorldActivity
+import rs.emulator.world.WorldOrigin
+import rs.emulator.world.repository.task.PreUpdatePlayerSynchronizationTask
+import rs.emulator.world.repository.task.UpdatePlayerSynchronizationEvent
 import java.nio.file.Paths
 
 /**
@@ -80,6 +87,8 @@ class Test : KoinComponent {
 
                 single { PacketService() }
 
+                single { World.newBuilder().setMembers(true).setOrigin(WorldOrigin.UNITED_STATES).setAccess(WorldAccess.DEVELOPMENT).setActivity(WorldActivity.NONE).build() }
+
                 //todo move the parsing.
                 single { PacketRepository() }
 
@@ -100,7 +109,22 @@ class Test : KoinComponent {
 
             }
 
+            val postLoadModule = module {
+
+                single {
+
+                    val fileStore: VirtualFileStore = get()
+
+                    val huffmanFile = fileStore.fetchIndex(IndexConfig.BINARY.identifier).fetchNamedArchive("huffman")!!.fetchEntry(0)
+
+                   HuffmanCodec(huffmanFile.fetchBuffer(true).toArray())
+
+                }
+
+            }
+
             runBlocking {
+
                 startKoin {
 
                     modules(mod)
@@ -113,11 +137,15 @@ class Test : KoinComponent {
                         startPlugins()
                     }
 
+                    test.engine.schedule(PreUpdatePlayerSynchronizationTask, true)
+
                     test.engine.schedule(UpdatePlayerSynchronizationEvent, true)
 
                     test.serviceManager
                         .startAsync()
                         .awaitHealthy()
+
+                    modules(postLoadModule)
 
                     System.gc()
 

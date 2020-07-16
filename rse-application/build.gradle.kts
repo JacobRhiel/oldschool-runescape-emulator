@@ -24,4 +24,8 @@ dependencies {
 
     implementation(project(":rse-api:region"))
 
+    implementation(project(":rse-map"))
+
+    implementation(project(":rse-world-repository"))
+
 }

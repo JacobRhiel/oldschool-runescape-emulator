@@ -30,6 +30,6 @@ abstract class StoreFile(val parent: Int,
 
     abstract val table: IndependentReferenceTable<*>
 
-    abstract fun fetchBuffer(decompressed: Boolean = false) : BufferedReader
+    abstract fun fetchBuffer(decompressed: Boolean = false, xtea: IntArray? = null) : BufferedReader
 
 }

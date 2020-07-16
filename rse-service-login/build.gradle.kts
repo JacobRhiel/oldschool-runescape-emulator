@@ -15,6 +15,6 @@ dependencies {
 
     implementation(project(":rse-entity:player"))
 
-    implementation(project(":rse-world"))
+    implementation(project(":rse-world-repository"))
 
 }

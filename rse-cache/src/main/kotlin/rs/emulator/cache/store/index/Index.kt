@@ -101,6 +101,6 @@ open class Index(
 
     }
 
-    override fun fetchBuffer(decompressed: Boolean): BufferedReader = dataFile.read(255, identifier, referenceSector, sectorLength)
+    override fun fetchBuffer(decompressed: Boolean, xtea: IntArray?): BufferedReader = dataFile.read(255, identifier, referenceSector, sectorLength)
 
 }

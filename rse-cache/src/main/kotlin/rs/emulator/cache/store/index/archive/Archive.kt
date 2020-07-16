@@ -33,7 +33,7 @@ class Archive(
 
     fun fetchEntry(identifier: Int) = table.lookup(identifier)
 
-    override fun fetchBuffer(decompressed: Boolean): BufferedReader
+    override fun fetchBuffer(decompressed: Boolean, xtea: IntArray?): BufferedReader
     {
 
         val idx = referenceTable.fetchIndex(parent)
@@ -43,7 +43,7 @@ class Archive(
         val buffer = dataFile.read(idx.identifier, identifier, referenceSector, sectorLength)
 
         return if(decompressed)
-            decompress(this, buffer)
+            decompress(this, buffer, xtea)
         else
             buffer
 

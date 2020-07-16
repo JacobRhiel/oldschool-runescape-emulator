@@ -8,6 +8,8 @@ dependencies {
 
     api(project(":rse-api:entity"))
 
+    implementation(project(":rse-encryption"))
+
     implementation(project(":rse-entity:player"))
 
 }

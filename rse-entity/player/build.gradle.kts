@@ -8,6 +8,8 @@ dependencies {
 
     api(project(":rse-packet:message"))
 
+    implementation(project(":rse-map"))
+
 }
 
 tasks.withType<Test> {

@@ -67,4 +67,6 @@ class PlayerAppearanceMask : UpdateMask<Player>
 
     override fun fetchFlag(): UpdateFlag = PlayerUpdateFlag.APPEARANCE
 
+    override fun shouldGenerate(entity: Player): Boolean = entity.syncInfo.hasMaskFlag(PlayerUpdateFlag.APPEARANCE)
+
 }

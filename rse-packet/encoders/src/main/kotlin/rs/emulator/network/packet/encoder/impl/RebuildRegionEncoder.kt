@@ -4,10 +4,11 @@ import io.netty.buffer.Unpooled
 import rs.emulator.buffer.manipulation.DataOrder
 import rs.emulator.buffer.manipulation.DataTransformation
 import rs.emulator.buffer.manipulation.DataType
+import rs.emulator.encryption.xtea.XteaKeyService
+import rs.emulator.entity.player.Player
 import rs.emulator.network.packet.GamePacketBuilder
 import rs.emulator.network.packet.encoder.PacketEncoder
 import rs.emulator.network.packet.message.outgoing.RebuildRegionMessage
-import rs.emulator.region.XteaKeyService
 
 /**
  *
@@ -27,7 +28,7 @@ class RebuildRegionEncoder : PacketEncoder<RebuildRegionMessage>()
     val CHUNKS_PER_REGION = 13
 
     /**
-     * The size of the viewport a [gg.rsmod.game.model.entity.Player] can
+     * The size of the viewport a [Player] can
      * 'see' at a time, in tiles.
      */
     val MAX_VIEWPORT = CHUNK_SIZE * CHUNKS_PER_REGION
@@ -40,9 +41,7 @@ class RebuildRegionEncoder : PacketEncoder<RebuildRegionMessage>()
 
             builder.switchToBitAccess()
 
-            val tileHash = (message.z and 0x3FFF) or ((message.x and 0x3FFF) shl 14) or ((message.height and 0x3) shl 28)
-
-            builder.putBits(30, tileHash)//message.tile.as30BitInteger)
+            builder.putBits(30, message.tileHash)
 
             for (i in 1 until 2048)
                 if (i != message.index)
