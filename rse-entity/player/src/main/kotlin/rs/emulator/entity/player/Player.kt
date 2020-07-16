@@ -17,6 +17,7 @@ import rs.emulator.packet.api.IPacketMessage
 import rs.emulator.plugins.RSPluginManager
 import rs.emulator.plugins.extensions.factories.ContainerRegistrationException
 import rs.emulator.plugins.extensions.factories.ItemContainerFactory
+import java.util.concurrent.atomic.AtomicLong
 
 class Player(val channel: Channel, val outgoingPackets: PublishProcessor<IPacketMessage>) : Actor(), IPlayer {
 
@@ -25,6 +26,8 @@ class Player(val channel: Channel, val outgoingPackets: PublishProcessor<IPacket
     val syncInfo = SyncInformation().apply { this.addMaskFlag(PlayerUpdateFlag.APPEARANCE) }
 
     val messageHandler = MessageHandler(this)
+
+    val idleMouseTicks = AtomicLong(0L)
 
     fun onLogin() {
 
@@ -530,6 +533,9 @@ class Player(val channel: Channel, val outgoingPackets: PublishProcessor<IPacket
                 }
             }
         }
+
+        outgoingPackets.offer(UnknownMessage(true))
+
     }
 
     private val itemContainerManager = ItemContainerManager().apply {

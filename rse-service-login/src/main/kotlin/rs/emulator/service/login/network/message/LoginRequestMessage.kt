@@ -70,10 +70,12 @@ data class LoginRequestMessage(
         val incomingDisposable = session.incomingPackets
             .onBackpressureBuffer(10)
             .onBackpressureDrop { throw Error("Incoming packet ${it.metaData.opcode} dropped.") }
-            .subscribe {
+            .subscribe({
                 val (metaData, gamePacket) = it
                 metaData.handle(ctx.channel(), player, gamePacket)
-            }
+            }, {
+                it.printStackTrace()
+            })
 
         session.disposables.addAll(listOf(outgoingDisposable, incomingDisposable))
 

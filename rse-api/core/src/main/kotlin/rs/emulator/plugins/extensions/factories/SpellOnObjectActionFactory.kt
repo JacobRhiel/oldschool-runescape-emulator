@@ -1,7 +1,7 @@
 package rs.emulator.plugins.extensions.factories
 
 import org.pf4j.ExtensionPoint
-import rs.emulator.plugins.extensions.factories.actions.SpellOnObjectAction
+import rs.emulator.plugins.extensions.factories.actions.spell.SpellOnObjectAction
 
 /**
  *

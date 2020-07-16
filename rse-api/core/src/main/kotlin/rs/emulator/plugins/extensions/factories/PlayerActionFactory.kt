@@ -1,7 +1,7 @@
 package rs.emulator.plugins.extensions.factories
 
 import org.pf4j.ExtensionPoint
-import rs.emulator.plugins.extensions.factories.actions.PlayerActions
+import rs.emulator.plugins.extensions.factories.actions.action.PlayerAction
 
 /**
  *
@@ -14,6 +14,6 @@ interface PlayerActionFactory : ExtensionPoint {
         playerIndex: Int,
         option: Int,
         controlPressed: Boolean
-    ): PlayerActions
+    ): PlayerAction
 
 }

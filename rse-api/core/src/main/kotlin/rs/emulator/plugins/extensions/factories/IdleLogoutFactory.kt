@@ -2,7 +2,7 @@ package rs.emulator.plugins.extensions.factories
 
 import org.pf4j.ExtensionPoint
 import rs.emulator.entity.actor.player.IPlayer
-import rs.emulator.plugins.extensions.factories.actions.IdleLogoutAction
+import rs.emulator.plugins.extensions.factories.actions.idle.IdleLogoutAction
 
 /**
  *

@@ -1,4 +1,4 @@
-package rs.emulator.plugins.extensions.factories.actions
+package rs.emulator.plugins.extensions.factories.actions.spell
 
 import rs.emulator.entity.`object`.IObject
 import rs.emulator.entity.actor.player.IPlayer

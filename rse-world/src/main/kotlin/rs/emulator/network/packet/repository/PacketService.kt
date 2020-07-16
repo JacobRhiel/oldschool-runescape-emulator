@@ -143,6 +143,15 @@ class PacketService : AbstractIdleService(), KoinComponent {
             listener = NpcActionListener()
         )
 
+        packetRepository.putDecoders(
+            opcodes = *intArrayOf(30, 29, 72, 41, 88),
+            decoder = LocActionDecoder(),
+            length = 7,
+            ignore = false,
+            clazz = LocActionMessage::class,
+            listener = LocActionListener()
+        )
+
         packetRepository.putDecoder(
             3,
             MouseClickDecoder(), length = 6, ignore = false, clazz = MouseClickMessage::class,
@@ -211,9 +220,71 @@ class PacketService : AbstractIdleService(), KoinComponent {
             listener = SpellOnObjListener()
         )
 
+        packetRepository.putDecoder(
+            60,
+            SpellOnGroundObjDecoder(),
+            length = 13,
+            clazz = SpellOnGroundObjMessage::class,
+            listener = SpellOnGroundObjListener()
+        )
+
+        packetRepository.putDecoder(
+            38,
+            SpellOnNpcDecoder(),
+            length = 9,
+            clazz = SpellOnNpcMessage::class,
+            listener = SpellOnNpcListener()
+        )
+
+        packetRepository.putDecoder(
+            99,
+            ObjOnNpcDecoder(),
+            length = 11,
+            clazz = ObjOnNpcMessage::class,
+            listener = ObjOnNpcListener()
+        )
+
+        /*packetRepository.putDecoder(
+            85,
+            ZeroSizeDecoder(),
+            length = 0,
+            clazz = IdleMouseTickMessage::class,
+            listener = IdleMouseTickListener()
+        )*/
+
+        packetRepository.putDecoder(
+            55,
+            SpellOnPlayerDecoder(),
+            length = 9,
+            clazz = SpellOnPlayerMessage::class,
+            listener = SpellOnPlayerListener()
+        )
+
+        packetRepository.putDecoder(
+            63,
+            ObjOnObjDecoder(),
+            length = 16,
+            clazz = ObjOnObjMessage::class,
+            listener = ObjOnObjListener()
+        )
+        packetRepository.putDecoder(
+            83,
+            ChatFilterDecoder(),
+            length = 3,
+            clazz = ChatFilterMessage::class,
+            listener = ChatFilterListener()
+        )
+
     }
 
     private fun addEncoders() {
+
+        packetRepository.putEncoder(
+            67,
+            UnknownEncoder(),
+            clazz = UnknownMessage::class
+        )
+
         packetRepository.putEncoder(
             21,
             RebuildRegionEncoder(),

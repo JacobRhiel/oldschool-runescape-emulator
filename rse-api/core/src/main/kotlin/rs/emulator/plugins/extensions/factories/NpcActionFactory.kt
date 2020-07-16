@@ -1,7 +1,7 @@
 package rs.emulator.plugins.extensions.factories
 
 import org.pf4j.ExtensionPoint
-import rs.emulator.plugins.extensions.factories.actions.NpcActions
+import rs.emulator.plugins.extensions.factories.actions.action.NpcAction
 
 /**
  *
@@ -10,6 +10,6 @@ import rs.emulator.plugins.extensions.factories.actions.NpcActions
 
 interface NpcActionFactory : ExtensionPoint {
 
-    fun registerNpcActions(npcIndex: Int, option: Int, controlPressed: Boolean): NpcActions
+    fun registerNpcActions(npcIndex: Int, option: Int, controlPressed: Boolean): NpcAction
 
 }
