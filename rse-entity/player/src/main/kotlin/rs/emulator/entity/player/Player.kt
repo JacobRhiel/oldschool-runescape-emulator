@@ -2,10 +2,13 @@ package rs.emulator.entity.player
 
 import io.netty.channel.Channel
 import io.reactivex.processors.PublishProcessor
+import org.koin.core.KoinComponent
+import org.koin.core.get
 import rs.emulator.entity.actor.Actor
 import rs.emulator.entity.actor.player.IPlayer
 import rs.emulator.entity.actor.player.messages.AbstractMessageHandler
 import rs.emulator.entity.actor.player.messages.IMessages
+import rs.emulator.entity.actor.player.messages.IWidgetMessages
 import rs.emulator.entity.actor.player.storage.IItemContainerManager
 import rs.emulator.entity.player.chat.PublicChatText
 import rs.emulator.entity.player.storage.ItemContainerManager
@@ -18,10 +21,18 @@ import rs.emulator.packet.api.IPacketMessage
 import rs.emulator.plugins.RSPluginManager
 import rs.emulator.plugins.extensions.factories.ContainerRegistrationException
 import rs.emulator.plugins.extensions.factories.ItemContainerFactory
+import rs.emulator.reactive.createSubZone
+import rs.emulator.region.zones.RegionZone
+import rs.emulator.region.zones.events.EnterZoneEvent
+import rs.emulator.region.zones.events.LeaveZoneEvent
 import rs.emulator.skills.SkillAttributes
+import rs.emulator.world.World
 import java.util.concurrent.atomic.AtomicLong
 
-class Player(val channel: Channel, val outgoingPackets : PublishProcessor<IPacketMessage>) : Actor(), IPlayer {
+class Player(val channel: Channel, val outgoingPackets: PublishProcessor<IPacketMessage>) : Actor(), IPlayer,
+    KoinComponent {
+
+    val world: World = get()
 
     val viewport = Viewport(this)
 
@@ -189,11 +200,29 @@ class Player(val channel: Channel, val outgoingPackets : PublishProcessor<IPacke
             )
         }
 
-        skillAttributes.experienceProcessor.subscribe {
-            //Double xp
-            it.modifiedExperience = (it.baseExperience * 2)
+        val regionId = coordinate.toRegion().regionId
+        val region = world.mapGrid.fetchRegion(regionId)
+        val zone = RegionZone(coordinate.x, coordinate.z, 0, 20, 20)
+        zone.reactiveZone.subscribe<EnterZoneEvent> {
+            messagesFromType<IWidgetMessages>()
+                .sendChatMessage("Entering parent Zone")
         }
-        skillAttributes.addExperience(3, 1000)
+        zone.reactiveZone.subscribe<LeaveZoneEvent> {
+            messagesFromType<IWidgetMessages>()
+                .sendChatMessage("Leaving parent Zone")
+        }
+        val child = zone.reactiveZone.createSubZone(5, 5, 0, 10, 10)
+
+        child.subscribe<EnterZoneEvent> {
+            messagesFromType<IWidgetMessages>()
+                .sendChatMessage("Entering sub-zone")
+        }
+        child.subscribe<LeaveZoneEvent> {
+            messagesFromType<IWidgetMessages>()
+                .sendChatMessage("Leaving sub-zone")
+        }
+
+        region.zones.add(zone)
 
         containerManager().register(93, Inventory()) {
             syncBlock {

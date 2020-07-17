@@ -1,11 +1,12 @@
 package rs.emulator.world
 
+import rs.emulator.map.MapGrid
+
 /**
  *
  * @author Chk
  */
-class WorldBuilder
-{
+class WorldBuilder {
 
     private lateinit var origin: WorldOrigin
 
@@ -23,6 +24,6 @@ class WorldBuilder
 
     fun setAccess(access: WorldAccess) : WorldBuilder = this.apply { this.access = access }
 
-    fun build(): World = World(0, members, access, activity, origin)
+    fun build(): World = World(0, members, access, activity, origin, MapGrid())
 
 }

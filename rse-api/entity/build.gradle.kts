@@ -3,6 +3,7 @@ dependencies {
     api(project(":rse-api:collections"))
     api(project(":rse-api:definitions"))
     api(project(":rse-api:skills"))
+    api(project(":rse-api:region"))
 
     api(project(":rse-database"))
 

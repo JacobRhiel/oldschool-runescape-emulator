@@ -1,4 +1,4 @@
-package rs.emulator.skills
+package rs.emulator.skills.math
 
 import kotlin.math.floor
 import kotlin.math.pow

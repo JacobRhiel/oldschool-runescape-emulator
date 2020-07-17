@@ -25,7 +25,8 @@ include(
     "rse-api:core",
     "rse-api:widgets",
     "rse-api:skills",
-    "rse-api:reactive"
+    "rse-api:reactive",
+    "rse-api:region-zones"
 )
 include("rse-plugins", "rse-plugins:commands", "rse-plugins:system")
 include("rse-network-js5")

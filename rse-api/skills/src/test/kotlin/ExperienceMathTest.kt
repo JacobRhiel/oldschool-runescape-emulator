@@ -1,5 +1,5 @@
 import org.junit.jupiter.api.Test
-import rs.emulator.skills.ExperienceMath
+import rs.emulator.skills.math.ExperienceMath
 
 class ExperienceMathTest {
 
