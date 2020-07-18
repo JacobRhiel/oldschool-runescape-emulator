@@ -151,6 +151,15 @@ class PacketService : AbstractIdleService(), KoinComponent {
             listener = NpcActionListener()
         )
 
+        packetRepository.putDecoders(
+            opcodes = *intArrayOf(64, 36, 52, 67, 11),
+            decoder = LegacyObjActionDecoder(),
+            length = 8,
+            ignore = false,
+            clazz = LegacyObjActionMessage::class,
+            listener = LegacyObjActionListener()
+        )
+
         packetRepository.putDecoder(
             3,
             MouseClickDecoder(), length = 6, ignore = false, clazz = MouseClickMessage::class,
