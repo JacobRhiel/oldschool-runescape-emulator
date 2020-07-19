@@ -5,7 +5,7 @@ package rs.emulator.entity.widgets
  * @author javatar
  */
 
-interface WidgetEvent {
+interface ComponentEvent {
 
     val source: Component
 

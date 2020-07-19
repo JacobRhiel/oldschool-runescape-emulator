@@ -8,4 +8,6 @@ import rs.emulator.entity.widgets.ComponentEvent
  * @author javatar
  */
 
-class ComponentClickEvent(override val source: Component, val option: Int) : ComponentEvent
+class ComponentOpenEvent(
+    override val source: Component
+) : ComponentEvent

@@ -1,11 +1,10 @@
 package rs.emulator.entity.player
 
-import io.netty.channel.Channel
 import io.reactivex.processors.PublishProcessor
+import io.reactivex.rxkotlin.toObservable
 import org.koin.core.KoinComponent
 import org.koin.core.get
 import rs.emulator.entity.actor.Actor
-import rs.emulator.entity.actor.npc.Npc
 import rs.emulator.entity.actor.player.IPlayer
 import rs.emulator.entity.actor.player.messages.AbstractMessageHandler
 import rs.emulator.entity.actor.player.messages.IMessages
@@ -17,17 +16,15 @@ import rs.emulator.entity.player.storage.containers.Inventory
 import rs.emulator.entity.player.update.flag.PlayerUpdateFlag
 import rs.emulator.entity.player.update.sync.SyncInformation
 import rs.emulator.entity.player.viewport.Viewport
-import rs.emulator.entity.widgets.Component
 import rs.emulator.entity.widgets.WidgetViewport
-import rs.emulator.entity.widgets.events.ComponentClickEvent
-import rs.emulator.entity.widgets.subscribe
-import rs.emulator.entity.widgets.widgets.ChatWidget
+import rs.emulator.entity.widgets.events.ComponentOpenEvent
 import rs.emulator.entity.widgets.widgets.FixedGameFrameWidget
 import rs.emulator.network.packet.message.outgoing.*
 import rs.emulator.packet.api.IPacketMessage
 import rs.emulator.plugins.RSPluginManager
 import rs.emulator.plugins.extensions.factories.ContainerRegistrationException
 import rs.emulator.plugins.extensions.factories.ItemContainerFactory
+import rs.emulator.plugins.extensions.factories.LoginActionFactory
 import rs.emulator.reactive.createSubZone
 import rs.emulator.region.zones.RegionZone
 import rs.emulator.region.zones.events.EnterZoneEvent
@@ -36,7 +33,7 @@ import rs.emulator.skills.SkillAttributes
 import rs.emulator.world.World
 import java.util.concurrent.atomic.AtomicLong
 
-class Player(val channel: Channel, val outgoingPackets: PublishProcessor<IPacketMessage>) : Actor(), IPlayer,
+class Player(val outgoingPackets: PublishProcessor<IPacketMessage>) : Actor(), IPlayer,
     KoinComponent {
 
     val world: World = get()
@@ -53,20 +50,14 @@ class Player(val channel: Channel, val outgoingPackets: PublishProcessor<IPacket
 
     override val skillAttributes: SkillAttributes = SkillAttributes()
 
-    val widgetViewport = WidgetViewport(this).apply {
+    override val widgetViewport = WidgetViewport().apply {
         this[548] = FixedGameFrameWidget()
-        this[162] = ChatWidget()
     }
 
     fun onLogin() {
 
-
-        widgetViewport[162][33].subscribe<ComponentClickEvent> {
-            if (it.option == 78) {
-                widgetViewport[548][23].open(Component(553))
-                outgoingPackets.offer(IfOpenSubMessage(548, 23, 553, 0))
-                outgoingPackets.offer(RunClientScriptMessage(1104, 1, 1))
-            }
+        widgetViewport[548][23].subscribe<ComponentOpenEvent> {
+            outgoingPackets.offer(IfOpenSubMessage(548, 23, it.source.id, 0))
         }
 
         outgoingPackets.offer(
@@ -252,6 +243,11 @@ class Player(val channel: Channel, val outgoingPackets: PublishProcessor<IPacket
                 }
             }
         }
+
+        RSPluginManager.getExtensions<LoginActionFactory>()
+            .toObservable()
+            .map { it.registerLoginAction(this) }
+            .subscribe { it.onLogin(this) }
 
     }
 

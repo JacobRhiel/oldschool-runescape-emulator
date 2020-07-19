@@ -1,6 +1,7 @@
 package rs.emulator.network.packet.listener
 
 import io.netty.channel.Channel
+import rs.emulator.entity.actor.player.messages.IWidgetMessages
 import rs.emulator.entity.player.Player
 import rs.emulator.entity.widgets.events.ComponentClickEvent
 import rs.emulator.network.packet.message.incoming.IfButtonMessage
@@ -26,20 +27,7 @@ class IfButtonListener : GamePacketListener<IfButtonMessage> {
             it.onClick(player, message.hash, message.option, message.slot, message.item)
         }*/
 
-
-        val comp = player.widgetViewport[interfaceId][component]
-
-        if (comp.active) {
-            comp.events.onNext(
-                ComponentClickEvent(
-                    comp,
-                    player,
-                    option
-                )
-            )
-        }
-
-        if (interfaceId == 162 && component == 33) {
+        /*if (interfaceId == 162 && component == 33) {
 
             if (option == 78) {
 
@@ -48,7 +36,7 @@ class IfButtonListener : GamePacketListener<IfButtonMessage> {
 
             }
 
-        }
+        }*/
 
         if (interfaceId == 378 && component == 78) {
 
@@ -356,6 +344,20 @@ class IfButtonListener : GamePacketListener<IfButtonMessage> {
 
             }
 
+        } else {
+            val comp = player.widgetViewport[interfaceId][component]
+
+            player.messagesFromType<IWidgetMessages>()
+                .sendChatMessage("Opening ${comp.id} - ${comp.active}")
+
+            if (comp.active) {
+                comp.onNext(
+                    ComponentClickEvent(
+                        comp,
+                        option
+                    )
+                )
+            }
         }
 
         println("Unhandled button action: [component=[$interfaceId:$component], option=$option, slot=${message.slot}, item=${message.item}]")

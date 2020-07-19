@@ -1,13 +1,11 @@
 package rs.emulator.entity.widgets
 
-import rs.emulator.entity.actor.player.IPlayer
-
 /**
  *
  * @author javatar
  */
 
-class WidgetViewport(player: IPlayer) {
+class WidgetViewport {
 
     val visibleWidgets = mutableMapOf<Int, Widget>()
 
@@ -16,7 +14,9 @@ class WidgetViewport(player: IPlayer) {
     }
 
     operator fun set(widgetId: Int, widget: Widget) {
-        visibleWidgets[widgetId] = widget
+        if (!visibleWidgets.containsKey(widgetId)) {
+            visibleWidgets[widgetId] = widget
+        }
     }
 
 }

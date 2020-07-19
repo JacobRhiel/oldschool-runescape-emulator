@@ -23,7 +23,7 @@ class MessageHandler(val player: Player) : AbstractMessageHandler() {
         player.outgoingPackets.offer(
             RunClientScriptMessage(
                 scriptId,
-                params
+                *params
             )
         )
     }

@@ -1,4 +1,4 @@
-package rs.emulator.entity.widgets.widgets
+package rs.emulator.plugin.widget
 
 import rs.emulator.entity.widgets.DynamicComponent
 import rs.emulator.entity.widgets.Widget
@@ -8,10 +8,10 @@ import rs.emulator.entity.widgets.Widget
  * @author javatar
  */
 
-class FixedGameFrameWidget : Widget(548) {
+class ChatWidget : Widget(162) {
 
     init {
-        this[23] = DynamicComponent(23, this)
+        this[33] = DynamicComponent(33, this)
     }
 
 }

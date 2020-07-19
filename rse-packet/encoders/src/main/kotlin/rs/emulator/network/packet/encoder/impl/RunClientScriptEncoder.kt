@@ -39,7 +39,7 @@ class RunClientScriptEncoder : PacketEncoder<RunClientScriptMessage>()
                     args.add((value.toInt() shr 8).toByte())
                     args.add(value.toByte())
                 }
-                else -> logger().error("Invalid argument type {} for script {}.", value::class.java, message.id)
+                else -> logger().error("Invalid argument type {} for script {}.", value::class, message.id)
             }
         }
 

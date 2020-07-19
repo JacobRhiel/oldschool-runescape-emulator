@@ -52,7 +52,7 @@ class PlayerAppearanceMask : UpdateMask<Player>
             writer.put(DataType.SHORT, anim)
         }
 
-        writer.putString("Gpi")
+        writer.putString(entity.displayName())
         writer.put(DataType.BYTE, /*other.combatLevel*/3)
         writer.put(DataType.SHORT,0)//skill level
         writer.put(DataType.BYTE, 0)//is hidden

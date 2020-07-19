@@ -28,7 +28,12 @@ include(
     "rse-api:reactive",
     "rse-api:region-zones"
 )
-include("rse-plugins", "rse-plugins:commands", "rse-plugins:system")
+include(
+    "rse-plugins",
+    "rse-plugins:commands",
+    "rse-plugins:system",
+    "rse-plugins:report-abuse"
+)
 include("rse-network-js5")
 include("rse-network-world")
 include("rse-encryption")

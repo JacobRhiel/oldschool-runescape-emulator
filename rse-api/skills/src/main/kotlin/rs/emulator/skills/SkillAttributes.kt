@@ -32,6 +32,7 @@ class SkillAttributes(attributeCount: Int = 23) {
             if (id == it.id) {
                 val base = when (modType) {
                     BASE -> it.baseExperience
+
                     MODIFIED -> it.modifiedExperience
                 }
                 it.modifiedExperience = when (expMod) {
