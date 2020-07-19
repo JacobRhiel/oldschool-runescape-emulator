@@ -25,8 +25,6 @@ class PublicMessageDecoder : PacketDecoder<PublicChatMessage>()
 
         val length = reader.unsignedSmart
 
-        println("type: $type, color: $color, effect: $effect, length: $length")
-
         val data = ByteArray(reader.readableBytes)
 
         reader.getBytes(data)

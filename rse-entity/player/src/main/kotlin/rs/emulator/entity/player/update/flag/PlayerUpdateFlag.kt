@@ -13,7 +13,23 @@ enum class PlayerUpdateFlag(override val bit: Int) : UpdateFlag
 
     MOVEMENT(256),
 
-    PUBLIC_CHAT(1)
+    PUBLIC_CHAT(1),
+
+    ANIMATION(128),
+
+    GRAPHIC(2048),
+
+    FORCE_TEXT(2),
+
+    FACE_COORDINATE(64),
+
+    FACE_ENTITY(8),
+
+    CONTEXT_MENU(1024),
+
+    FORCE_MOVEMENT(512),
+
+    HIT_MARK(4)
 
     ;
 

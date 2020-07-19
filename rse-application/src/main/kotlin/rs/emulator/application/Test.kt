@@ -32,6 +32,7 @@ import rs.emulator.world.WorldAccess
 import rs.emulator.world.WorldActivity
 import rs.emulator.world.WorldOrigin
 import rs.emulator.world.repository.task.PreUpdatePlayerSynchronizationTask
+import rs.emulator.world.repository.task.UpdateNpcSynchronizationTask
 import rs.emulator.world.repository.task.UpdatePlayerSynchronizationEvent
 import java.nio.file.Paths
 
@@ -136,6 +137,8 @@ class Test : KoinComponent {
                     test.engine.schedule(PreUpdatePlayerSynchronizationTask, true)
 
                     test.engine.schedule(UpdatePlayerSynchronizationEvent, true)
+
+                    test.engine.schedule(UpdateNpcSynchronizationTask, true)
 
                     test.serviceManager
                         .startAsync()

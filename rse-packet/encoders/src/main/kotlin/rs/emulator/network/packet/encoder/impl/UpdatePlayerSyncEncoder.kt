@@ -3,9 +3,7 @@ package rs.emulator.network.packet.encoder.impl
 import rs.emulator.buffer.manipulation.DataType
 import rs.emulator.entity.player.Player
 import rs.emulator.entity.player.update.flag.PlayerUpdateFlag
-import rs.emulator.entity.player.update.mask.PlayerAppearanceMask
-import rs.emulator.entity.player.update.mask.PlayerMovementMask
-import rs.emulator.entity.player.update.mask.PlayerPublicChatMask
+import rs.emulator.entity.player.update.mask.*
 import rs.emulator.entity.player.update.sync.SyncInformation
 import rs.emulator.entity.player.viewport.Viewport
 import rs.emulator.entity.update.mask.UpdateMask
@@ -297,7 +295,23 @@ class UpdatePlayerSyncEncoder : PacketEncoder<UpdatePlayerSyncMessage<Player>>()
 
             PlayerMovementMask(),
 
-            PlayerPublicChatMask()
+            PlayerPublicChatMask(),
+
+            PlayerContextMenuMask(),
+
+            PlayerAnimationMask(),
+
+            PlayerGraphicMask(),
+
+            PlayerFaceEntityMask(),
+
+            PlayerFaceCoordinateMask(),
+
+            PlayerForceMovementMask(),
+
+            PlayerForceTextMask(),
+
+            PlayerHitMarkMask()
 
         ).sortedBy { it.fetchFlag().bit }
 

@@ -3,11 +3,11 @@ package rs.emulator.entity.player
 import io.netty.channel.Channel
 import io.reactivex.processors.PublishProcessor
 import rs.emulator.entity.actor.Actor
+import rs.emulator.entity.actor.npc.Npc
 import rs.emulator.entity.actor.player.IPlayer
 import rs.emulator.entity.actor.player.messages.AbstractMessageHandler
 import rs.emulator.entity.actor.player.messages.IMessages
 import rs.emulator.entity.actor.player.storage.IItemContainerManager
-import rs.emulator.entity.actor.player.storage.container.ItemContainer
 import rs.emulator.entity.player.chat.PublicChatMessage
 import rs.emulator.entity.player.storage.ItemContainerManager
 import rs.emulator.entity.player.storage.containers.Inventory
@@ -179,6 +179,7 @@ class Player(val channel: Channel, val outgoingPackets : PublishProcessor<IPacke
                 }
             }
         }
+
     }
 
     private val itemContainerManager = ItemContainerManager().apply {

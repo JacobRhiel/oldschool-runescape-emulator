@@ -12,4 +12,6 @@ dependencies {
 
     implementation(project(":rse-entity:player"))
 
+    implementation(project(":rse-entity:npc"))
+
 }

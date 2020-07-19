@@ -4,6 +4,7 @@ import io.netty.channel.Channel
 import io.netty.channel.ChannelHandlerContext
 import org.koin.core.KoinComponent
 import org.koin.core.get
+import rs.emulator.entity.actor.npc.Npc
 import rs.emulator.entity.player.Player
 import rs.emulator.network.SESSION_KEY
 import rs.emulator.network.message.NetworkMessage

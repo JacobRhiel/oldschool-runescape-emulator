@@ -3,7 +3,6 @@ package rs.emulator.network.packet.listener
 import io.netty.channel.Channel
 import org.koin.core.KoinComponent
 import org.koin.core.get
-import rs.emulator.cache.store.VirtualFileStore
 import rs.emulator.encryption.huffman.HuffmanCodec
 import rs.emulator.entity.player.Player
 import rs.emulator.entity.player.update.flag.PlayerUpdateFlag

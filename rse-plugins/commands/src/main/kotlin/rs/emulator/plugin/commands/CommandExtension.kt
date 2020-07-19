@@ -31,6 +31,10 @@ class CommandExtension : CommandFactory {
                 val coins = ItemProvider.provide<StandardItem>(995, 2147000000)
                 player.inventory().add(coins)
             }
+            "testAnim" -> {
+                val animation = 3864
+
+            }
         }
 
     }

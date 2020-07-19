@@ -5,7 +5,6 @@ import org.koin.core.get
 import rs.emulator.buffer.manipulation.DataOrder
 import rs.emulator.buffer.manipulation.DataTransformation
 import rs.emulator.buffer.manipulation.DataType
-import rs.emulator.cache.store.VirtualFileStore
 import rs.emulator.encryption.huffman.HuffmanCodec
 import rs.emulator.entity.player.Player
 import rs.emulator.entity.player.update.flag.PlayerUpdateFlag
