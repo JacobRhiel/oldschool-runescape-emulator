@@ -5,4 +5,8 @@ package rs.emulator.entity.widgets
  * @author javatar
  */
 
-interface IOverlayWidget : IWidget
+interface WidgetEvent {
+
+    val source: Component
+
+}

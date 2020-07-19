@@ -303,6 +303,15 @@ class PacketService : AbstractIdleService(), KoinComponent {
             listener = PublicChatListener()
         )
 
+        packetRepository.putDecoder(
+            100,
+            decoder = ReportAbuseDecoder(),
+            packetType = PacketType.VARIABLE_BYTE,
+            ignore = false,
+            clazz = ReportAbuseMessage::class,
+            listener = ReportAbuseListener()
+        )
+
     }
 
     private fun addEncoders() {

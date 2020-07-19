@@ -2,6 +2,7 @@ package rs.emulator.network.packet.listener
 
 import io.netty.channel.Channel
 import rs.emulator.entity.player.Player
+import rs.emulator.entity.widgets.events.ComponentClickEvent
 import rs.emulator.network.packet.message.incoming.IfButtonMessage
 import rs.emulator.network.packet.message.outgoing.*
 
@@ -9,11 +10,9 @@ import rs.emulator.network.packet.message.outgoing.*
  *
  * @author Chk
  */
-class IfButtonListener : GamePacketListener<IfButtonMessage>
-{
+class IfButtonListener : GamePacketListener<IfButtonMessage> {
 
-    override fun handle(channel: Channel, player: Player, message: IfButtonMessage)
-    {
+    override fun handle(channel: Channel, player: Player, message: IfButtonMessage) {
 
         val interfaceId = message.hash shr 16
 
@@ -27,8 +26,31 @@ class IfButtonListener : GamePacketListener<IfButtonMessage>
             it.onClick(player, message.hash, message.option, message.slot, message.item)
         }*/
 
-        if(interfaceId == 378 && component == 78)
-        {
+
+        val comp = player.widgetViewport[interfaceId][component]
+
+        if (comp.active) {
+            comp.events.onNext(
+                ComponentClickEvent(
+                    comp,
+                    player,
+                    option
+                )
+            )
+        }
+
+        if (interfaceId == 162 && component == 33) {
+
+            if (option == 78) {
+
+                player.outgoingPackets.offer(IfOpenSubMessage(548, 23, 553, 0))
+                player.outgoingPackets.offer(RunClientScriptMessage(1104, 1, 1))
+
+            }
+
+        }
+
+        if (interfaceId == 378 && component == 78) {
 
             if (option == 14) {
 
@@ -330,8 +352,7 @@ class IfButtonListener : GamePacketListener<IfButtonMessage>
                     )
                 )
 
-
-                //player.outgoingPackets.offer(UpdateInventoryPartialMessage(interfaceId = 149, component = 0, containerKey = 93, oldItems = hashMapOf(Pair(4151, 1)), newItems = hashMapOf(Pair(1038, 1))))
+                player.widgetViewport[162][33].active = true
 
             }
 

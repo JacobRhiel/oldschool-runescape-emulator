@@ -16,6 +16,12 @@ import rs.emulator.entity.player.storage.containers.Inventory
 import rs.emulator.entity.player.update.flag.PlayerUpdateFlag
 import rs.emulator.entity.player.update.sync.SyncInformation
 import rs.emulator.entity.player.viewport.Viewport
+import rs.emulator.entity.widgets.Component
+import rs.emulator.entity.widgets.WidgetViewport
+import rs.emulator.entity.widgets.events.ComponentClickEvent
+import rs.emulator.entity.widgets.subscribe
+import rs.emulator.entity.widgets.widgets.ChatWidget
+import rs.emulator.entity.widgets.widgets.FixedGameFrameWidget
 import rs.emulator.network.packet.message.outgoing.*
 import rs.emulator.packet.api.IPacketMessage
 import rs.emulator.plugins.RSPluginManager
@@ -46,7 +52,21 @@ class Player(val channel: Channel, val outgoingPackets: PublishProcessor<IPacket
 
     override val skillAttributes: SkillAttributes = SkillAttributes()
 
+    val widgetViewport = WidgetViewport(this).apply {
+        this[548] = FixedGameFrameWidget()
+        this[162] = ChatWidget()
+    }
+
     fun onLogin() {
+
+
+        widgetViewport[162][33].subscribe<ComponentClickEvent> {
+            if (it.option == 78) {
+                widgetViewport[548][23].open(Component(553))
+                outgoingPackets.offer(IfOpenSubMessage(548, 23, 553, 0))
+                outgoingPackets.offer(RunClientScriptMessage(1104, 1, 1))
+            }
+        }
 
         outgoingPackets.offer(
             RebuildRegionMessage(
