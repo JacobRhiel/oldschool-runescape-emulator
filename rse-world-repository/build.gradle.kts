@@ -5,6 +5,8 @@ dependencies {
 
     implementation(project(":rse-entity:player"))
 
+    implementation(project(":rse-entity:npc"))
+
     implementation(project(":rse-packet:message"))
 
     implementation(project(":rse-packet:decoders"))

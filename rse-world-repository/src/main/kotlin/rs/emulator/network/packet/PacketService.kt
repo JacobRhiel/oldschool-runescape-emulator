@@ -400,6 +400,13 @@ class PacketService : AbstractIdleService(), KoinComponent {
         )
 
         packetRepository.putEncoder(
+            83,
+            UpdateNpcSyncEncoder(),
+            packetType = PacketType.VARIABLE_SHORT,
+            clazz = UpdateNpcSyncMessage::class
+        )
+
+        packetRepository.putEncoder(
             12,
             UpdateSkillEncoder(),
             clazz = UpdateSkillMessage::class

@@ -5,6 +5,7 @@ import io.reactivex.processors.PublishProcessor
 import org.koin.core.KoinComponent
 import org.koin.core.get
 import rs.emulator.entity.actor.Actor
+import rs.emulator.entity.actor.npc.Npc
 import rs.emulator.entity.actor.player.IPlayer
 import rs.emulator.entity.actor.player.messages.AbstractMessageHandler
 import rs.emulator.entity.actor.player.messages.IMessages
@@ -251,6 +252,7 @@ class Player(val channel: Channel, val outgoingPackets: PublishProcessor<IPacket
                 }
             }
         }
+
     }
 
     private val itemContainerManager = ItemContainerManager().apply {

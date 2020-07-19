@@ -7,6 +7,7 @@ dependencies {
     api(project(":rse-api:entity"))
     api(project(":rse-api:region-zones"))
     api(project(":rse-entity:widget"))
+    api(project(":rse-entity:npc"))
 
     api(project(":rse-packet:message"))
 
