@@ -19,12 +19,14 @@ import rs.emulator.encryption.xtea.XteaKeyService
 import rs.emulator.engine.service.CyclicEngineService
 import rs.emulator.engine.service.schedule.CyclicDelaySchedule
 import rs.emulator.fileserver.FileStoreService
+import rs.emulator.map.route.strategy.entity.PathingRouteStrategy
 import rs.emulator.network.packet.repository.PacketRepository
 import rs.emulator.network.packet.PacketService
 import rs.emulator.network.pipeline.DefaultPipelineProvider
 import rs.emulator.network.world.network.channel.pipeline.WorldPipelineProvider
 import rs.emulator.network.world.service.WorldService
 import rs.emulator.plugins.RSPluginManager
+import rs.emulator.region.WorldCoordinate
 import rs.emulator.service.login.worker.LoginWorkerSchedule
 import rs.emulator.service.login.worker.LoginWorkerService
 import rs.emulator.world.World
@@ -47,6 +49,8 @@ class Test : KoinComponent {
     private val engine: CyclicEngineService = get()
 
     val packetRepository: PacketRepository = get()
+
+    val world: World = get()
 
     @ExperimentalStdlibApi
     companion object {
@@ -139,10 +143,15 @@ class Test : KoinComponent {
                     test.engine.schedule(UpdatePlayerSynchronizationEvent, true)
 
                     test.engine.schedule(UpdateNpcSynchronizationTask, true)
-
                     test.serviceManager
                         .startAsync()
                         .awaitHealthy()
+
+/*
+                    val route = PathingRouteStrategy(test.world.map)
+
+                    println(route.find(WorldCoordinate(1, 1, 1), WorldCoordinate(1, 1, 1)))
+*/
 
                     System.gc()
 

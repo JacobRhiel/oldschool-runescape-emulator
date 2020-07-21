@@ -16,7 +16,7 @@ class MapGrid : AreaGrid(width = 32768, height = 32768)
 
     private val regions = mutableMapOf<Int, Region>()
 
-    fun fetchRegion(id: Int) = regions.computeIfAbsent(id) { Region(RegionGrid(id).apply { constructGrid() }) }
+    fun fetchRegion(id: Int): Region = regions.computeIfAbsent(id) { Region(RegionGrid(id).apply { constructGrid() }) }
 
     fun loadRegion(id: Int) : Region
     {

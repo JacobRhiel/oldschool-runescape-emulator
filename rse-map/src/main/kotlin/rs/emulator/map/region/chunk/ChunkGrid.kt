@@ -13,7 +13,7 @@ class ChunkGrid(val region: RegionGrid)
     : AreaGrid(width = 8, height = 8)
 {
 
-    private val tiles = mutableMapOf<Int, GridTile>()
+    val tiles = mutableMapOf<Int, GridTile>()
 
     fun constructGrid(startX: Int, startZ: Int, plane: Int, landscapeDefinition: LandscapeDefinition)
     {

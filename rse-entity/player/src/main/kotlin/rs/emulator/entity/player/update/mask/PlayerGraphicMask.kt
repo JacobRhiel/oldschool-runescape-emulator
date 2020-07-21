@@ -1,5 +1,6 @@
 package rs.emulator.entity.player.update.mask
 
+import rs.emulator.buffer.manipulation.DataOrder
 import rs.emulator.buffer.manipulation.DataTransformation
 import rs.emulator.buffer.manipulation.DataType
 import rs.emulator.entity.player.Player
@@ -14,17 +15,20 @@ import rs.emulator.network.packet.GamePacketBuilder
  */
 class PlayerGraphicMask : UpdateMask<Player>
 {
+
     override fun shouldGenerate(entity: Player): Boolean
     {
 
-        return entity.syncInfo.hasMaskFlag(PlayerUpdateFlag.GRAPHIC)
+        return entity.pendingGraphic != -1 && entity.syncInfo.hasMaskFlag(PlayerUpdateFlag.GRAPHIC)
 
     }
 
     override fun generate(entity: Player, builder: GamePacketBuilder)
     {
 
-        builder.put(DataType.BYTE, DataTransformation.NEGATE, 0)//graphic id
+        builder.put(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD, entity.pendingGraphic)
+
+        builder.put(DataType.INT, DataOrder.MIDDLE,(entity.pendingGraphicHeight shl 16) or entity.pendingGraphicDelay)
 
     }
 

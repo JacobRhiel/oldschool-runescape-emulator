@@ -19,14 +19,14 @@ class PlayerAnimationMask : UpdateMask<Player>
     override fun shouldGenerate(entity: Player): Boolean
     {
 
-        return entity.syncInfo.hasMaskFlag(PlayerUpdateFlag.ANIMATION)
+        return entity.pendingAnimation != -1 && entity.syncInfo.hasMaskFlag(PlayerUpdateFlag.ANIMATION)
 
     }
 
     override fun generate(entity: Player, builder: GamePacketBuilder)
     {
 
-        builder.put(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD, 0)//animation id
+        builder.put(DataType.SHORT, DataOrder.LITTLE, DataTransformation.ADD, entity.pendingAnimation)//animation id
 
         builder.put(DataType.BYTE, DataTransformation.SUBTRACT, 0)//animation delay until begin
 

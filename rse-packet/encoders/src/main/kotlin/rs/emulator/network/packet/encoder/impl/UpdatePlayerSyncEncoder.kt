@@ -299,8 +299,6 @@ class UpdatePlayerSyncEncoder : PacketEncoder<UpdatePlayerSyncMessage<Player>>()
 
             PlayerContextMenuMask(),
 
-            PlayerAnimationMask(),
-
             PlayerGraphicMask(),
 
             PlayerFaceEntityMask(),
@@ -311,7 +309,9 @@ class UpdatePlayerSyncEncoder : PacketEncoder<UpdatePlayerSyncMessage<Player>>()
 
             PlayerForceTextMask(),
 
-            PlayerHitMarkMask()
+            PlayerHitMarkMask(),
+
+            PlayerAnimationMask()
 
         ).sortedBy { it.fetchFlag().bit }
 

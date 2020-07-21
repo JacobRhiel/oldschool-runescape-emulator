@@ -22,7 +22,7 @@ class LandscapeDefinitionGenerator : DefinitionGenerator<LandscapeDefinition>()
 
     override fun generate(id: Int, reader: BufferedReader): LandscapeDefinition = LandscapeDefinition(id)
 
-    override fun generateArchiveName(id: Int): String = "l${id}_${id}"
+    override fun generateArchiveName(id: Int): String = "l${(id shr 8)}_${(id and 0xFF)}"
 
     override fun decodeHeader(id: Int, reader: BufferedReader): LandscapeDefinition
     {

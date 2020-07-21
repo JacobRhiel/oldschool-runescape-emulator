@@ -23,7 +23,7 @@ class MapScapeDefinitionGenerator : DefinitionGenerator<MapScapeDefinition>()
 
     override fun generate(id: Int, reader: BufferedReader): MapScapeDefinition = MapScapeDefinition(id)
 
-    override fun generateArchiveName(id: Int): String = "m${id}_${id}"
+    override fun generateArchiveName(id: Int): String = "m${(id shr 8)}_${(id and 0xFF)}"
 
     override fun decodeHeader(id: Int, reader: BufferedReader): MapScapeDefinition
     {

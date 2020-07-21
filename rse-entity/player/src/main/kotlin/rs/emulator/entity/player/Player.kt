@@ -30,6 +30,14 @@ class Player(val channel: Channel, val outgoingPackets : PublishProcessor<IPacke
 
     var pendingPublicChatMessage: PublicChatMessage? = null
 
+    var pendingAnimation: Int = -1
+
+    var pendingGraphic: Int = -1
+
+    var pendingGraphicHeight: Int = 0
+
+    var pendingGraphicDelay: Int = 0
+
     fun onLogin() {
 
         outgoingPackets.offer(RebuildRegionMessage(true, 1, x = coordinate.x, z = coordinate.z, tileHash = coordinate.as30BitInteger))

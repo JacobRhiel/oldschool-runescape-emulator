@@ -28,4 +28,6 @@ dependencies {
 
     implementation(project(":rse-world-repository"))
 
+    implementation(project(":rse-map:route"))
+
 }

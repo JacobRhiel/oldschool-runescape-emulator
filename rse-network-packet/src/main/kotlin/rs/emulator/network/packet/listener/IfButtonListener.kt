@@ -2,6 +2,7 @@ package rs.emulator.network.packet.listener
 
 import io.netty.channel.Channel
 import rs.emulator.entity.player.Player
+import rs.emulator.entity.player.update.flag.PlayerUpdateFlag
 import rs.emulator.network.packet.message.incoming.IfButtonMessage
 import rs.emulator.network.packet.message.outgoing.*
 
@@ -26,6 +27,26 @@ class IfButtonListener : GamePacketListener<IfButtonMessage>
         interactionExtensions.forEach {
             it.onClick(player, message.hash, message.option, message.slot, message.item)
         }*/
+
+        if(interfaceId == 216 && component == 1)
+        {
+
+            if(option == 14)
+            {
+
+                player.pendingAnimation = 713
+
+                player.pendingGraphic = 113
+
+                player.pendingGraphicHeight = 92
+
+                player.syncInfo.addMaskFlag(PlayerUpdateFlag.GRAPHIC)
+
+                player.syncInfo.addMaskFlag(PlayerUpdateFlag.ANIMATION)
+
+            }
+
+        }
 
         if(interfaceId == 378 && component == 78)
         {

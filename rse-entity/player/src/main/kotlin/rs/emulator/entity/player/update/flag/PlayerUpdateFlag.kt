@@ -17,7 +17,7 @@ enum class PlayerUpdateFlag(override val bit: Int) : UpdateFlag
 
     ANIMATION(128),
 
-    GRAPHIC(2048),
+    GRAPHIC(4096),
 
     FORCE_TEXT(2),
 
@@ -30,6 +30,8 @@ enum class PlayerUpdateFlag(override val bit: Int) : UpdateFlag
     FORCE_MOVEMENT(512),
 
     HIT_MARK(4)
+
+    //todo: 2048?
 
     ;
 

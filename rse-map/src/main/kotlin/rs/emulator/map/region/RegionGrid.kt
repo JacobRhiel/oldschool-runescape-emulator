@@ -18,9 +18,9 @@ class RegionGrid(val id: Int)
     : AreaGrid(width = 64, height = 64)
 {
 
-    private val mapScapeDefinition: MapScapeDefinition = definition().find(((id shr 8) * 64) shr 6)
+    private val mapScapeDefinition: MapScapeDefinition = definition().find(id)
 
-    private val landscapeDefinition: LandscapeDefinition = definition().find(((id shr 8) * 64) shr 6, XteaKeyService.get(id))
+    private val landscapeDefinition: LandscapeDefinition = definition().find(id, XteaKeyService.get(id))
 
     private val chunks = mutableMapOf<Int, ChunkGrid>()
 
@@ -31,6 +31,8 @@ class RegionGrid(val id: Int)
     fun fetchChunkGrid(id: Int) = chunks.computeIfAbsent(id) { ChunkGrid(this) }
 
     fun fetchChunkGrid(x: Int, z: Int, height: Int) = chunks.computeIfAbsent((x shr z) and height) { ChunkGrid(this) }
+
+    fun fetchChunks() = chunks.toMap()
 
     override fun constructGrid()
     {
