@@ -10,6 +10,8 @@ dependencies {
     api(project(":rse-packet:packet-api"))
     api(project(":rse-api:core"))
 
+    implementation(project(":rse-map"))
+
     implementation(project(":rse-encryption"))
 
     implementation(project(":rse-entity:widget"))

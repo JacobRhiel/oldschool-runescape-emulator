@@ -8,6 +8,7 @@ import kotlin.reflect.KProperty
  */
 
 data class VarbitDelegate(private val list : VarbitList, val id : Int, val value : Int) {
+
     operator fun getValue(nothing: Nothing?, property: KProperty<*>): Int {
         return list[this.id]
     }

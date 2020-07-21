@@ -5,4 +5,10 @@ package rs.emulator.skills
  * @author javatar
  */
 
-data class Skill(var fakeLevel: Int = 1, var actualLevel: Int = 1, val maxLevel: Int = 99, var experience: Int = 0)
+class Skill(
+    val id: Int,
+    var currentLevel: Int = 1,
+    var actualLevel: Int = 1,
+    var experience: Int = 0,
+    val maxLevel: Int = 99
+)

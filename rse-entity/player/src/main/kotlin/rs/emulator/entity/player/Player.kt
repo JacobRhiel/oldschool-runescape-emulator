@@ -1,26 +1,42 @@
 package rs.emulator.entity.player
 
-import io.netty.channel.Channel
 import io.reactivex.processors.PublishProcessor
+import io.reactivex.rxkotlin.toObservable
+import org.koin.core.KoinComponent
+import org.koin.core.get
 import rs.emulator.entity.actor.Actor
-import rs.emulator.entity.actor.npc.Npc
 import rs.emulator.entity.actor.player.IPlayer
 import rs.emulator.entity.actor.player.messages.AbstractMessageHandler
 import rs.emulator.entity.actor.player.messages.IMessages
+import rs.emulator.entity.actor.player.messages.IWidgetMessages
 import rs.emulator.entity.actor.player.storage.IItemContainerManager
-import rs.emulator.entity.player.chat.PublicChatMessage
+import rs.emulator.entity.player.chat.PublicChatText
 import rs.emulator.entity.player.storage.ItemContainerManager
 import rs.emulator.entity.player.storage.containers.Inventory
 import rs.emulator.entity.player.update.flag.PlayerUpdateFlag
 import rs.emulator.entity.player.update.sync.SyncInformation
 import rs.emulator.entity.player.viewport.Viewport
+import rs.emulator.entity.widgets.WidgetViewport
+import rs.emulator.entity.widgets.events.ComponentOpenEvent
+import rs.emulator.entity.widgets.widgets.FixedGameFrameWidget
 import rs.emulator.network.packet.message.outgoing.*
 import rs.emulator.packet.api.IPacketMessage
 import rs.emulator.plugins.RSPluginManager
 import rs.emulator.plugins.extensions.factories.ContainerRegistrationException
 import rs.emulator.plugins.extensions.factories.ItemContainerFactory
+import rs.emulator.plugins.extensions.factories.LoginActionFactory
+import rs.emulator.reactive.createSubZone
+import rs.emulator.region.zones.RegionZone
+import rs.emulator.region.zones.events.EnterZoneEvent
+import rs.emulator.region.zones.events.LeaveZoneEvent
+import rs.emulator.skills.SkillAttributes
+import rs.emulator.world.World
+import java.util.concurrent.atomic.AtomicLong
 
-class Player(val channel: Channel, val outgoingPackets : PublishProcessor<IPacketMessage>) : Actor(), IPlayer {
+class Player(val outgoingPackets: PublishProcessor<IPacketMessage>) : Actor(), IPlayer,
+    KoinComponent {
+
+    val world: World = get()
 
     val viewport = Viewport(this)
 
@@ -28,7 +44,15 @@ class Player(val channel: Channel, val outgoingPackets : PublishProcessor<IPacke
 
     val messageHandler = MessageHandler(this)
 
-    var pendingPublicChatMessage: PublicChatMessage? = null
+    val idleMouseTicks = AtomicLong(0L)
+
+    var pendingPublicChatMessage: PublicChatText? = null
+
+    override val skillAttributes: SkillAttributes = SkillAttributes()
+
+    override val widgetViewport = WidgetViewport().apply {
+        this[548] = FixedGameFrameWidget()
+    }
 
     var pendingAnimation: Int = -1
 
@@ -40,7 +64,19 @@ class Player(val channel: Channel, val outgoingPackets : PublishProcessor<IPacke
 
     fun onLogin() {
 
-        outgoingPackets.offer(RebuildRegionMessage(true, 1, x = coordinate.x, z = coordinate.z, tileHash = coordinate.as30BitInteger))
+        widgetViewport[548][23].subscribe<ComponentOpenEvent> {
+            outgoingPackets.offer(IfOpenSubMessage(548, 23, it.source.id, 0))
+        }
+
+        outgoingPackets.offer(
+            RebuildRegionMessage(
+                true,
+                1,
+                x = coordinate.x,
+                z = coordinate.z,
+                tileHash = coordinate.as30BitInteger
+            )
+        )
 
         outgoingPackets.offer(VarpSmallMessage(18, 1))
         outgoingPackets.offer(VarpLargeMessage(20, 59899954))
@@ -172,13 +208,41 @@ class Player(val channel: Channel, val outgoingPackets : PublishProcessor<IPacke
 
         outgoingPackets.offer(RunClientScriptMessage(2015, 0))
 
-        outgoingPackets.offer(
-            UpdateSkillMessage(
-                3,
-                25,
-                500000
+        outgoingPackets.offer(UnknownMessage(true))
+
+        skillAttributes.attributeChangedProcessor.subscribe {
+            outgoingPackets.offer(
+                UpdateSkillMessage(
+                    it.id,
+                    it.currentLevel,
+                    it.experience
+                )
             )
-        )
+        }
+
+        val regionId = coordinate.toRegion().regionId
+        val region = world.mapGrid.fetchRegion(regionId)
+        val zone = RegionZone(coordinate.x, coordinate.z, 0, 20, 20)
+        zone.reactiveZone.subscribe<EnterZoneEvent> {
+            messagesFromType<IWidgetMessages>()
+                .sendChatMessage("Entering parent Zone")
+        }
+        zone.reactiveZone.subscribe<LeaveZoneEvent> {
+            messagesFromType<IWidgetMessages>()
+                .sendChatMessage("Leaving parent Zone")
+        }
+        val child = zone.reactiveZone.createSubZone(5, 5, 0, 10, 10)
+
+        child.subscribe<EnterZoneEvent> {
+            messagesFromType<IWidgetMessages>()
+                .sendChatMessage("Entering sub-zone")
+        }
+        child.subscribe<LeaveZoneEvent> {
+            messagesFromType<IWidgetMessages>()
+                .sendChatMessage("Leaving sub-zone")
+        }
+
+        region.zones.add(zone)
 
         containerManager().register(93, Inventory()) {
             syncBlock {
@@ -187,6 +251,11 @@ class Player(val channel: Channel, val outgoingPackets : PublishProcessor<IPacke
                 }
             }
         }
+
+        RSPluginManager.getExtensions<LoginActionFactory>()
+            .toObservable()
+            .map { it.registerLoginAction(this) }
+            .subscribe { it.onLogin(this) }
 
     }
 

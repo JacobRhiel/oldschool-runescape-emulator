@@ -1,8 +1,9 @@
 package rs.emulator.network.packet.listener
 
 import io.netty.channel.Channel
+import rs.emulator.entity.actor.player.messages.IWidgetMessages
 import rs.emulator.entity.player.Player
-import rs.emulator.entity.player.update.flag.PlayerUpdateFlag
+import rs.emulator.entity.widgets.events.ComponentClickEvent
 import rs.emulator.network.packet.message.incoming.IfButtonMessage
 import rs.emulator.network.packet.message.outgoing.*
 
@@ -10,11 +11,9 @@ import rs.emulator.network.packet.message.outgoing.*
  *
  * @author Chk
  */
-class IfButtonListener : GamePacketListener<IfButtonMessage>
-{
+class IfButtonListener : GamePacketListener<IfButtonMessage> {
 
-    override fun handle(channel: Channel, player: Player, message: IfButtonMessage)
-    {
+    override fun handle(channel: Channel, player: Player, message: IfButtonMessage) {
 
         val interfaceId = message.hash shr 16
 
@@ -28,28 +27,18 @@ class IfButtonListener : GamePacketListener<IfButtonMessage>
             it.onClick(player, message.hash, message.option, message.slot, message.item)
         }*/
 
-        if(interfaceId == 216 && component == 1)
-        {
+        /*if (interfaceId == 162 && component == 33) {
 
-            if(option == 14)
-            {
+            if (option == 78) {
 
-                player.pendingAnimation = 713
-
-                player.pendingGraphic = 113
-
-                player.pendingGraphicHeight = 92
-
-                player.syncInfo.addMaskFlag(PlayerUpdateFlag.GRAPHIC)
-
-                player.syncInfo.addMaskFlag(PlayerUpdateFlag.ANIMATION)
+                player.outgoingPackets.offer(IfOpenSubMessage(548, 23, 553, 0))
+                player.outgoingPackets.offer(RunClientScriptMessage(1104, 1, 1))
 
             }
 
-        }
+        }*/
 
-        if(interfaceId == 378 && component == 78)
-        {
+        if (interfaceId == 378 && component == 78) {
 
             if (option == 14) {
 
@@ -351,11 +340,24 @@ class IfButtonListener : GamePacketListener<IfButtonMessage>
                     )
                 )
 
-
-                //player.outgoingPackets.offer(UpdateInventoryPartialMessage(interfaceId = 149, component = 0, containerKey = 93, oldItems = hashMapOf(Pair(4151, 1)), newItems = hashMapOf(Pair(1038, 1))))
+                player.widgetViewport[162][33].active = true
 
             }
 
+        } else {
+            val comp = player.widgetViewport[interfaceId][component]
+
+            player.messagesFromType<IWidgetMessages>()
+                .sendChatMessage("Opening ${comp.id} - ${comp.active}")
+
+            if (comp.active) {
+                comp.onNext(
+                    ComponentClickEvent(
+                        comp,
+                        option
+                    )
+                )
+            }
         }
 
         println("Unhandled button action: [component=[$interfaceId:$component], option=$option, slot=${message.slot}, item=${message.item}]")

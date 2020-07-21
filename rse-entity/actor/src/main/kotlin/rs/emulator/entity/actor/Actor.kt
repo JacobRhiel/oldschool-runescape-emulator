@@ -6,5 +6,4 @@ abstract class Actor : Entity(), IActor
 {
 
 
-
 }

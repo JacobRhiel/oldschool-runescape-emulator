@@ -1,6 +1,7 @@
 package rs.emulator.entity.material.items
 
 import rs.emulator.entity.IEntity
+import rs.emulator.region.WorldCoordinate
 
 /**
  *
@@ -9,7 +10,10 @@ import rs.emulator.entity.IEntity
 
 abstract class Item(var id: Int, var amount: Int = 1, var stackable: Boolean = false) : IEntity {
 
-    abstract fun copy(amount: Int = this.amount, stackable: Boolean = this.stackable) : Item
+    override val coordinate: WorldCoordinate = WorldCoordinate(-1, -1)
+    override val lastCoordinate: WorldCoordinate = coordinate
+
+    abstract fun copy(amount: Int = this.amount, stackable: Boolean = this.stackable): Item
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

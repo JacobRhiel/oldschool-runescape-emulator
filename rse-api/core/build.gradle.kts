@@ -5,3 +5,7 @@ dependencies {
     api(project(":rse-api:definitions"))
     api("com.xenomachina:kotlin-argparser:2.0.7")
 }
+
+tasks.withType<Test> {
+    useJUnitPlatform()
+}

@@ -25,7 +25,7 @@ class MapGrid : AreaGrid(width = 32768, height = 32768)
 
         regions.computeIfAbsent(id) { region }
 
-        processor.offer(region)
+        //processor.offer(region)
 
         return region
 

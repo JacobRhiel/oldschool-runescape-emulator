@@ -22,7 +22,7 @@ open class World(
     @Column(name = "access") private val access: WorldAccess,
     @Column(name = "activity") private val activity: WorldActivity,
     @Column(name = "origin") private val origin: WorldOrigin,
-    val map: MapGrid
+    val mapGrid: MapGrid
 ) : KoinComponent, Entry
 {
 

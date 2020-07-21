@@ -2,7 +2,7 @@ package rs.emulator.network.packet.session
 
 import io.netty.channel.Channel
 import io.netty.channel.ChannelHandlerContext
-import io.reactivex.disposables.Disposable
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.processors.PublishProcessor
 import org.koin.core.KoinComponent
 import org.koin.core.get
@@ -34,7 +34,7 @@ class PacketSession(val channel: Channel,
     val incomingPackets = PublishProcessor.create<IncomingPacket>()
     val outgoingPackets = PublishProcessor.create<IPacketMessage>()
 
-    val disposables = mutableListOf<Disposable>()
+    val composite = CompositeDisposable()
 
     init {
 
@@ -81,7 +81,7 @@ class PacketSession(val channel: Channel,
     override fun onDestroy(ctx: ChannelHandlerContext)
     {
 
-        disposables.forEach(Disposable::dispose)
+        composite.dispose()
 
     }
 

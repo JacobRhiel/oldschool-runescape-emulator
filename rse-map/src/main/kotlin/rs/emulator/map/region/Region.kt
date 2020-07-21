@@ -1,7 +1,10 @@
 package rs.emulator.map.region
 
-import io.reactivex.processors.PublishProcessor
-import rs.emulator.map.Positionable
+import rs.emulator.entity.`object`.IObject
+import rs.emulator.entity.actor.npc.INpc
+import rs.emulator.entity.actor.player.IPlayer
+import rs.emulator.entity.material.items.Item
+import rs.emulator.region.zones.RegionZone
 
 /**
  *
@@ -10,29 +13,25 @@ import rs.emulator.map.Positionable
 class Region(val grid: RegionGrid)
 {
 
-    private val playerList = mutableMapOf<Int, Positionable>()
+    private val playerList = mutableMapOf<Int, IPlayer>()
 
-    private val npcList = mutableMapOf<Int, Positionable>()
-
-    //tile hash as key
-    private val groundItemList = mutableMapOf<Int, Positionable>()
+    private val npcList = mutableMapOf<Int, INpc>()
 
     //tile hash as key
-    private val locList = mutableMapOf<Int, Positionable>()
+    private val groundItemList = mutableMapOf<Int, Item>()
 
-    private val actorProcessor = PublishProcessor.create<Positionable>()
+    //tile hash as key
+    private val locList = mutableMapOf<Int, IObject>()
 
-    private val groundItemProcessor = PublishProcessor.create<Positionable>()
+    val zones = mutableListOf<RegionZone>()
 
-    private val locProcessor = PublishProcessor.create<Positionable>()
+    fun addPlayer(index: Int, player: IPlayer) = playerList.computeIfAbsent(index) { player }
 
-    fun addPlayer(index: Int, positionable: Positionable) = playerList.computeIfAbsent(index) { positionable }
+    fun addNpc(index: Int, npc: INpc) = npcList.computeIfAbsent(index) { npc }
 
-    fun addNpc(index: Int, positionable: Positionable) = npcList.computeIfAbsent(index) { positionable }
+    fun addGroundItem(tileHash: Int, item: Item) = groundItemList.computeIfAbsent(tileHash) { item }
 
-    fun addGroundItem(tileHash: Int, positionable: Positionable) = groundItemList.computeIfAbsent(tileHash) { positionable }
-
-    fun addLoc(tileHash: Int, positionable: Positionable) = locList.computeIfAbsent(tileHash) { positionable }
+    fun addLoc(tileHash: Int, obj: IObject) = locList.computeIfAbsent(tileHash) { obj }
 
     fun removePlayer(index: Int) = playerList.remove(index)
 
