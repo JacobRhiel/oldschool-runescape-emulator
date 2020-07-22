@@ -1,5 +1,6 @@
 package rs.emulator.network.packet.encoder.impl
 
+import rs.dusk.engine.model.entity.Direction
 import rs.emulator.buffer.manipulation.DataType
 import rs.emulator.entity.player.Player
 import rs.emulator.entity.player.update.flag.PlayerUpdateFlag
@@ -10,6 +11,7 @@ import rs.emulator.entity.update.mask.UpdateMask
 import rs.emulator.network.packet.GamePacketBuilder
 import rs.emulator.network.packet.encoder.PacketEncoder
 import rs.emulator.network.packet.message.outgoing.UpdatePlayerSyncMessage
+import kotlin.math.abs
 
 /**
  *
@@ -21,20 +23,10 @@ class UpdatePlayerSyncEncoder : PacketEncoder<UpdatePlayerSyncMessage<Player>>()
 
     override fun encode(message: UpdatePlayerSyncMessage<Player>, builder: GamePacketBuilder)
     {
-        var flag = message.player.syncInfo.fetchMaskFlag()
+
+        println("test player update")
 
         val maskBuilder = GamePacketBuilder()
-
-        if (flag >= 0x100)
-        {
-
-            flag = flag or 16
-            maskBuilder.put(DataType.BYTE, flag and 0xFF)
-            maskBuilder.put(DataType.BYTE, flag shr 8)
-
-        }
-        else
-            maskBuilder.put(DataType.BYTE, flag and 0xFF)
 
         builder.switchToBitAccess()
 
@@ -92,22 +84,52 @@ class UpdatePlayerSyncEncoder : PacketEncoder<UpdatePlayerSyncMessage<Player>>()
 
                 builder.switchToByteAccess()
 
-                val movementFlag = syncInformation.hasMaskFlag(PlayerUpdateFlag.MOVEMENT)
+                var flag = player.syncInfo.fetchMaskFlag()
+
+                if (flag >= 0x100)
+                {
+
+                    flag = flag or 16
+                    maskBuilder.put(DataType.BYTE, flag and 0xFF)
+                    maskBuilder.put(DataType.BYTE, flag shr 8)
+
+                }
+                else
+                    maskBuilder.put(DataType.BYTE, flag and 0xFF)
 
                 generateMaskBuffer(viewportPlayer, fetchMasks(), maskBuilder)
 
                 builder.switchToBitAccess()
 
-                println("is movement: $movementFlag - mask: ${syncInformation.fetchMaskFlag()}")
+                syncInformation.resetFlag()
 
-                if(!movementFlag)
+            }
+
+            if(player.pendingTeleport != null)
+            {
+
+                builder.putBits(1, 1)
+
+                builder.putBits(1, 1)
+
+                builder.putBits(2, 3)
+
+                val diffX = player.coordinate.x - player.lastCoordinate.x
+
+                val diffZ = player.coordinate.z - player.lastCoordinate.z
+
+                val diffH = player.coordinate.plane - player.lastCoordinate.plane
+
+                if (abs(diffX) <= 15 && abs(diffZ) <= 15)
                 {
 
-                    builder.putBits(1, 1)
+                    builder.putBits(1, 0)
 
-                    builder.putBits(1, 1)
+                    builder.putBits(2, diffH and 0x3)
 
-                    builder.putBits(2, 0)
+                    builder.putBits(5, diffX and 0x1F)
+
+                    builder.putBits(5, diffZ and 0x1F)
 
                 }
                 else
@@ -115,63 +137,96 @@ class UpdatePlayerSyncEncoder : PacketEncoder<UpdatePlayerSyncMessage<Player>>()
 
                     builder.putBits(1, 1)
 
-                    builder.putBits(1, 1)
+                    builder.putBits(2, diffH and 0x3)
 
-                    builder.putBits(2, 3)
+                    builder.putBits(14, diffX and 0x3FFF)
 
-                    val diffX = player.coordinate.x - player.lastCoordinate.x
-
-                    val diffZ = player.coordinate.z - player.lastCoordinate.z
-
-                    val diffH = player.coordinate.plane - player.lastCoordinate.plane
-
-                    if(Math.abs(diffX) <= 15 && Math.abs(diffZ) <= 15)
-                    {
-
-                        builder.putBits(1, 0)
-
-                        builder.putBits(2, diffH and 0x3)
-
-                        builder.putBits(5, diffX and 0x1F)
-
-                        builder.putBits(5, diffZ and 0x1F)
-
-                    }
-                    else
-                    {
-
-                        builder.putBits(1, 1)
-
-                        builder.putBits(2, diffH and 0x3)
-
-                        builder.putBits(14, diffX and 0x3FFF)
-
-                        builder.putBits(14, diffZ and 0x3FFF)
-
-                    }
-
-                    println("teleport segment.")
+                    builder.putBits(14, diffZ and 0x3FFF)
 
                 }
 
-                builder.switchToByteAccess()
+                player.pendingTeleport = null
 
-                syncInformation.resetFlag()
+                println("teleport segment.")
+
+            }
+            else if(player.movement.steps.peek() != null && (player.movement.walkStep != Direction.NONE/* ||
+                player.movement.runStep != Direction.NONE*/)
+            )
+            {
+
+                val direction = player.movement.walkStep //todo: implement run
+
+                builder.putBits(1, 1)
+
+                builder.putBits(1, if(updateRequired) 1 else 0)//0 = no other flags in queue?
+
+                builder.putBits(2, 1)//1 - walk, 2 - run
+
+                println("direction: ${direction.ordinal}")
+
+                builder.putBits(3, getPlayerWalkingDirection(direction.delta.x, direction.delta.z))//4 - run, 3 - walk
+
+                //if(!updateRequired)
+                 //   update(builder, syncInformation, viewportPlayer, maskBuilder)
+
+            }
+            else if(updateRequired)
+            {
+
+                println("abc...")
+
+                builder.putBits(1, 1)
+
+                builder.putBits(1, 1)
+
+                builder.putBits(2, 0)
 
             }
             else
             {
 
-                skipCount = generateSkipCount(viewport, builder, true, inverse)
+                println("skip")
 
-                println("local skip count: $skipCount")
+                skipCount = generateSkipCount(viewport, builder, true, inverse)
 
                 syncInformation.setFlag(0x2)
 
             }
 
+            builder.switchToByteAccess()
+
+            syncInformation.resetFlag()
+
         }
 
+    }
+
+    fun getPlayerWalkingDirection(dx: Int, dy: Int): Int {
+        if (dx == -1 && dy == -1) {
+            return 0
+        }
+        if (dx == 0 && dy == -1) {
+            return 1
+        }
+        if (dx == 1 && dy == -1) {
+            return 2
+        }
+        if (dx == -1 && dy == 0) {
+            return 3
+        }
+        if (dx == 1 && dy == 0) {
+            return 4
+        }
+        if (dx == -1 && dy == 1) {
+            return 5
+        }
+        if (dx == 0 && dy == 1) {
+            return 6
+        }
+        return if (dx == 1 && dy == 1) {
+            7
+        } else -1
     }
 
     private fun globalNsn0(player: Player, builder: GamePacketBuilder, inverse: Boolean = false) =
@@ -202,8 +257,6 @@ class UpdatePlayerSyncEncoder : PacketEncoder<UpdatePlayerSyncMessage<Player>>()
             //todo: update multi-player block
 
             skipCount = generateSkipCount(viewport, builder, false, inverse)
-
-            println("global skip count 2: $skipCount")
 
             syncInformation.setFlag(0x2)
 
@@ -251,8 +304,6 @@ class UpdatePlayerSyncEncoder : PacketEncoder<UpdatePlayerSyncMessage<Player>>()
         skipCount = /*2048*/ 2046 - skipCount
 
         builder.putBits(1, 0)
-
-        println("actual skip count : $skipCount")
 
         when {
 

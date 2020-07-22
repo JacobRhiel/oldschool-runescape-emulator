@@ -13,7 +13,7 @@ class WorldCoordinate : Coordinate
 
     constructor(x: Int, z: Int, plane: Int = 0) : this((x and 0x7FFF) or ((z and 0x7FFF) shl 15) or (plane shl 30))
 
-    private constructor(hash: Int) : super(hash and 0x7FFF, (hash shr 15) and 0x7FFF, hash ushr 30)
+    constructor(hash: Int) : super(hash and 0x7FFF, (hash shr 15) and 0x7FFF, hash ushr 30)
     {
         this.pointHash = hash
     }
@@ -21,6 +21,8 @@ class WorldCoordinate : Coordinate
     val as30BitInteger: Int get() = (z and 0x3FFF) or ((x and 0x3FFF) shl 14) or ((plane and 0x3) shl 28)
 
     val asTileHashMultiplier: Int get() = (z shr 13) or ((x shr 13) shl 8) or ((plane and 0x3) shl 16)
+
+    override fun copy(offsetX: Int, offsetZ: Int, offsetPlane: Int): Coordinate = WorldCoordinate(this.x + offsetX, this.z + offsetZ, this.plane + plane)
 
     companion object
     {

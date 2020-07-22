@@ -21,8 +21,6 @@ class UpdateNpcSyncEncoder : PacketEncoder<UpdateNpcSyncMessage<Player>>()
     override fun encode(message: UpdateNpcSyncMessage<Player>, builder: GamePacketBuilder)
     {
 
-        println("--------------------------encoding npc")
-
         val player = message.player
 
         val maskBuilder = GamePacketBuilder()

@@ -31,8 +31,6 @@ class LoginResponseEncoder : MessageToByteEncoder<LoginResponseMessage>()
 
             out.writeBytes(buffer)
 
-            println("login response time.")
-
         }
         else
             ctx.channel().writeAndFlush(buffer)

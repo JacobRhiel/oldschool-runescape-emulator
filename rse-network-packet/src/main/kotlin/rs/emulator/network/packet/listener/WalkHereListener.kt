@@ -30,6 +30,8 @@ class WalkHereListener : GamePacketListener<WalkHereMessage>, KoinComponent {
 
             player.coordinate.set(message.destX, message.destZ)
 
+            player.pendingTeleport = player.coordinate
+
             player.syncInfo.addMaskFlag(PlayerUpdateFlag.MOVEMENT)
 
         }

@@ -59,8 +59,6 @@ class GamePacketDecoder(private val isaacRandom: IsaacRandom)
 
             opcode = buf.readUnsignedByte().toInt() - isaacRandom.nextInt() and 0xFF
 
-            println("decoding opcode: $opcode")
-
             val packet = packetRepository.fetchDecoder(opcode)
 
             actionType = packet.action

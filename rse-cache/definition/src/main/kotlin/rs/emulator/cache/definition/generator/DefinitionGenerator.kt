@@ -46,8 +46,6 @@ abstract class DefinitionGenerator<T : Definition>
 
                 val opcode: Int = reader.getUnsigned(DataType.BYTE).toInt()
 
-                println("opcode: $opcode")
-
                 if (opcode == 0)
                     break
 

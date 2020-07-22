@@ -9,6 +9,8 @@ dependencies {
     api(project(":rse-api:collections"))
 
     api(project(":rse-world"))
+
+    api(project(":rse-map:route"))
     
 }
 

@@ -7,6 +7,7 @@ import rs.emulator.entity.player.Player
 import rs.emulator.network.packet.message.incoming.LocActionMessage
 import rs.emulator.plugins.RSPluginManager
 import rs.emulator.plugins.extensions.factories.entity.actions.ObjectActionFactory
+import rs.emulator.region.WorldCoordinate
 import rs.emulator.world.GameWorld
 
 /**
@@ -14,10 +15,17 @@ import rs.emulator.world.GameWorld
  * @author javatar
  */
 
-class LocActionListener : GamePacketListener<LocActionMessage> {
-    override fun handle(channel: Channel, player: Player, message: LocActionMessage) {
+class LocActionListener : GamePacketListener<LocActionMessage>
+{
+
+    override fun handle(channel: Channel, player: Player, message: LocActionMessage)
+    {
 
         //TODO - validate if object exists on x and y
+
+        val path = player.find(WorldCoordinate(message.x, message.y, player.coordinate.plane))
+
+        println("Path result for loc: ${message.locId}, $path")
 
         RSPluginManager.getExtensions<ObjectActionFactory>()
             .toObservable()

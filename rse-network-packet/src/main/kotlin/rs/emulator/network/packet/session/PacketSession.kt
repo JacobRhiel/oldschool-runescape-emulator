@@ -70,8 +70,6 @@ class PacketSession(val channel: Channel,
 
             incomingPackets.offer(IncomingPacket(metaData, gamePacket))
 
-            println("msg: $msg")
-
             msg.release()
 
         }

@@ -36,8 +36,6 @@ class MapGrid : AreaGrid(width = 32768, height = 32768)
 
         val regionId = ((x shr 6) shl 8) or (z shr 6)
 
-        println("region id: $regionId")
-
         return loadRegion(regionId)
 
     }

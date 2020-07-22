@@ -40,8 +40,6 @@ class GamePacketEncoder(private val isaac: IsaacRandom) : KoinComponent, Message
 
         out.writeByte((msg.opcode + (isaac.nextInt())) and 0xFF)
 
-        println(msg.type)
-
         when (msg.type) {
 
             PacketType.VARIABLE_BYTE -> out.writeByte(msg.length)
@@ -54,10 +52,6 @@ class GamePacketEncoder(private val isaac: IsaacRandom) : KoinComponent, Message
         }
 
         println("Encoding packet: ${msg.javaClass.simpleName}. ${msg.opcode}")
-
-        println("payload: " + msg.payload.array().toTypedArray().contentDeepToString())
-
-        println("payload size: " + msg.payload.readableBytes())
 
         out.writeBytes(msg.payload)
 
