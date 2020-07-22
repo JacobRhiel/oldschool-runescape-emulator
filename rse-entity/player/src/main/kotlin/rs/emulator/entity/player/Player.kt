@@ -4,6 +4,7 @@ import io.reactivex.processors.PublishProcessor
 import io.reactivex.rxkotlin.toObservable
 import org.koin.core.KoinComponent
 import org.koin.core.get
+import rs.dusk.engine.path.Finder
 import rs.emulator.entity.actor.Actor
 import rs.emulator.entity.actor.player.IPlayer
 import rs.emulator.entity.actor.player.messages.AbstractMessageHandler
@@ -26,6 +27,7 @@ import rs.emulator.plugins.extensions.factories.ContainerRegistrationException
 import rs.emulator.plugins.extensions.factories.ItemContainerFactory
 import rs.emulator.plugins.extensions.factories.LoginActionFactory
 import rs.emulator.reactive.createSubZone
+import rs.emulator.region.coordinate.Coordinate
 import rs.emulator.region.zones.RegionZone
 import rs.emulator.region.zones.events.EnterZoneEvent
 import rs.emulator.region.zones.events.LeaveZoneEvent
@@ -46,7 +48,11 @@ class Player(val outgoingPackets: PublishProcessor<IPacketMessage>) : Actor(), I
 
     val idleMouseTicks = AtomicLong(0L)
 
+    var pendingTeleport: Coordinate? = null
+
     var pendingPublicChatMessage: PublicChatText? = null
+
+    override val searchPattern: Finder = pathFinder.bfs
 
     override val skillAttributes: SkillAttributes = SkillAttributes()
 

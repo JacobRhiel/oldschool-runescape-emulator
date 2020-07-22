@@ -11,6 +11,8 @@ import rs.emulator.region.chunk.ChunkCoordinate
 abstract class Coordinate(var x: Int, var z: Int, var plane: Int = 0)
 {
 
+    constructor(hash: Int) : this(hash and 0x7FFF, (hash shr 15) and 0x7FFF, hash ushr 30)
+
     open fun toLocal() : ChunkCoordinate = ChunkCoordinate((x shr 6) shl 8 and z shr 6, x and 63, z and 63, plane)
 
     open fun toRegion() : RegionCoordinate = RegionCoordinate(x shr 6, z shr 6, plane)
@@ -29,6 +31,31 @@ abstract class Coordinate(var x: Int, var z: Int, var plane: Int = 0)
 
     fun set(x: Int, z: Int) = this.apply { this.x = x }.apply { this.z = z }
 
+    fun add(x: Int = 0, y: Int = 0, plane: Int = 0) = copy(offsetX = x, offsetZ = y, offsetPlane = plane)
+    
+    fun equals(x: Int = 0, y: Int = 0, plane: Int = 0) = this.x == x && this.z == y && this.plane == plane
+    
+    fun minus(x: Int = 0, y: Int = 0, plane: Int = 0) = add(-x, -y, plane)
+    
+    fun delta(x: Int = 0, y: Int = 0, plane: Int = 0) = minus(x, y, plane)
+
+    fun add(point: Coordinate) = add(point.x, point.z, point.plane)
+    
+    fun minus(point: Coordinate) = minus(point.x, point.z, point.plane)
+    
+    fun delta(point: Coordinate) = delta(point.x, point.z, point.plane)
+
+    abstract fun copy(offsetX: Int = 0, offsetZ: Int = 0, offsetPlane: Int = 0): Coordinate
+
     override fun toString(): String = "x: $x z: $z : plane $plane"
+
+    companion object
+    {
+
+        fun getId(x: Int, z: Int, plane: Int = 0) = (z and 0x3FFF) or ((x and 0x3FFF) shl 14) or ((plane and 0x3) shl 28)
+
+        val EMPTY = WorldCoordinate(0)
+
+    }
 
 }

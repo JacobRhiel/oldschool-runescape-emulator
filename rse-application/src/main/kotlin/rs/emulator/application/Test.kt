@@ -6,6 +6,11 @@ import org.koin.core.KoinComponent
 import org.koin.core.context.startKoin
 import org.koin.core.get
 import org.koin.dsl.module
+import rs.dusk.engine.model.world.map.collision.Collisions
+import rs.dusk.engine.path.PathFinder
+import rs.dusk.engine.path.find.AxisAlignment
+import rs.dusk.engine.path.find.BreadthFirstSearch
+import rs.dusk.engine.path.find.DirectSearch
 import rs.emulator.Repository
 import rs.emulator.cache.definition.DefinitionRepository
 import rs.emulator.cache.definition.definition
@@ -33,6 +38,7 @@ import rs.emulator.world.World
 import rs.emulator.world.WorldAccess
 import rs.emulator.world.WorldActivity
 import rs.emulator.world.WorldOrigin
+import rs.emulator.world.repository.task.PlayerWalkingTask
 import rs.emulator.world.repository.task.PreUpdatePlayerSynchronizationTask
 import rs.emulator.world.repository.task.UpdateNpcSynchronizationTask
 import rs.emulator.world.repository.task.UpdatePlayerSynchronizationEvent
@@ -124,11 +130,29 @@ class Test : KoinComponent {
 
             }
 
+            val pathFindModule = module {
+                single { DirectSearch() }
+                single { AxisAlignment() }
+                single { BreadthFirstSearch() }
+                single { PathFinder(get(), get(), get(), get()) }
+            }
+
+            val collisionModule = module {
+                single { Collisions() }
+                //single { CollisionReader(get()) }
+            }
+
             runBlocking {
 
                 startKoin {
 
-                    modules(mod)
+                    modules(
+                        listOf(
+                            mod,
+                            pathFindModule,
+                            collisionModule
+                        )
+                    )
 
                     val test = Test()
                     
@@ -140,9 +164,12 @@ class Test : KoinComponent {
 
                     test.engine.schedule(PreUpdatePlayerSynchronizationTask, true)
 
+                    test.engine.schedule(PlayerWalkingTask, true)
+
                     test.engine.schedule(UpdatePlayerSynchronizationEvent, true)
 
                     test.engine.schedule(UpdateNpcSynchronizationTask, true)
+
                     test.serviceManager
                         .startAsync()
                         .awaitHealthy()

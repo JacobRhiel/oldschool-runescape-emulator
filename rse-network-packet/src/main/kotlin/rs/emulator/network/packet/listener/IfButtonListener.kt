@@ -340,7 +340,7 @@ class IfButtonListener : GamePacketListener<IfButtonMessage> {
                     )
                 )
 
-                player.widgetViewport[162][33].active = true
+                //player.widgetViewport[162][33].active = true
 
             }
 

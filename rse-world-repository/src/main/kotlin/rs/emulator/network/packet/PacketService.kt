@@ -53,6 +53,15 @@ class PacketService : AbstractIdleService(), KoinComponent {
             listener = ObjActionListener()
         )
 
+        packetRepository.putDecoders(
+            opcodes = *intArrayOf(29, 30, 41, 72, 88),
+            decoder = LocActionDecoder(),
+            length = 7,
+            ignore = false,
+            clazz = LocActionMessage::class,
+            listener = LocActionListener()
+        )
+
         packetRepository.putDecoder(
             46,
             WindowStatusDecoder(), length = 5, ignore = false, clazz = WindowStatusMessage::class,

@@ -22,8 +22,6 @@ class HandshakeEncoder: MessageToByteEncoder<RequestHandshakePipelineMessage>()
     override fun encode(ctx: ChannelHandlerContext, msg: RequestHandshakePipelineMessage, buffer: ByteBuf)
     {
 
-        println("request: " + msg.request)
-
         when(msg.request)
         {
 

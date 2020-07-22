@@ -27,8 +27,6 @@ class JS5HandshakeDecoder
 
         val currentRevision = 190//todo centralize
 
-        println(currentRevision)
-
         val requestedRevision = buffer.readInt()
 
         if(requestedRevision != currentRevision)

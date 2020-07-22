@@ -21,6 +21,8 @@ class LocActionDecoder : PacketDecoder<LocActionMessage>() {
         var controlPressed = false
         var option = -1
 
+        println("decoding loc opcode: $opcode")
+
         when (opcode) {
 
             88 -> {
@@ -40,6 +42,7 @@ class LocActionDecoder : PacketDecoder<LocActionMessage>() {
                     DataOrder.LITTLE,
                     DataTransformation.ADD
                 ).toInt()
+                println("y: $y - x: $x - locaId: $locId")
                 option = 1
             }
             41 -> {

@@ -29,8 +29,6 @@ data class JS5FileRequestMessage(
 
                 val reader = fileStore.fetchIndexHeaderBuffer()
 
-                println("this data is false: " + reader.toArray().toTypedArray().contentDeepToString())
-
                 ctx.writeAndFlush(JS5FileResponseMessage(index, archive, reader))
             }
             else

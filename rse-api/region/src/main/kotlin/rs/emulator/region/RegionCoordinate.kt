@@ -27,6 +27,8 @@ class RegionCoordinate(x: Int, z: Int, plane: Int = 0) : Coordinate(x, z, plane)
 
     override fun toWorld(): WorldCoordinate = basePosition
 
+    override fun copy(offsetX: Int, offsetZ: Int, offsetPlane: Int): Coordinate = RegionCoordinate(this.x + offsetX, this.z + offsetZ, this.plane + plane)
+
     /**
      * Return bottomLeftRegionX and bottomLeftRegionZ because region x and z always directs
      * to the base coordinates of the region.

@@ -71,8 +71,6 @@ class DefinitionRepository : KoinComponent, AbstractDefinitionRepository()
 
         val hasShiftedId = shiftedId != -1
 
-        println("test1 ${clazz.simpleName}")
-
         val reader = when
         {
 
