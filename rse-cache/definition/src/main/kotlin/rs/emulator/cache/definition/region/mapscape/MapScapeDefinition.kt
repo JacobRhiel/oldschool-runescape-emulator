@@ -13,6 +13,6 @@ class MapScapeDefinition(identifier: Int) : Definition(identifier)
 
     private val regionY: Int = identifier and 0xFF
 
-    val tiles: Array<Array<Array<MapScapeTile?>>> = Array(64) { Array(64) { arrayOfNulls<MapScapeTile>(4) } }
+    val tiles = Array(4) { Array(64) { arrayOfNulls<MapScapeTile>(64) } }
 
 }

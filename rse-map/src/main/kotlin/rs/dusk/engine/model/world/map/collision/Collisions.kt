@@ -1,7 +1,5 @@
 package rs.dusk.engine.model.world.map.collision
 
-import org.koin.dsl.module
-
 import rs.emulator.region.coordinate.Coordinate
 
 /**
@@ -26,8 +24,17 @@ fun Collisions.remove(x: Int, y: Int, plane: Int, flag: Int) {
     this[tile] = value and flag.inv()
 }
 
-operator fun Collisions.get(x: Int, y: Int, plane: Int) =
-    this[Coordinate.getId(x, y, plane)] ?: 0
+operator fun Collisions.get(x: Int, y: Int, plane: Int): Int
+{
+    val value = this[Coordinate.getId(x, y, plane)] ?: 0
+    println("val for hash: $x, $y, $plane, $value")
+    return value
+}
 
-fun Collisions.check(x: Int, y: Int, plane: Int, flag: Int) =
-    this[x, y, plane] and flag != 0
+fun Collisions.check(x: Int, y: Int, plane: Int, flag: Int): Boolean
+{
+
+    println(this[x, y, plane] and flag)
+
+    return this[x, y, plane] and flag != 0
+}

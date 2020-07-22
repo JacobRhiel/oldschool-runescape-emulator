@@ -15,13 +15,7 @@ object Test
     fun main(args: Array<String>)
     {
 
-        val engine = CyclicEngineService()
-
-        val manager = ServiceManager(listOf(engine))
-
-        manager.startAsync()
-
-        manager.awaitHealthy()
+        println(Integer.decode("0x100"))
 
 
     }

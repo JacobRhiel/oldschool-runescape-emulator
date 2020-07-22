@@ -23,6 +23,8 @@ class LocActionListener : GamePacketListener<LocActionMessage>
 
         //TODO - validate if object exists on x and y
 
+        player.world.mapGrid.fetchRegion(player.coordinate.x, player.coordinate.z)
+
         val path = player.find(WorldCoordinate(message.x, message.y, player.coordinate.plane))
 
         println("Path result for loc: ${message.locId}, $path")
