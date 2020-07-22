@@ -12,6 +12,7 @@ class FixedGameFrameWidget : Widget(548) {
 
     init {
         this[23] = DynamicComponent(23, this)
+        this[27] = DynamicComponent(27, this)
     }
 
 }

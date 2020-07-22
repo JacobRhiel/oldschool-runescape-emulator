@@ -10,15 +10,16 @@ import rs.emulator.entity.actor.player.IPlayer
 import rs.emulator.entity.actor.player.messages.AbstractMessageHandler
 import rs.emulator.entity.actor.player.messages.IMessages
 import rs.emulator.entity.actor.player.storage.IItemContainerManager
+import rs.emulator.entity.attributes.Attributes
 import rs.emulator.entity.player.chat.PublicChatText
 import rs.emulator.entity.player.storage.ItemContainerManager
 import rs.emulator.entity.player.storage.containers.Inventory
 import rs.emulator.entity.player.update.flag.PlayerUpdateFlag
 import rs.emulator.entity.player.update.sync.SyncInformation
 import rs.emulator.entity.player.viewport.Viewport
+import rs.emulator.entity.widgets.Component
 import rs.emulator.entity.widgets.WidgetViewport
 import rs.emulator.entity.widgets.events.ComponentOpenEvent
-import rs.emulator.entity.widgets.widgets.FixedGameFrameWidget
 import rs.emulator.network.packet.message.outgoing.*
 import rs.emulator.packet.api.IPacketMessage
 import rs.emulator.plugins.RSPluginManager
@@ -51,9 +52,9 @@ class Player(val outgoingPackets: PublishProcessor<IPacketMessage>) : Actor(), I
 
     override val skillAttributes: SkillAttributes = SkillAttributes()
 
-    override val widgetViewport = WidgetViewport().apply {
-        this[548] = FixedGameFrameWidget()
-    }
+    override val attributes: Attributes = Attributes()
+
+    override val widgetViewport = WidgetViewport()
 
     var pendingAnimation: Int = -1
 
@@ -64,6 +65,9 @@ class Player(val outgoingPackets: PublishProcessor<IPacketMessage>) : Actor(), I
     var pendingGraphicDelay: Int = 0
 
     fun onLogin() {
+
+        widgetViewport[548][27].open(Component(162))
+
 
         widgetViewport[548][23].subscribe<ComponentOpenEvent> {
             outgoingPackets.offer(IfOpenSubMessage(548, 23, it.source.id, 0))

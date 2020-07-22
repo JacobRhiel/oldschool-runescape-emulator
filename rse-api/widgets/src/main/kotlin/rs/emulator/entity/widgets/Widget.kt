@@ -7,6 +7,10 @@ package rs.emulator.entity.widgets
 
 abstract class Widget(val widgetId: Int, private val components: MutableMap<Int, DynamicComponent> = mutableMapOf()) {
 
+    fun dispose() {
+        components.forEach { it.value.dispose() }
+    }
+
     operator fun get(compId: Int): DynamicComponent {
         return components.getOrDefault(compId, DynamicComponent.EMPTY)
     }
