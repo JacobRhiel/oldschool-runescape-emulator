@@ -51,7 +51,7 @@ class LandscapeDefinitionGenerator : DefinitionGenerator<LandscapeDefinition>()
                 val type = attributes shr 2
                 val orientation = attributes and 0x3
 
-                val tile = definition.tiles[localX][localZ][plane]
+                val tile = definition.tiles[plane][localX][localZ]
 
                 if(tile == null)
                 {
@@ -62,7 +62,7 @@ class LandscapeDefinitionGenerator : DefinitionGenerator<LandscapeDefinition>()
                         .type(type)
                         .orientation(orientation)
 
-                    definition.tiles[localX][localZ][plane] = builder.build()
+                    definition.tiles[plane][localX][localZ] = builder.build()
 
                 }
                 else

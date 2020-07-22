@@ -61,7 +61,7 @@ class MapScapeDefinitionGenerator : DefinitionGenerator<MapScapeDefinition>()
                             builder.underlay((attribute - 81).toByte())
                     }
 
-                    definition.tiles[x][z][plane] = builder.build()
+                    definition.tiles[plane][x][z] = builder.build()
 
                 }
             }

@@ -15,6 +15,6 @@ data class LandscapeDefinition(val identifier: Int) : Definition(identifier)
 
     private val regionY = identifier and 0xFF
 
-    val tiles: Array<Array<Array<LandscapeTile?>>> = Array(64) { Array(64) { arrayOfNulls<LandscapeTile>(4) } }
+    val tiles: Array<Array<Array<LandscapeTile?>>> = Array(4) { Array(64) { arrayOfNulls<LandscapeTile>(64) } }
 
 }

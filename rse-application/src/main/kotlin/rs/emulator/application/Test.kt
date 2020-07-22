@@ -24,14 +24,12 @@ import rs.emulator.encryption.xtea.XteaKeyService
 import rs.emulator.engine.service.CyclicEngineService
 import rs.emulator.engine.service.schedule.CyclicDelaySchedule
 import rs.emulator.fileserver.FileStoreService
-import rs.emulator.map.route.strategy.entity.PathingRouteStrategy
 import rs.emulator.network.packet.repository.PacketRepository
 import rs.emulator.network.packet.PacketService
 import rs.emulator.network.pipeline.DefaultPipelineProvider
 import rs.emulator.network.world.network.channel.pipeline.WorldPipelineProvider
 import rs.emulator.network.world.service.WorldService
 import rs.emulator.plugins.RSPluginManager
-import rs.emulator.region.WorldCoordinate
 import rs.emulator.service.login.worker.LoginWorkerSchedule
 import rs.emulator.service.login.worker.LoginWorkerService
 import rs.emulator.world.World

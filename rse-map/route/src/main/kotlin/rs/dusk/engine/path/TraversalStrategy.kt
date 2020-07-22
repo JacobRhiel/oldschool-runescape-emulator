@@ -9,7 +9,9 @@ import rs.emulator.region.coordinate.Coordinate
  * @author Greg Hibberd <greg@greghibberd.com>
  * @since May 18, 2020
  */
-interface TraversalStrategy {
+interface TraversalStrategy
+{
+
     fun blocked(x: Int, y: Int, plane: Int, direction: Direction): Boolean
 
     fun blocked(tile: Coordinate, direction: Direction): Boolean = blocked(tile.x, tile.z, tile.plane, direction)
