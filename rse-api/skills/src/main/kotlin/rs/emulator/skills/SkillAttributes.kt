@@ -17,7 +17,15 @@ import kotlin.math.pow
 
 class SkillAttributes(attributeCount: Int = 23) {
 
-    val skills = Array(attributeCount) { Skill(it) }
+    val skills = Array(attributeCount) {
+        val skill = Skill(it)
+        if (it == 3) {
+            skill.experience = ExperienceMath.xpForLevel(10)
+            skill.currentLevel = 10
+            skill.actualLevel = 10
+        }
+        skill
+    }
     val experienceProcessor = PublishProcessor.create<ExperienceEvent>()
     val levelUpProcessor = PublishProcessor.create<LevelEvent>()
     val attributeChangedProcessor = PublishProcessor.create<Skill>()
@@ -44,6 +52,10 @@ class SkillAttributes(attributeCount: Int = 23) {
                 }
             }
         }
+    }
+
+    fun forceSync() {
+        skills.forEach { attributeChangedProcessor.offer(it) }
     }
 
     fun addExperience(id: Int, experience: Int) {
