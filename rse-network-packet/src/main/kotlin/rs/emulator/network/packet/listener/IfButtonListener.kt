@@ -1,9 +1,9 @@
 package rs.emulator.network.packet.listener
 
 import io.netty.channel.Channel
-import rs.emulator.entity.actor.player.messages.IWidgetMessages
+import rs.emulator.Repository
+import rs.emulator.cache.definition.widget.enum.EnumDefinition
 import rs.emulator.entity.player.Player
-import rs.emulator.entity.widgets.events.ComponentClickEvent
 import rs.emulator.network.packet.message.incoming.IfButtonMessage
 import rs.emulator.network.packet.message.outgoing.*
 
@@ -13,6 +13,9 @@ import rs.emulator.network.packet.message.outgoing.*
  */
 class IfButtonListener : GamePacketListener<IfButtonMessage> {
 
+    private val enum548 = Repository.getDefinition<EnumDefinition>(1129)
+    private val enum161 = Repository.getDefinition<EnumDefinition>(1132)
+
     override fun handle(channel: Channel, player: Player, message: IfButtonMessage) {
 
         val interfaceId = message.hash shr 16
@@ -20,23 +23,6 @@ class IfButtonListener : GamePacketListener<IfButtonMessage> {
         val component = message.hash and 0xFFFF
 
         val option = message.option + 1
-
-        /*val interactionExtensions = RSPluginManager.getExtensions(WidgetInteractionExtensionPoint::class.java)
-
-        interactionExtensions.forEach {
-            it.onClick(player, message.hash, message.option, message.slot, message.item)
-        }*/
-
-        /*if (interfaceId == 162 && component == 33) {
-
-            if (option == 78) {
-
-                player.outgoingPackets.offer(IfOpenSubMessage(548, 23, 553, 0))
-                player.outgoingPackets.offer(RunClientScriptMessage(1104, 1, 1))
-
-            }
-
-        }*/
 
         if (interfaceId == 378 && component == 78) {
 
@@ -104,214 +90,7 @@ class IfButtonListener : GamePacketListener<IfButtonMessage> {
                     )
                 )
 
-                player.outgoingPackets.offer(
-                    IfMoveSubMessage(
-                        548,
-                        27,
-                        165,
-                        1
-                    )
-                )
-                player.outgoingPackets.offer(
-                    IfMoveSubMessage(
-                        548,
-                        23,
-                        165,
-                        8
-                    )
-                )
-                player.outgoingPackets.offer(
-                    IfMoveSubMessage(
-                        548,
-                        14,
-                        165,
-                        4
-                    )
-                )
-                player.outgoingPackets.offer(
-                    IfMoveSubMessage(
-                        548,
-                        17,
-                        165,
-                        5
-                    )
-                )
-                player.outgoingPackets.offer(
-                    IfMoveSubMessage(
-                        548,
-                        67,
-                        165,
-                        9
-                    )
-                )
-                player.outgoingPackets.offer(
-                    IfMoveSubMessage(
-                        548,
-                        69,
-                        165,
-                        10
-                    )
-                )
-                player.outgoingPackets.offer(
-                    IfMoveSubMessage(
-                        548,
-                        70,
-                        165,
-                        11
-                    )
-                )
-                player.outgoingPackets.offer(
-                    IfMoveSubMessage(
-                        548,
-                        71,
-                        165,
-                        12
-                    )
-                )
-                player.outgoingPackets.offer(
-                    IfMoveSubMessage(
-                        548,
-                        72,
-                        165,
-                        13
-                    )
-                )
-                player.outgoingPackets.offer(
-                    IfMoveSubMessage(
-                        548,
-                        73,
-                        165,
-                        14
-                    )
-                )
-                player.outgoingPackets.offer(
-                    IfMoveSubMessage(
-                        548,
-                        74,
-                        165,
-                        15
-                    )
-                )
-                player.outgoingPackets.offer(
-                    IfMoveSubMessage(
-                        548,
-                        75,
-                        165,
-                        16
-                    )
-                )
-                player.outgoingPackets.offer(
-                    IfMoveSubMessage(
-                        548,
-                        76,
-                        165,
-                        17
-                    )
-                )
-                player.outgoingPackets.offer(
-                    IfMoveSubMessage(
-                        548,
-                        77,
-                        165,
-                        18
-                    )
-                )
-                player.outgoingPackets.offer(
-                    IfMoveSubMessage(
-                        548,
-                        78,
-                        165,
-                        19
-                    )
-                )
-                player.outgoingPackets.offer(
-                    IfMoveSubMessage(
-                        548,
-                        79,
-                        165,
-                        20
-                    )
-                )
-                player.outgoingPackets.offer(
-                    IfMoveSubMessage(
-                        548,
-                        80,
-                        165,
-                        21
-                    )
-                )
-                player.outgoingPackets.offer(
-                    IfMoveSubMessage(
-                        548,
-                        81,
-                        165,
-                        22
-                    )
-                )
-                player.outgoingPackets.offer(
-                    IfMoveSubMessage(
-                        548,
-                        82,
-                        165,
-                        23
-                    )
-                )
-                player.outgoingPackets.offer(
-                    IfMoveSubMessage(
-                        548,
-                        15,
-                        165,
-                        24
-                    )
-                )
-                player.outgoingPackets.offer(
-                    IfMoveSubMessage(
-                        548,
-                        20,
-                        165,
-                        25
-                    )
-                )
-                player.outgoingPackets.offer(
-                    IfMoveSubMessage(
-                        548,
-                        11,
-                        165,
-                        26
-                    )
-                )
-                player.outgoingPackets.offer(
-                    IfMoveSubMessage(
-                        548,
-                        18,
-                        165,
-                        6
-                    )
-                )
-                player.outgoingPackets.offer(
-                    IfMoveSubMessage(
-                        548,
-                        19,
-                        165,
-                        7
-                    )
-                )
-                player.outgoingPackets.offer(
-                    IfMoveSubMessage(
-                        548,
-                        24,
-                        165,
-                        30
-                    )
-                )
-                player.outgoingPackets.offer(
-                    IfMoveSubMessage(
-                        548,
-                        16,
-                        165,
-                        2
-                    )
-                )
+                moveSubsToFixedGameFrame(player, enum161, enum548)
 
                 player.outgoingPackets.offer(
                     RunClientScriptMessage(
@@ -339,13 +118,13 @@ class IfButtonListener : GamePacketListener<IfButtonMessage> {
                         message = "Welcome to GrinderScape."
                     )
                 )
-
-                //player.widgetViewport[162][33].active = true
-
             }
 
         } else {
-            val comp = player.widgetViewport[interfaceId][component]
+
+            /*if(player.widgetViewport.rootWidget[interfaceId].component.id == component) {
+
+            }
 
             player.messagesFromType<IWidgetMessages>()
                 .sendChatMessage("Opening ${comp.id} - ${comp.active}")
@@ -357,11 +136,27 @@ class IfButtonListener : GamePacketListener<IfButtonMessage> {
                         option
                     )
                 )
+            }*/
+            println("Unhandled button action: [component=[$interfaceId:$component], option=$option, slot=${message.slot}, item=${message.item}]")
+        }
+    }
+
+    private fun moveSubsToFixedGameFrame(player: Player, enum: EnumDefinition, other: EnumDefinition) {
+        enum.intValues.forEachIndexed { index, it ->
+            val hash = enum.keys[index]
+            val index548 = other.keys.indexOfFirst { it == hash }
+            val hash548 = other.intValues[index548]
+            if (hash548 != -1) {
+                player.outgoingPackets.offer(
+                    IfMoveSubMessage(
+                        hash548 shr 16,
+                        hash548 and 255,
+                        it shr 16,
+                        it and 255
+                    )
+                )
             }
         }
-
-        println("Unhandled button action: [component=[$interfaceId:$component], option=$option, slot=${message.slot}, item=${message.item}]")
-
     }
 
 }

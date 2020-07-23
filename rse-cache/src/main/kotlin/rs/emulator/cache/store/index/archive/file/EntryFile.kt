@@ -23,11 +23,15 @@ class EntryFile(private val idx: Int,
 
     private val dataFile: DataFile = get()
 
+    var data: BufferedReader? = null
+
     override val table: IndependentReferenceTable<StoreFile>
         get() = TODO("Not yet implemented")
 
-    override fun fetchBuffer(decompressed: Boolean, xtea: IntArray?) : BufferedReader
-    {
+    override fun fetchBuffer(decompressed: Boolean, xtea: IntArray?): BufferedReader {
+
+        if (data != null)
+            return data!!
 
         val idx = referenceTable.fetchIndex(idx)
 
@@ -35,19 +39,23 @@ class EntryFile(private val idx: Int,
 
         var buffer = dataFile.read(idx.identifier, parent, archive.referenceSector, archive.sectorLength)
 
-        if(decompressed)
+        if (decompressed)
             buffer = archive.decompress(archive, buffer)
 
-        val out = ByteArray(if(archive.entryCount == 1) buffer.readableBytes else referenceLength)
+        val out = ByteArray(if (archive.entryCount == 1) buffer.readableBytes else referenceLength)
 
         buffer.skipBytes(referenceIndex)
 
-        if(archive.entryCount > 1)
+        if (archive.entryCount > 1)
             buffer.readBytes(out, 0, referenceLength)
         else
             buffer.readBytes(out, 0, buffer.readableBytes)
 
-        return BufferedReader(out)
+        val reader = BufferedReader(out)
+
+        data = reader
+
+        return reader
 
     }
 

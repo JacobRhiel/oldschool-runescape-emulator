@@ -11,6 +11,7 @@ import rs.emulator.cache.definition.entity.obj.ObjDefinitionGenerator
 import rs.emulator.cache.definition.entity.obj.meta.ObjMetaDataDefinitionGenerator
 import rs.emulator.cache.definition.entity.sequence.SequenceDefinitionGenerator
 import rs.emulator.cache.definition.entity.spotanim.SpotAnimDefinitionGenerator
+import rs.emulator.cache.definition.generator.DefinitionGenerator
 import rs.emulator.cache.definition.region.landscape.LandscapeDefinitionGenerator
 import rs.emulator.cache.definition.region.mapscape.MapScapeDefinitionGenerator
 import rs.emulator.cache.definition.varp.bit.VarBitDefinitionGenerator
@@ -23,7 +24,9 @@ import rs.emulator.cache.definition.widget.script.ScriptDefinitionGenerator
 import rs.emulator.cache.definition.widget.struct.StructDefinitionGenerator
 import rs.emulator.cache.store.VirtualFileStore
 import rs.emulator.definitions.Definition
+import rs.emulator.definitions.widget.WidgetDefinition
 import java.util.concurrent.TimeUnit
+import java.util.stream.Collectors
 
 /**
  *
@@ -53,16 +56,46 @@ class DefinitionRepository : KoinComponent, AbstractDefinitionRepository()
         StructDefinitionGenerator()
     )
 
-    @PublishedApi internal val definitionCache: Cache<Class<Definition>, HashMap<Int, Definition>> = Caffeine.newBuilder()
+    @PublishedApi
+    internal val definitionCache: Cache<Class<Definition>, HashMap<Int, Definition>> = Caffeine.newBuilder()
         .maximumSize(255) //65535 default maximum size of any entry.
         .expireAfterAccess(2, TimeUnit.MINUTES)
         .recordStats()
         .build()
 
+    @PublishedApi
+    internal val widgetCache: Cache<Int, Array<WidgetDefinition>> = Caffeine.newBuilder()
+        .maximumSize(255)
+        .expireAfterAccess(2, TimeUnit.MINUTES)
+        .recordStats()
+        .build()
+
+
     private fun submitType(clazz: Class<Definition>) = definitionCache.put(clazz, hashMapOf())
 
-    override fun findActual(identifier: Int, child: Int, keys: IntArray?, clazz : Class<*>): Definition?
-    {
+    inline fun <reified D : Definition> cacheConfigDefinitions(): List<D> {
+        val generator = generators.firstOrNull { it.definitionClass == D::class.java }
+        if (generator != null) {
+
+            val index = fileStore.fetchIndex(generator.indexConfig.identifier)
+            val archive = index.fetchArchive(generator.archive)
+
+            val size = archive.table.count
+
+            println("Size : $size")
+
+            return IntRange(0, size - 1).toList().stream()
+                .map {
+                    generator.decodeHeader(
+                        it,
+                        archive.fetchEntry(it).fetchBuffer(true)
+                    ) as D
+                }.collect(Collectors.toList())
+        }
+        return listOf()
+    }
+
+    override fun findActual(identifier: Int, child: Int, keys: IntArray?, clazz: Class<*>): Definition? {
 
         val generator = generators.firstOrNull { it.definitionClass == clazz }
             ?: throw Error("No generator found for definition type: ${clazz.simpleName}.")
@@ -120,8 +153,25 @@ class DefinitionRepository : KoinComponent, AbstractDefinitionRepository()
 
     }
 
-    fun submitEntry(definition: Definition)
-    {
+    override fun findWidget(identifier: Int): Array<WidgetDefinition> {
+        val gen: DefinitionGenerator<out Definition>? =
+            generators.find { it.definitionClass == WidgetDefinition::class.java }
+        val widgetChildren: Array<WidgetDefinition>? = widgetCache.getIfPresent(identifier)
+        if (gen != null && widgetChildren == null) {
+            val archive = fileStore.fetchIndex(gen.indexConfig.identifier).fetchArchive(identifier)
+            val childrenSize = archive.entryCount
+            val children = mutableListOf<WidgetDefinition>()
+            repeat(childrenSize) {
+                val data = archive.fetchEntry(it)
+                children.add(gen.decodeHeader(it, data.fetchBuffer(true)) as WidgetDefinition)
+            }
+            widgetCache.put(identifier, children.toTypedArray())
+            return widgetCache.getIfPresent(identifier) ?: arrayOf()
+        }
+        return widgetChildren ?: arrayOf()
+    }
+
+    fun submitEntry(definition: Definition) {
 
         var cache = definitionCache.getIfPresent(definition.javaClass)
 

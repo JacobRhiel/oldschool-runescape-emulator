@@ -17,7 +17,6 @@ import rs.emulator.entity.player.storage.containers.Inventory
 import rs.emulator.entity.player.update.flag.PlayerUpdateFlag
 import rs.emulator.entity.player.update.sync.SyncInformation
 import rs.emulator.entity.player.viewport.Viewport
-import rs.emulator.entity.widgets.Component
 import rs.emulator.entity.widgets.WidgetViewport
 import rs.emulator.entity.widgets.events.ComponentOpenEvent
 import rs.emulator.network.packet.message.outgoing.*
@@ -66,11 +65,11 @@ class Player(val outgoingPackets: PublishProcessor<IPacketMessage>) : Actor(), I
 
     fun onLogin() {
 
-        widgetViewport[548][27].open(Component(162))
-
-
-        widgetViewport[548][23].subscribe<ComponentOpenEvent> {
-            outgoingPackets.offer(IfOpenSubMessage(548, 23, it.source.id, 0))
+        widgetViewport.subscribeTo<ComponentOpenEvent>(WidgetViewport.Frames.VIEW_PORT) {
+            outgoingPackets.offer(IfOpenSubMessage(it.root.widgetId, it.dynamicComponent.id, it.source.id, 0))
+        }
+        widgetViewport.subscribeTo<ComponentOpenEvent>(WidgetViewport.Frames.COMMUNICATION_HUB) {
+            outgoingPackets.offer(IfOpenSubMessage(it.root.widgetId, it.dynamicComponent.id, it.source.id, 0))
         }
 
         outgoingPackets.offer(

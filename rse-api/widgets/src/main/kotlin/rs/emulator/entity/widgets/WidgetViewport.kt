@@ -1,5 +1,6 @@
 package rs.emulator.entity.widgets
 
+import io.reactivex.disposables.Disposable
 import rs.emulator.entity.widgets.widgets.FixedGameFrameWidget
 import rs.emulator.entity.widgets.widgets.LegacyResizableGameFrameWidget
 import rs.emulator.entity.widgets.widgets.ResizableGameFrameWidget
@@ -10,8 +11,6 @@ import rs.emulator.entity.widgets.widgets.ResizableGameFrameWidget
  */
 
 class WidgetViewport {
-
-    val visibleWidgets = mutableMapOf<Int, Widget>()
 
     var gameframeMode = GameFrameMode.FIXED
     var rootWidget: Widget = FixedGameFrameWidget()
@@ -32,35 +31,53 @@ class WidgetViewport {
     }
 
     fun openOnPlayerViewport(component: Component): Component {
-        return when (gameframeMode) {
-            GameFrameMode.FIXED -> rootWidget[23].open(component)
-            GameFrameMode.RESIZABLE -> rootWidget[15].open(component)
-            GameFrameMode.LEGACY_RESIZABLE -> rootWidget[15].open(component)
+        return getDynamicComponent(Frames.VIEW_PORT).open(component)
+    }
+
+    fun openTab(component: Component): Component {
+        return getDynamicComponent(Frames.TABS).open(component)
+    }
+
+    fun openOnCommutationHub(component: Component): Component {
+        return getDynamicComponent(Frames.COMMUNICATION_HUB).open(component)
+    }
+
+    inline fun <reified E : ComponentEvent> subscribeTo(frame: Frames, noinline onNext: (E) -> Unit): Disposable {
+        return getDynamicComponent(frame).subscribe(onNext)
+    }
+
+    fun getDynamicComponent(frame: Frames): DynamicComponent {
+        return when (frame) {
+            Frames.VIEW_PORT -> when (gameframeMode) {
+                GameFrameMode.FIXED -> rootWidget[GameFrameMode.FIXED.viewportId]
+                GameFrameMode.RESIZABLE -> rootWidget[GameFrameMode.RESIZABLE.viewportId]
+                GameFrameMode.LEGACY_RESIZABLE -> rootWidget[GameFrameMode.LEGACY_RESIZABLE.viewportId]
+            }
+            Frames.COMMUNICATION_HUB -> when (gameframeMode) {
+                GameFrameMode.FIXED -> rootWidget[GameFrameMode.FIXED.communicationHuhId]
+                GameFrameMode.RESIZABLE -> rootWidget[GameFrameMode.RESIZABLE.communicationHuhId]
+                GameFrameMode.LEGACY_RESIZABLE -> rootWidget[GameFrameMode.LEGACY_RESIZABLE.communicationHuhId]
+            }
+            Frames.TABS -> when (gameframeMode) {
+                GameFrameMode.FIXED -> rootWidget[GameFrameMode.FIXED.tabsId]
+                GameFrameMode.RESIZABLE -> rootWidget[GameFrameMode.RESIZABLE.tabsId]
+                GameFrameMode.LEGACY_RESIZABLE -> rootWidget[GameFrameMode.LEGACY_RESIZABLE.tabsId]
+            }
         }
     }
 
-    fun openTab(component: Component) {
-
+    enum class GameFrameMode(val viewportId: Int, val tabsId: Int, val communicationHuhId: Int) {
+        FIXED(23, -1, 27),
+        RESIZABLE(15, -1, 32),
+        LEGACY_RESIZABLE(15, -1, 34)
     }
 
-    fun openOnCommutationHub(component: Component) {
+    enum class Frames {
 
-    }
+        VIEW_PORT,
+        COMMUNICATION_HUB,
+        TABS
 
-    operator fun get(widgetId: Int): Widget {
-        return visibleWidgets[widgetId] ?: throw Error("No Widget found for $widgetId.")
-    }
-
-    operator fun set(widgetId: Int, widget: Widget) {
-        if (!visibleWidgets.containsKey(widgetId)) {
-            visibleWidgets[widgetId] = widget
-        }
-    }
-
-    enum class GameFrameMode {
-        FIXED,
-        RESIZABLE,
-        LEGACY_RESIZABLE
     }
 
 }
