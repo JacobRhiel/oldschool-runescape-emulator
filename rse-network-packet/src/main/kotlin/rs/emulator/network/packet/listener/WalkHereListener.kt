@@ -7,6 +7,7 @@ import rs.emulator.entity.player.Player
 import rs.emulator.entity.player.update.flag.PlayerUpdateFlag
 import rs.emulator.network.packet.message.WalkHereMessage
 import rs.emulator.reactive.ReactiveZone
+import rs.emulator.region.WorldCoordinate
 import rs.emulator.region.zones.ZoneEvent
 import rs.emulator.region.zones.events.EnterZoneEvent
 import rs.emulator.region.zones.events.LeaveZoneEvent
@@ -33,6 +34,14 @@ class WalkHereListener : GamePacketListener<WalkHereMessage>, KoinComponent {
             player.pendingTeleport = player.coordinate
 
             player.syncInfo.addMaskFlag(PlayerUpdateFlag.MOVEMENT)
+
+        } else {
+
+            player.world.mapGrid.fetchRegion(player.coordinate.x, player.coordinate.z)
+
+            val path = player.find(WorldCoordinate(message.destX, message.destZ, player.coordinate.plane))
+
+            println("Path dest $path")
 
         }
         val region = world.mapGrid.fetchRegion(player.coordinate.toRegion().regionId)

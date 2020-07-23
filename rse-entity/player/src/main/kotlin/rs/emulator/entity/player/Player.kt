@@ -17,8 +17,6 @@ import rs.emulator.entity.player.storage.containers.Inventory
 import rs.emulator.entity.player.update.flag.PlayerUpdateFlag
 import rs.emulator.entity.player.update.sync.SyncInformation
 import rs.emulator.entity.player.viewport.Viewport
-import rs.emulator.entity.widgets.WidgetViewport
-import rs.emulator.entity.widgets.events.ComponentOpenEvent
 import rs.emulator.network.packet.message.outgoing.*
 import rs.emulator.packet.api.IPacketMessage
 import rs.emulator.plugins.RSPluginManager
@@ -27,6 +25,11 @@ import rs.emulator.plugins.extensions.factories.ItemContainerFactory
 import rs.emulator.plugins.extensions.factories.LoginActionFactory
 import rs.emulator.region.coordinate.Coordinate
 import rs.emulator.skills.SkillAttributes
+import rs.emulator.widgets.WidgetViewport
+import rs.emulator.widgets.components.Component
+import rs.emulator.widgets.components.Widget
+import rs.emulator.widgets.events.ComponentClickEvent
+import rs.emulator.widgets.subscribe
 import rs.emulator.world.World
 import java.util.concurrent.atomic.AtomicLong
 
@@ -65,12 +68,18 @@ class Player(val outgoingPackets: PublishProcessor<IPacketMessage>) : Actor(), I
 
     fun onLogin() {
 
-        widgetViewport.subscribeTo<ComponentOpenEvent>(WidgetViewport.Frames.VIEW_PORT) {
-            outgoingPackets.offer(IfOpenSubMessage(it.root.widgetId, it.dynamicComponent.id, it.source.id, 0))
+        //TODO - dispose of overlay on logout
+
+        widgetViewport.getContainerComponent(WidgetViewport.Frames.VIEW_PORT).subscribe {
+            outgoingPackets.offer(IfOpenSubMessage(it.parent, it.child, it.widgetId, 0))
         }
-        widgetViewport.subscribeTo<ComponentOpenEvent>(WidgetViewport.Frames.COMMUNICATION_HUB) {
-            outgoingPackets.offer(IfOpenSubMessage(it.root.widgetId, it.dynamicComponent.id, it.source.id, 0))
-        }
+
+        widgetViewport.getContainerComponent(WidgetViewport.Frames.COMMUNICATION_HUB)[Widget(162)]
+            .subscribe<ComponentClickEvent>(Component(33)) {
+                widgetViewport.open(WidgetViewport.Frames.VIEW_PORT, Widget(553)) {
+                    messages().sendClientScript(1104, 1, 1)
+                }
+            }
 
         outgoingPackets.offer(
             RebuildRegionMessage(
