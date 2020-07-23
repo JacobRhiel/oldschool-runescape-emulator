@@ -34,6 +34,11 @@ class MapScapeDefinitionGenerator : DefinitionGenerator<MapScapeDefinition>()
 
     override fun decode(definition: MapScapeDefinition, opcode: Int, reader: BufferedReader)
     {
+
+        val rx = ((definition.id shr 8) and 0xFF) shl 6
+
+        val ry = (definition.id and 0xFF) shl 6
+
         for (plane in 0 until 4)
         {
             for (x in 0 until 64)

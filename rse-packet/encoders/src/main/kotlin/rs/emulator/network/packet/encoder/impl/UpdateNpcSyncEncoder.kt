@@ -6,6 +6,7 @@ import rs.emulator.entity.player.Player
 import rs.emulator.network.packet.GamePacketBuilder
 import rs.emulator.network.packet.encoder.PacketEncoder
 import rs.emulator.network.packet.message.outgoing.UpdateNpcSyncMessage
+import rs.emulator.world.World
 
 /**
  *
@@ -14,8 +15,8 @@ import rs.emulator.network.packet.message.outgoing.UpdateNpcSyncMessage
 class UpdateNpcSyncEncoder : PacketEncoder<UpdateNpcSyncMessage<Player>>()
 {
 
-    private val npcs = listOf<Npc>(
-        Npc(8058)
+    private val npcs = listOf(
+        Npc(1,8058)//todo npc index
     )
 
     override fun encode(message: UpdateNpcSyncMessage<Player>, builder: GamePacketBuilder)
@@ -46,6 +47,9 @@ class UpdateNpcSyncEncoder : PacketEncoder<UpdateNpcSyncMessage<Player>>()
         var index = 0 // todo: remove
 
         /*viewport.localNpcs*/this.npcs.iterator().forEachRemaining {
+
+            if(player.viewport.localNpcs.containsValue(it))
+                return@forEachRemaining
 
             val npc = it
 

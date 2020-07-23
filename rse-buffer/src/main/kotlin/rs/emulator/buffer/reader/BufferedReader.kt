@@ -4,9 +4,7 @@ import io.netty.buffer.ByteBuf
 import io.netty.buffer.Unpooled
 import rs.emulator.buffer.BufferUtils.readJagexString
 import rs.emulator.buffer.BufferUtils.readString
-import rs.emulator.buffer.manipulation.DataOrder
-import rs.emulator.buffer.manipulation.DataTransformation
-import rs.emulator.buffer.manipulation.DataType
+import rs.emulator.buffer.manipulation.*
 import kotlin.math.pow
 
 /**
@@ -61,9 +59,9 @@ open class BufferedReader
     open val unsignedSmart: Int
         get()
         {
-            val peek = buffer.getByte(buffer.readerIndex()).toInt()
+            val peek = buffer.getByte(buffer.readerIndex()).toInt() and 0xFF
             return if (peek < 128) buffer.readByte().toInt()
-            else buffer.readShort() - 0x8000
+            else buffer.readUnsignedShort() - 0x8000
         }
 
     val unsignedIntSmartShortCompat: Int

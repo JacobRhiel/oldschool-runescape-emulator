@@ -1,5 +1,7 @@
 package rs.emulator.map.grid.tile
 
+import rs.emulator.cache.definition.region.landscape.LandscapeLoc
+
 /**
  *
  * @author Chk
@@ -7,8 +9,7 @@ package rs.emulator.map.grid.tile
 class GridTile(val x: Int,
                val z: Int,
                val plane: Int,
-               val types: MutableList<Int> = mutableListOf(),
-               val orientation: Int = 0
+               val locs: MutableList<LandscapeLoc> = mutableListOf()
 )
 {
 

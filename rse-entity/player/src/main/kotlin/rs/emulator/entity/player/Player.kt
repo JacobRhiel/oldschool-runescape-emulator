@@ -20,6 +20,7 @@ import rs.emulator.entity.player.viewport.Viewport
 import rs.emulator.entity.widgets.WidgetViewport
 import rs.emulator.entity.widgets.events.ComponentOpenEvent
 import rs.emulator.entity.widgets.widgets.FixedGameFrameWidget
+import rs.emulator.map.region.Region
 import rs.emulator.network.packet.message.outgoing.*
 import rs.emulator.packet.api.IPacketMessage
 import rs.emulator.plugins.RSPluginManager
@@ -32,11 +33,13 @@ import rs.emulator.region.zones.RegionZone
 import rs.emulator.region.zones.events.EnterZoneEvent
 import rs.emulator.region.zones.events.LeaveZoneEvent
 import rs.emulator.skills.SkillAttributes
+import rs.emulator.utilities.koin.get
 import rs.emulator.world.World
+import java.lang.Exception
 import java.util.concurrent.atomic.AtomicLong
 
-class Player(val outgoingPackets: PublishProcessor<IPacketMessage>) : Actor(), IPlayer,
-    KoinComponent {
+class Player(index: Int, val outgoingPackets: PublishProcessor<IPacketMessage>) : Actor(index), IPlayer
+{
 
     val world: World = get()
 
@@ -227,7 +230,9 @@ class Player(val outgoingPackets: PublishProcessor<IPacketMessage>) : Actor(), I
         }
 
         val regionId = coordinate.toRegion().regionId
+
         val region = world.mapGrid.fetchRegion(regionId)
+
         val zone = RegionZone(coordinate.x, coordinate.z, 0, 20, 20)
         zone.reactiveZone.subscribe<EnterZoneEvent> {
             messagesFromType<IWidgetMessages>()

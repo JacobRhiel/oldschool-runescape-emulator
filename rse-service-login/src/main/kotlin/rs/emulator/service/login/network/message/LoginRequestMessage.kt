@@ -56,11 +56,11 @@ data class LoginRequestMessage(
 
         ctx.channel().write(LoginResponseMessage(isaac, loginResult))
 
-        val player = Player(session.outgoingPackets)
+        val player = Player(WorldRepository.nextPlayerIndex, session.outgoingPackets)
 
-        player.viewport.localPlayers[1] = player
+        player.viewport.localPlayers[player.index] = player
 
-        player.viewport.globalPlayers[1] = player
+        player.viewport.globalPlayers[player.index] = player
 
         session.outgoingPackets
             .subscribe { ctx.channel().writeAndFlush(it) }
@@ -79,9 +79,8 @@ data class LoginRequestMessage(
         //TODO - add player
         WorldRepository.players.add(player)
 
-        if (ctx.channel().isActive) {
+        if (ctx.channel().isActive)
             ctx.channel().flush()
-        }
 
     }
 

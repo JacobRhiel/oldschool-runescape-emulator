@@ -36,7 +36,7 @@ class EntryFile(private val idx: Int,
         var buffer = dataFile.read(idx.identifier, parent, archive.referenceSector, archive.sectorLength)
 
         if(decompressed)
-            buffer = archive.decompress(archive, buffer)
+            buffer = archive.decompress(archive, buffer, xtea)
 
         val out = ByteArray(if(archive.entryCount == 1) buffer.readableBytes else referenceLength)
 

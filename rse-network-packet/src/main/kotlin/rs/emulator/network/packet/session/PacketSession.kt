@@ -79,6 +79,8 @@ class PacketSession(val channel: Channel,
     override fun onDestroy(ctx: ChannelHandlerContext)
     {
 
+        //todo: remove player from WorldRepository.players?
+
         composite.dispose()
 
     }

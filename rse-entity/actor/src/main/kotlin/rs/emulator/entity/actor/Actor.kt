@@ -7,15 +7,19 @@ import rs.dusk.engine.path.target.RectangleTargetStrategy
 import rs.dusk.engine.path.target.TileTargetStrategy
 import rs.dusk.engine.path.traverse.SmallTraversal
 import rs.emulator.entity.Entity
+import rs.emulator.map.region.Region
+import rs.emulator.region.WorldCoordinate
 import rs.emulator.region.coordinate.Coordinate
 import rs.emulator.utilities.koin.get
 
-abstract class Actor : Entity(), IActor
+abstract class Actor(var index: Int) : Entity(), IActor
 {
 
     protected val pathFinder: PathFinder = get()
 
     var direction: Direction = Direction.SOUTH
+
+    var lastRegion: WorldCoordinate? = coordinate
 
     val movement = Movement().apply {
         this.traversal = SmallTraversal(TraversalType.Land, false, pathFinder.collisions)

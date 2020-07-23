@@ -4,7 +4,7 @@ import rs.dusk.engine.path.Finder
 import rs.emulator.entity.actor.Actor
 import rs.emulator.skills.SkillAttributes
 
-class Npc(override val id: Int) : Actor(), INpc
+class Npc(index: Int, override val id: Int) : Actor(index), INpc
 {
 
     //todo: size override by definition

@@ -49,6 +49,13 @@ abstract class Coordinate(var x: Int, var z: Int, var plane: Int = 0)
 
     override fun toString(): String = "x: $x z: $z : plane $plane"
 
+    override fun equals(other: Any?): Boolean
+    {
+        if(other == null) return false
+        val otherCoordinate = other as Coordinate
+        return this.x == otherCoordinate.x && this.z == otherCoordinate.z && this.plane == otherCoordinate.plane
+    }
+
     companion object
     {
 

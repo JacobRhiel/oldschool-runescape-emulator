@@ -34,6 +34,7 @@ class LandscapeDefinitionGenerator : DefinitionGenerator<LandscapeDefinition>()
     override fun decode(definition: LandscapeDefinition, opcode: Int, reader: BufferedReader)
     {
         var id = -1
+
         var idOffset: Int
 
         while (reader.unsignedIntSmartShortCompat.also { idOffset = it } != 0)
@@ -41,6 +42,7 @@ class LandscapeDefinitionGenerator : DefinitionGenerator<LandscapeDefinition>()
             id += idOffset
             var position = 0
             var positionOffset: Int
+
             while (reader.unsignedSmart.also { positionOffset = it } != 0)
             {
                 position += positionOffset - 1
@@ -56,17 +58,22 @@ class LandscapeDefinitionGenerator : DefinitionGenerator<LandscapeDefinition>()
                 if(tile == null)
                 {
 
-                    val builder = LandscapeTile.Builder()
+                    val landscapeTile = LandscapeTile.Builder()
                         .coordinates(localX, localZ)
                         .plane(plane)
-                        .type(type)
-                        .orientation(orientation)
+                            .build()
 
-                    definition.tiles[plane][localX][localZ] = builder.build()
+                    landscapeTile.locs.add(LandscapeLoc(id, type, orientation))
+
+                    definition.tiles[plane][localX][localZ] = landscapeTile
 
                 }
                 else
-                    tile.types.add(type)
+                {
+
+                    tile.locs.add(LandscapeLoc(id, type, orientation))
+
+                }
 
             }
         }

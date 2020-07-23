@@ -14,6 +14,9 @@ object WorldRepository {
 
     val npcs = ArrayList<Npc>(2048)
 
+    val nextPlayerIndex: Int
+        get() = players.size + 1
+
     init {
 
         GameWorld.players = players

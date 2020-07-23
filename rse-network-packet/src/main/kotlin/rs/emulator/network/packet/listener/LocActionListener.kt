@@ -25,7 +25,9 @@ class LocActionListener : GamePacketListener<LocActionMessage>
 
         player.world.mapGrid.fetchRegion(player.coordinate.x, player.coordinate.z)
 
-        val path = player.find(WorldCoordinate(message.x, message.y, player.coordinate.plane))
+        player.targetCoordinate = WorldCoordinate(message.x, message.y, player.coordinate.plane)
+
+        val path = player.find(player.targetCoordinate!!)
 
         println("Path result for loc: ${message.locId}, $path")
 
