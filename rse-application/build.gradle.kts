@@ -31,3 +31,9 @@ dependencies {
     implementation(project(":rse-map:route"))
 
 }
+
+tasks.withType<Test> {
+
+    useJUnitPlatform()
+
+}

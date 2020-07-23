@@ -4,8 +4,9 @@ import rs.emulator.buffer.manipulation.DataType
 import rs.emulator.buffer.reader.BufferedReader
 import rs.emulator.cache.definition.generator.DefinitionGenerator
 import rs.emulator.cache.store.index.IndexConfig
-import rs.emulator.cache.definition.widget.script.ClientScript1Instruction
-import java.util.ArrayList
+import rs.emulator.definitions.scripts.ClientScript1Instruction
+import rs.emulator.definitions.widget.WidgetDefinition
+import java.util.*
 
 /**
  *
@@ -49,7 +50,7 @@ class WidgetDefinitionGenerator : DefinitionGenerator<WidgetDefinition>()
             definition.parentId = -1
         } else
         {
-            definition.parentId += definition.idd and 0xFFFF.inv()
+            definition.parentId += definition.componentId and 0xFFFF.inv()
         }
         definition.hoveredSiblingId = var1.getUnsigned(DataType.SHORT).toInt()
         if (definition.hoveredSiblingId == 0xFFFF)
@@ -152,10 +153,9 @@ class WidgetDefinitionGenerator : DefinitionGenerator<WidgetDefinition>()
             while (var8 < 20)
             {
                 val var9 = var1.getUnsigned(DataType.BYTE).toInt()
-                if (var9 == 1)
-                {
-                    definition.xOffsets[var8] = var1.getSigned(DataType.SHORT).toInt().toInt()
-                    definition.yOffsets[var8] = var1.getSigned(DataType.SHORT).toInt().toInt()
+                if (var9 == 1) {
+                    definition.xOffsets[var8] = var1.getSigned(DataType.SHORT).toInt()
+                    definition.yOffsets[var8] = var1.getSigned(DataType.SHORT).toInt()
                     definition.sprites[var8] = var1.getSigned(DataType.INT).toInt()
                 } else
                 {
@@ -245,23 +245,20 @@ class WidgetDefinitionGenerator : DefinitionGenerator<WidgetDefinition>()
             definition.itemQuantities = IntArray(definition.originalWidth * definition.originalHeight)
             definition.xTextAlignment = var1.getUnsigned(DataType.BYTE).toInt()
             definition.fontId = var1.getUnsigned(DataType.SHORT).toInt()
-            if (definition.fontId == 0xFFFF)
-            {
+            if (definition.fontId == 0xFFFF) {
                 definition.fontId = -1
             }
             definition.textShadowed = var1.getUnsigned(DataType.BYTE).toInt() == 1
             definition.textColor = var1.getSigned(DataType.INT).toInt()
-            definition.xPitch = var1.getSigned(DataType.SHORT).toInt().toInt()
-            definition.yPitch = var1.getSigned(DataType.SHORT).toInt().toInt()
+            definition.xPitch = var1.getSigned(DataType.SHORT).toInt()
+            definition.yPitch = var1.getSigned(DataType.SHORT).toInt()
             var4 = var1.getUnsigned(DataType.BYTE).toInt()
-            if (var4 == 1)
-            {
+            if (var4 == 1) {
                 definition.clickMask = definition.clickMask or 1073741824
             }
             definition.configActions = arrayOfNulls(5)
             var5 = 0
-            while (var5 < 5)
-            {
+            while (var5 < 5) {
                 val var10 = var1.string
                 if (var10.length > 0)
                 {
@@ -341,7 +338,7 @@ class WidgetDefinitionGenerator : DefinitionGenerator<WidgetDefinition>()
             definition.parentId = -1
         } else
         {
-            definition.parentId += definition.idd and 0xFFFF.inv()
+            definition.parentId += definition.componentId and 0xFFFF.inv()
         }
         definition.isHidden = var1.getUnsigned(DataType.BYTE).toInt() == 1
         if (definition.type == 0)
@@ -361,23 +358,20 @@ class WidgetDefinitionGenerator : DefinitionGenerator<WidgetDefinition>()
             definition.flippedVertically = var1.getUnsigned(DataType.BYTE).toInt() == 1
             definition.flippedHorizontally = var1.getUnsigned(DataType.BYTE).toInt() == 1
         }
-        if (definition.type == 6)
-        {
+        if (definition.type == 6) {
             definition.modelType = 1
             definition.modelId = var1.getUnsigned(DataType.SHORT).toInt()
-            if (definition.modelId == 0xFFFF)
-            {
+            if (definition.modelId == 0xFFFF) {
                 definition.modelId = -1
             }
-            definition.offsetX2d = var1.getSigned(DataType.SHORT).toInt().toInt()
-            definition.offsetY2d = var1.getSigned(DataType.SHORT).toInt().toInt()
+            definition.offsetX2d = var1.getSigned(DataType.SHORT).toInt()
+            definition.offsetY2d = var1.getSigned(DataType.SHORT).toInt()
             definition.rotationX = var1.getUnsigned(DataType.SHORT).toInt()
             definition.rotationZ = var1.getUnsigned(DataType.SHORT).toInt()
             definition.rotationY = var1.getUnsigned(DataType.SHORT).toInt()
             definition.modelZoom = var1.getUnsigned(DataType.SHORT).toInt()
             definition.animation = var1.getUnsigned(DataType.SHORT).toInt()
-            if (definition.animation == 0xFFFF)
-            {
+            if (definition.animation == 0xFFFF) {
                 definition.animation = -1
             }
             definition.orthogonal = var1.getUnsigned(DataType.BYTE).toInt() == 1

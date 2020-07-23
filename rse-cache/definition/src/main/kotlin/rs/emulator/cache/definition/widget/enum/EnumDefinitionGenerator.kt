@@ -12,19 +12,25 @@ import rs.emulator.cache.store.index.archive.ArchiveConfig
  *
  * @author Chk
  */
-class EnumDefinitionGenerator : DefinitionGenerator<EnumDefinition>()
-{
+class EnumDefinitionGenerator : DefinitionGenerator<EnumDefinition>() {
 
     override val definitionClass: Class<EnumDefinition> = EnumDefinition::class.java
 
     override val indexConfig: IndexConfig = IndexConfig.CONFIGS
 
-    override val archive: Int = ArchiveConfig.STRUCT.identifier
+    override val archive: Int = ArchiveConfig.ENUM.identifier
 
     override fun generate(id: Int, reader: BufferedReader): EnumDefinition = EnumDefinition(id)
 
-    override fun decode(definition: EnumDefinition, opcode: Int, reader: BufferedReader)
-    {
+    override fun decodeHeader(id: Int, reader: BufferedReader): EnumDefinition {
+
+        if (reader.toArray().size == 1 && reader.toArray()[0].toInt() == 0)
+            return EnumDefinition(id)
+
+        return super.decodeHeader(id, reader)
+    }
+
+    override fun decode(definition: EnumDefinition, opcode: Int, reader: BufferedReader) {
 
         var size: Int
 
@@ -32,17 +38,17 @@ class EnumDefinitionGenerator : DefinitionGenerator<EnumDefinition>()
 
         var index: Int
 
-        when(opcode)
-        {
+        when (opcode) {
 
             1 -> definition.keyType = ScriptVarType.forCharKey(reader.getUnsigned(DataType.BYTE).toChar())
 
             2 -> definition.valType = ScriptVarType.forCharKey(reader.getUnsigned(DataType.BYTE).toChar())
 
-            4 -> definition.defaultString = reader.string
+            3 -> definition.defaultString = reader.string
 
-            5 ->
-            {
+            4 -> definition.defaultInt = reader.getUnsigned(DataType.INT).toInt()
+
+            5 -> {
 
                 size = reader.getUnsigned(DataType.SHORT).toInt()
 
@@ -66,8 +72,7 @@ class EnumDefinitionGenerator : DefinitionGenerator<EnumDefinition>()
 
             }
 
-            6 ->
-            {
+            6 -> {
 
                 size = reader.getUnsigned(DataType.SHORT).toInt()
 

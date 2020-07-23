@@ -1,6 +1,7 @@
 package rs.emulator
 
 import rs.emulator.definitions.Definition
+import rs.emulator.definitions.widget.WidgetDefinition
 
 /**
  *
@@ -9,16 +10,21 @@ import rs.emulator.definitions.Definition
 
 abstract class AbstractDefinitionRepository {
 
-    protected abstract fun findActual(identifier: Int, child: Int, keys: IntArray? = null, clazz : Class<*>): Definition?
+    protected abstract fun findActual(identifier: Int, child: Int, keys: IntArray? = null, clazz: Class<*>): Definition?
 
-    inline fun <reified T : Definition> find(identifier: Int, keys: IntArray? = null) : T {
+    abstract fun findWidget(identifier: Int): Array<WidgetDefinition>
+
+
+    inline fun <reified T : Definition> find(identifier: Int, keys: IntArray? = null): T {
         return find(identifier, -1, keys, T::class.java) as T
     }
 
-    inline fun <reified T : Definition> find(identifier: Int, child: Int, keys: IntArray? = null) : T {
+    inline fun <reified T : Definition> find(identifier: Int, child: Int, keys: IntArray? = null): T {
         return find(identifier, child, keys, T::class.java) as T
     }
 
-    @PublishedApi internal fun find(identifier: Int, child: Int, keys: IntArray? = null, clazz: Class<*>) = this.findActual(identifier, child, keys, clazz)
+    @PublishedApi
+    internal fun find(identifier: Int, child: Int, keys: IntArray? = null, clazz: Class<*>) =
+        this.findActual(identifier, child, keys, clazz)
 
 }

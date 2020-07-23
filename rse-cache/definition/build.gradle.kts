@@ -8,3 +8,9 @@ dependencies {
     api(project(":rse-api:definitions"))
 
 }
+
+tasks.withType<Test> {
+
+    useJUnitPlatform()
+
+}

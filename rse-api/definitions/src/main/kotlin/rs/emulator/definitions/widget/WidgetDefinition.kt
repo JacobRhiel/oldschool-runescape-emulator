@@ -1,7 +1,7 @@
-package rs.emulator.cache.definition.widget
+package rs.emulator.definitions.widget
 
 import rs.emulator.definitions.Definition
-import rs.emulator.cache.definition.widget.script.ClientScript1Instruction
+import rs.emulator.definitions.scripts.ClientScript1Instruction
 
 /**
  *
@@ -10,7 +10,7 @@ import rs.emulator.cache.definition.widget.script.ClientScript1Instruction
 class WidgetDefinition(identifier: Int) : Definition(identifier)
 {
 
-    var idd = -1
+    var componentId = -1
     var isIf3 = false
     var type = 0
     var contentType = 0
@@ -110,5 +110,6 @@ class WidgetDefinition(identifier: Int) : Definition(identifier)
     var alternateAnimation = -1
     var spellName = ""
     var tooltip = "Ok"
+
 
 }

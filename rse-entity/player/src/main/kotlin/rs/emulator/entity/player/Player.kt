@@ -20,7 +20,6 @@ import rs.emulator.entity.player.viewport.Viewport
 import rs.emulator.entity.widgets.WidgetViewport
 import rs.emulator.entity.widgets.events.ComponentOpenEvent
 import rs.emulator.entity.widgets.widgets.FixedGameFrameWidget
-import rs.emulator.map.region.Region
 import rs.emulator.network.packet.message.outgoing.*
 import rs.emulator.packet.api.IPacketMessage
 import rs.emulator.plugins.RSPluginManager
@@ -33,9 +32,7 @@ import rs.emulator.region.zones.RegionZone
 import rs.emulator.region.zones.events.EnterZoneEvent
 import rs.emulator.region.zones.events.LeaveZoneEvent
 import rs.emulator.skills.SkillAttributes
-import rs.emulator.utilities.koin.get
 import rs.emulator.world.World
-import java.lang.Exception
 import java.util.concurrent.atomic.AtomicLong
 
 class Player(index: Int, val outgoingPackets: PublishProcessor<IPacketMessage>) : Actor(index), IPlayer
@@ -59,9 +56,9 @@ class Player(index: Int, val outgoingPackets: PublishProcessor<IPacketMessage>) 
 
     override val skillAttributes: SkillAttributes = SkillAttributes()
 
-    override val widgetViewport = WidgetViewport().apply {
-        this[548] = FixedGameFrameWidget()
-    }
+    override val attributes: Attributes = Attributes()
+
+    override val widgetViewport = WidgetViewport()
 
     var pendingAnimation: Int = -1
 
@@ -73,8 +70,11 @@ class Player(index: Int, val outgoingPackets: PublishProcessor<IPacketMessage>) 
 
     fun onLogin() {
 
-        widgetViewport[548][23].subscribe<ComponentOpenEvent> {
-            outgoingPackets.offer(IfOpenSubMessage(548, 23, it.source.id, 0))
+        widgetViewport.subscribeTo<ComponentOpenEvent>(WidgetViewport.Frames.VIEW_PORT) {
+            outgoingPackets.offer(IfOpenSubMessage(it.root.widgetId, it.dynamicComponent.id, it.source.id, 0))
+        }
+        widgetViewport.subscribeTo<ComponentOpenEvent>(WidgetViewport.Frames.COMMUNICATION_HUB) {
+            outgoingPackets.offer(IfOpenSubMessage(it.root.widgetId, it.dynamicComponent.id, it.source.id, 0))
         }
 
         outgoingPackets.offer(
@@ -229,31 +229,7 @@ class Player(index: Int, val outgoingPackets: PublishProcessor<IPacketMessage>) 
             )
         }
 
-        val regionId = coordinate.toRegion().regionId
-
-        val region = world.mapGrid.fetchRegion(regionId)
-
-        val zone = RegionZone(coordinate.x, coordinate.z, 0, 20, 20)
-        zone.reactiveZone.subscribe<EnterZoneEvent> {
-            messagesFromType<IWidgetMessages>()
-                .sendChatMessage("Entering parent Zone")
-        }
-        zone.reactiveZone.subscribe<LeaveZoneEvent> {
-            messagesFromType<IWidgetMessages>()
-                .sendChatMessage("Leaving parent Zone")
-        }
-        val child = zone.reactiveZone.createSubZone(5, 5, 0, 10, 10)
-
-        child.subscribe<EnterZoneEvent> {
-            messagesFromType<IWidgetMessages>()
-                .sendChatMessage("Entering sub-zone")
-        }
-        child.subscribe<LeaveZoneEvent> {
-            messagesFromType<IWidgetMessages>()
-                .sendChatMessage("Leaving sub-zone")
-        }
-
-        region.zones.add(zone)
+        skillAttributes.forceSync()
 
         containerManager().register(93, Inventory()) {
             syncBlock {

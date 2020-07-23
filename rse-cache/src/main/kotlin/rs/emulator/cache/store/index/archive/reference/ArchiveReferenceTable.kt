@@ -87,6 +87,7 @@ class ArchiveReferenceTable(private val idx: Int,
                 val entryFile = lookup(id)
                 entryFile.referenceIndex = buffer.readerIndex()
                 buffer.readBytes(fileContents[id]!!, fileOffsets[id], chunkSize)
+                entryFile.data = BufferedReader(fileContents[id]!!)
                 fileOffsets[id] += chunkSize
             }
         }

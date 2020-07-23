@@ -23,11 +23,15 @@ class EntryFile(private val idx: Int,
 
     private val dataFile: DataFile = get()
 
+    var data: BufferedReader? = null
+
     override val table: IndependentReferenceTable<StoreFile>
         get() = TODO("Not yet implemented")
 
-    override fun fetchBuffer(decompressed: Boolean, xtea: IntArray?) : BufferedReader
-    {
+    override fun fetchBuffer(decompressed: Boolean, xtea: IntArray?): BufferedReader {
+
+        if (data != null)
+            return data!!
 
         val idx = referenceTable.fetchIndex(idx)
 
@@ -47,7 +51,11 @@ class EntryFile(private val idx: Int,
         else
             buffer.readBytes(out, 0, buffer.readableBytes)
 
-        return BufferedReader(out)
+        val reader = BufferedReader(out)
+
+        data = reader
+
+        return reader
 
     }
 

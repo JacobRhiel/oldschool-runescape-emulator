@@ -2,7 +2,8 @@ package rs.emulator.cache.store
 
 import com.google.common.primitives.Ints
 import io.netty.buffer.Unpooled
-import org.koin.core.*
+import org.koin.core.KoinComponent
+import org.koin.core.get
 import rs.emulator.buffer.manipulation.DataType
 import rs.emulator.buffer.reader.BufferedReader
 import rs.emulator.buffer.writer.BufferedWriter
@@ -19,8 +20,7 @@ import java.nio.file.Path
  *
  * @author Chk
  */
-class VirtualFileStore(private val path: Path) : KoinComponent, Closeable
-{
+class VirtualFileStore(private val path: Path) : KoinComponent, Closeable {
 
     private val dataFile = DataFile(path.resolve("main_file_cache.dat2"))
 
@@ -28,21 +28,19 @@ class VirtualFileStore(private val path: Path) : KoinComponent, Closeable
 
     lateinit var huffman: HuffmanCodec
 
-    fun preload()
-    {
+    fun preload() {
 
-        val idxList = referenceTable.fetchIndexList()
+        referenceTable.fetchIndexList()
 
-        huffman = HuffmanCodec(fetchIndex(IndexConfig.BINARY.identifier).fetchNamedArchive("huffman")!!.fetchEntry(0).fetchBuffer(true).toArray())
-
-       // idxList.forEach { it.table.fetchAllArchives() }
-
+        huffman = HuffmanCodec(
+            fetchIndex(IndexConfig.BINARY.identifier).fetchNamedArchive("huffman")!!.fetchEntry(0).fetchBuffer(true)
+                .toArray()
+        )
     }
 
-    fun fetchIndex(identifier: Int) : Index = referenceTable.fetchIndex(identifier)
+    fun fetchIndex(identifier: Int): Index = referenceTable.fetchIndex(identifier)
 
-    fun fetchIndexHeaderBuffer(): BufferedReader
-    {
+    fun fetchIndexHeaderBuffer(): BufferedReader {
 
         val writer = BufferedWriter()
 
@@ -55,23 +53,31 @@ class VirtualFileStore(private val path: Path) : KoinComponent, Closeable
             writer.put(DataType.INT, it.table.version)
         }
 
-        return BufferedWriter(Unpooled.wrappedBuffer(writer.byteBuf.array().copyOf(writer.byteBuf.readableBytes()))).toBufferedReader()
+        return BufferedWriter(
+            Unpooled.wrappedBuffer(
+                writer.byteBuf.array().copyOf(writer.byteBuf.readableBytes())
+            )
+        ).toBufferedReader()
 
     }
 
-    fun fetchIndexCrcHashes() = referenceTable.fetchIndexList().filter { it.identifier <= 20 }.map { it.hash }.toIntArray()
+    fun fetchIndexCrcHashes() =
+        referenceTable.fetchIndexList().filter { it.identifier <= 20 }.map { it.hash }.toIntArray()
 
-    fun fetchIndexTableData(identifier: Int): BufferedReader
-    {
+    fun fetchIndexTableData(identifier: Int): BufferedReader {
 
         val idxEntry = referenceTable.fetchIndex(identifier)
 
-        return dataFile.read(referenceTable.identifier, idxEntry.identifier, idxEntry.referenceSector, idxEntry.sectorLength)
+        return dataFile.read(
+            referenceTable.identifier,
+            idxEntry.identifier,
+            idxEntry.referenceSector,
+            idxEntry.sectorLength
+        )
 
     }
 
-    fun fetchArchiveCompressed(index: Int, archive: Int) : BufferedReader
-    {
+    fun fetchArchiveCompressed(index: Int, archive: Int): BufferedReader {
 
         val idx = fetchIndex(index)
 
@@ -85,7 +91,7 @@ class VirtualFileStore(private val path: Path) : KoinComponent, Closeable
 
         val length = Ints.fromBytes(data[1], data[2], data[3], data[4])
 
-        val expectedLength = length + (if(compressionType != CompressionType.NONE) 9 else 5)
+        val expectedLength = length + (if (compressionType != CompressionType.NONE) 9 else 5)
 
         if (expectedLength != length && data.size - expectedLength == 2)
             data = data.copyOf(data.size - 2)
@@ -94,8 +100,7 @@ class VirtualFileStore(private val path: Path) : KoinComponent, Closeable
 
     }
 
-    override fun close()
-    {
+    override fun close() {
         path.fileSystem.close()
     }
 

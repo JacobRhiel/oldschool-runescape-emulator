@@ -8,7 +8,7 @@ import rs.emulator.entity.widgets.widgets.FixedGameFrameWidget
  * @author javatar
  */
 
-class DynamicComponent(id: Int, val parent: Widget) : Component(id) {
+class DynamicComponent(id: Int, private val parent: Widget) : Component(id) {
 
     var component: Component = DEFAULT_COMPONENT
 
@@ -17,12 +17,12 @@ class DynamicComponent(id: Int, val parent: Widget) : Component(id) {
             this.component.active = false
             this.component.dispose()
             this.component = component
-            this.onNext(ComponentOpenEvent(component))
+            this.onNext(ComponentOpenEvent(parent, this, component))
             this.component.active = true
             this.component.block()
         } else {
             this.component = component
-            this.onNext(ComponentOpenEvent(component))
+            this.onNext(ComponentOpenEvent(parent, this, component))
             this.component.active = true
             this.component.block()
         }

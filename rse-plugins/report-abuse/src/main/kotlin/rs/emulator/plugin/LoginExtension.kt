@@ -2,9 +2,6 @@ package rs.emulator.plugin
 
 import org.pf4j.Extension
 import rs.emulator.entity.actor.player.IPlayer
-import rs.emulator.entity.widgets.Component
-import rs.emulator.entity.widgets.events.ComponentClickEvent
-import rs.emulator.plugin.widget.ChatWidget
 import rs.emulator.plugins.extensions.factories.LoginActionFactory
 import rs.emulator.plugins.extensions.factories.actions.LoginAction
 
@@ -19,6 +16,13 @@ class LoginExtension : LoginActionFactory, LoginAction {
     }
 
     override fun onLogin(player: IPlayer) {
+
+        /*val comp = player.widgetViewport.getDynamicComponent(WidgetViewport.Frames.COMMUNICATION_HUB)
+
+        val chat = comp.open(Component(162))
+
+
+
         player.widgetViewport.apply {
             this[162] = ChatWidget()
         }
@@ -29,6 +33,6 @@ class LoginExtension : LoginActionFactory, LoginAction {
                     player.messages().sendClientScript(1104, 1, 1)
                 }
             }
-        }
+        }*/
     }
 }
