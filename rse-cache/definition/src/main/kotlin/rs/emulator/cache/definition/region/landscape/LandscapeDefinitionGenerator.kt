@@ -3,7 +3,9 @@ package rs.emulator.cache.definition.region.landscape
 import rs.emulator.buffer.manipulation.DataType
 import rs.emulator.buffer.reader.BufferedReader
 import rs.emulator.cache.definition.generator.DefinitionGenerator
+import rs.emulator.cache.definition.region.mapscape.MapScapeDefinition
 import rs.emulator.cache.store.index.IndexConfig
+import rs.emulator.utilities.koin.get
 
 /**
  *
@@ -46,26 +48,45 @@ class LandscapeDefinitionGenerator : DefinitionGenerator<LandscapeDefinition>()
             while (reader.unsignedSmart.also { positionOffset = it } != 0)
             {
                 position += positionOffset - 1
-                val localZ = position and 0x3F
+                val localY = position and 0x3F
                 val localX = position shr 6 and 0x3F
-                val plane = position shr 12 and 0x3
+                var plane = position shr 12 and 0x3
                 val attributes: Int = reader.getUnsigned(DataType.BYTE).toInt()
                 val type = attributes shr 2
                 val orientation = attributes and 0x3
 
-                val tile = definition.tiles[plane][localX][localZ]
+                // Validate region
+                if (localX < 0 || localX > 64 || localY < 0 || localY >= 64) {
+                    continue
+                }
+
+                val mapScapeDefinition: MapScapeDefinition = rs.emulator.cache.definition.definition().find(definition.id)
+
+                val settings = mapScapeDefinition.tiles[1][localX][localY]!!.settings.toInt()
+
+                val bridge = settings and 0x2 == 0x2
+
+                // Decrease bridges
+                if (bridge)
+                    plane--
+
+                // Validate plane
+                if (plane !in 0 until 4)
+                    continue
+
+                val tile = definition.tiles[plane][localX][localY]
 
                 if(tile == null)
                 {
 
                     val landscapeTile = LandscapeTile.Builder()
-                        .coordinates(localX, localZ)
+                        .coordinates(localX, localY)
                         .plane(plane)
                             .build()
 
                     landscapeTile.locs.add(LandscapeLoc(id, type, orientation))
 
-                    definition.tiles[plane][localX][localZ] = landscapeTile
+                    definition.tiles[plane][localX][localY] = landscapeTile
 
                 }
                 else

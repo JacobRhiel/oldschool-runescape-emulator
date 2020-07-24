@@ -175,6 +175,8 @@ class Test : KoinComponent {
                         .startAsync()
                         .awaitHealthy()
 
+                    //definition().cacheConfigDefinitions<LocDefinition>()
+
                     /*test.world.mapGrid.fetchRegion(12595)
                     test.world.mapGrid.fetchRegion(12596)
                     test.world.mapGrid.fetchRegion(12597)

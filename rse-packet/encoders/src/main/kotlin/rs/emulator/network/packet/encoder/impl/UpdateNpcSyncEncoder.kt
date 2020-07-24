@@ -44,14 +44,12 @@ class UpdateNpcSyncEncoder : PacketEncoder<UpdateNpcSyncMessage<Player>>()
 
         }
 
-        var index = 0 // todo: remove
-
-        /*viewport.localNpcs*/this.npcs.iterator().forEachRemaining {
+        viewport.unsyncedNpcs.values.iterator().forEachRemaining {
 
             if(player.viewport.localNpcs.containsValue(it))
                 return@forEachRemaining
 
-            val npc = it
+            val npc = it as Npc
 
             var dx = npc.coordinate.x - player.coordinate.x
 
@@ -63,7 +61,9 @@ class UpdateNpcSyncEncoder : PacketEncoder<UpdateNpcSyncMessage<Player>>()
             if (dz < 15)
                 dz += 32
 
-            builder.putBits(15, index++)
+            println("index: ${it.index}")
+
+            builder.putBits(15, it.index)
 
             builder.putBits(3, 0)//dir
 
@@ -79,7 +79,9 @@ class UpdateNpcSyncEncoder : PacketEncoder<UpdateNpcSyncMessage<Player>>()
 
             maskBuilder.put(DataType.BYTE, 0 and 0xFF)
 
-            player.viewport.localNpcs[1] = npc
+            player.viewport.localNpcs[npc.index] = npc
+
+            player.viewport.unsyncedNpcs.remove(npc.index)
 
         }
 

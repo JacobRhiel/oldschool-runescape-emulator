@@ -3,6 +3,7 @@ package rs.emulator.entity.actor
 import rs.dusk.engine.model.entity.Direction
 import rs.dusk.engine.model.entity.index.Movement
 import rs.dusk.engine.path.*
+import rs.dusk.engine.path.target.PointTargetStrategy
 import rs.dusk.engine.path.target.RectangleTargetStrategy
 import rs.dusk.engine.path.target.TileTargetStrategy
 import rs.dusk.engine.path.traverse.SmallTraversal
@@ -14,6 +15,11 @@ import rs.emulator.utilities.koin.get
 
 abstract class Actor(var index: Int) : Entity(), IActor
 {
+
+    constructor(index: Int, coordinate: WorldCoordinate) : this(index)
+    {
+        this.coordinate.set(coordinate)
+    }
 
     protected val pathFinder: PathFinder = get()
 
@@ -32,8 +38,8 @@ abstract class Actor(var index: Int) : Entity(), IActor
     open val target: Entity? = null
 
     open val strategy: TargetStrategy
-         get() = RectangleTargetStrategy(
-             pathFinder.collisions,
+         get() = PointTargetStrategy(
+             //pathFinder.collisions,
              tile = targetCoordinate ?: coordinate,
              size = target?.size ?: size
          )

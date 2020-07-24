@@ -15,6 +15,7 @@ import rs.emulator.map.grid.tile.GridTile
 import rs.emulator.map.region.chunk.ChunkGrid
 import rs.emulator.region.RegionCoordinate
 import rs.emulator.region.WorldCoordinate
+import rs.emulator.region.zones.RegionZone
 import rs.emulator.utilities.koin.get
 
 /**
@@ -50,6 +51,8 @@ class RegionGrid(val id: Int)
 
         val plottedZ = ArrayListMultimap.create<Int, Int>()
 
+        val coords = RegionZone(3222, 3222, 0, 5, 5)
+
         for(plane in 0 until levels)
         {
 
@@ -81,22 +84,26 @@ class RegionGrid(val id: Int)
 
                         val blocked = isTile(mapScapeTile, BLOCKED_TILE)
 
-                        val bridge = isTile(mapScapeTile, BRIDGE_TILE)
+                        val bridge = isTile(mapScapeDefinition.tiles[1][rx][ry]!!, BRIDGE_TILE)
 
                         if (blocked && !bridge)
                             collisions.add(worldCoordinate.x, worldCoordinate.z, plane, FLOOR)
 
                     }
 
-                    if(worldCoordinate.x == 3223 && worldCoordinate.z == 3217)
-                    {
-                        println("pringint locs")
-                        println("locs: " + landscapeTile?.locs?.toTypedArray()?.contentDeepToString())
+                    landscapeTile?.locs?.forEach {
+                        modifyCollision(worldCoordinate, it, ADD_MASK)
                     }
 
-                    landscapeTile?.locs?.firstOrNull { it.id == 10778 }?.apply {
-                        println("adding collision to obj.")
-                        modifyCollision(worldCoordinate, this, ADD_MASK)
+                    if(coords.reactiveZone.isWithin(worldCoordinate.x, worldCoordinate.z))
+                    {
+
+                        landscapeTile?.locs?.forEach {
+
+                            println("collision info: " + collisions[worldCoordinate.x, worldCoordinate.z, plane])
+
+                        }
+
                     }
 
                 }
@@ -132,15 +139,15 @@ class RegionGrid(val id: Int)
 
         val definition: LocDefinition = definition().find(loc.id)
 
-        if (!definition.solid)
+        if(!unwalkable(definition, loc.type))
             return
 
         when (loc.type)
         {
-            in 0..3 -> modifyWall(location, loc, changeType)
+            //in 0..3 -> modifyWall(location, loc, changeType)
             in 9..21 -> modifyObject(location, loc, changeType)
             22 -> {
-                if (definition.solid) {
+                if (definition.interactive && definition.solid) {
                     modifyMask(location.x, location.z, location.plane, CollisionFlag.FLOOR_DECO, changeType)
                 }
             }
@@ -150,20 +157,26 @@ class RegionGrid(val id: Int)
     fun modifyObject(location: WorldCoordinate, loc: LandscapeLoc, changeType: Int)
     {
 
-        var mask = CollisionFlag.LAND
-
         val definition: LocDefinition = definition().find(loc.id)
 
-        if (definition.obstructive) //solid
+        var mask = CollisionFlag.LAND
+
+        if (definition.impenetrable) //solid
+        {
+            println("sky?")
             mask = mask or CollisionFlag.SKY
+        }
 
         if (!definition.solid) //not alt
+        {
+            println("not solid")
             mask = mask or CollisionFlag.IGNORED
+        }
 
         var width = definition.width
         var height = definition.length
 
-        if (loc.orientation and 0x1 == 1)
+        if (loc.orientation == 1 || loc.orientation == 3)
         {
             width = definition.length
             height = definition.width
@@ -175,9 +188,10 @@ class RegionGrid(val id: Int)
 
     }
 
-
-    fun modifyWall(location: WorldCoordinate, loc: LandscapeLoc, changeType: Int) {
+    fun modifyWall(location: WorldCoordinate, loc: LandscapeLoc, changeType: Int)
+    {
         modifyWall(location, loc, 0, changeType)
+        println("modifying wall")
         val definition: LocDefinition = definition().find(loc.id)
         if (definition.impenetrable)
             modifyWall(location, loc, 1, changeType)
@@ -197,9 +211,11 @@ class RegionGrid(val id: Int)
     fun modifyWall(location: WorldCoordinate, loc: LandscapeLoc, motion: Int, changeType: Int)
     {
 
+        println("also wall")
+
         val rotation = loc.orientation
         val type = loc.type
-        var tile = RegionCoordinate(location.x, location.z)
+        var tile = WorldCoordinate(location.x, location.z)
 
         // Internal corners
         if (type == 2)
@@ -214,7 +230,8 @@ class RegionGrid(val id: Int)
                 else                 -> 0
             }
             modifyMask(location.x, location.z, location.plane, applyMotion(or, motion), changeType)
-            tile = tile.add(Direction.cardinal[(rotation + 3) and 0x3].delta) as RegionCoordinate
+            tile = tile.add(Direction.cardinal[(rotation + 3) and 0x3].delta) as WorldCoordinate
+            println("new tile: $tile")
         }
 
         // Mask one wall side
@@ -229,9 +246,11 @@ class RegionGrid(val id: Int)
 
         // Mask other wall side
         tile = if (type == 2)
-            tile.add(Direction.cardinal[rotation and 0x3].delta) as RegionCoordinate
+            tile.add(Direction.cardinal[rotation and 0x3].delta) as WorldCoordinate
         else
-            tile.add(direction.delta) as RegionCoordinate
+            tile.add(direction.delta) as WorldCoordinate
+
+        println("old: $location, also new tile: $tile")
 
         direction = when (type)
         {
@@ -270,6 +289,17 @@ class RegionGrid(val id: Int)
     fun Direction.flag(motion: Int) = applyMotion(flag(), motion)
 
     fun isTile(loc: MapScapeTile, flag: Int) = loc.settings.toInt() and flag == flag
+
+    fun unwalkable(def: LocDefinition, type: Int): Boolean
+    {
+
+        val isSolidFloorDecoration = type == 22 && def.interactive
+        val isRoof = type in 12..21 && def.solid
+        val isWall = (type in 0..1 || type == 9) && def.solid
+        val isSolidInteractable = (type == 11 || type == 10) && def.solid
+        return isWall || isRoof || isSolidInteractable || isSolidFloorDecoration
+
+    }
 
     val BLOCKED_TILE = 0x1
     val BRIDGE_TILE = 0x2

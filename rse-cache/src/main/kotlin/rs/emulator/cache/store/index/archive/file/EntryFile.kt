@@ -31,7 +31,7 @@ class EntryFile(private val idx: Int,
     override fun fetchBuffer(decompressed: Boolean, xtea: IntArray?): BufferedReader {
 
         if (data != null)
-            return data!!
+            return data!!.copy()
 
         val idx = referenceTable.fetchIndex(idx)
 
@@ -55,7 +55,7 @@ class EntryFile(private val idx: Int,
 
         data = reader
 
-        return reader
+        return reader.copy()
 
     }
 

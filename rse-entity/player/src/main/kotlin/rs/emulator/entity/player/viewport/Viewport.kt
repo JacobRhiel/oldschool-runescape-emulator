@@ -1,6 +1,7 @@
 package rs.emulator.entity.player.viewport
 
 import rs.emulator.entity.Entity
+import rs.emulator.entity.actor.npc.Npc
 import rs.emulator.entity.player.Player
 
 /**
@@ -20,6 +21,10 @@ class Viewport(val myPlayer: Player)
     val globalPlayerCount = globalPlayers.size
 
     val localNpcs = mutableMapOf<Int, Entity>()
+
+    val unsyncedNpcs = mutableMapOf<Int, Entity>().apply { this.put(1, Npc(1, 1)) }
+
+    val nextNpcIndex = localNpcCount + 1
 
     val localNpcCount: Int
         get() = localNpcs.size

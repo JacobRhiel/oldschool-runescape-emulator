@@ -11,6 +11,7 @@ import rs.emulator.entity.actor.player.messages.AbstractMessageHandler
 import rs.emulator.entity.actor.player.messages.IMessages
 import rs.emulator.entity.actor.player.messages.IWidgetMessages
 import rs.emulator.entity.actor.player.storage.IItemContainerManager
+import rs.emulator.entity.attributes.Attributes
 import rs.emulator.entity.player.chat.PublicChatText
 import rs.emulator.entity.player.storage.ItemContainerManager
 import rs.emulator.entity.player.storage.containers.Inventory
@@ -32,6 +33,7 @@ import rs.emulator.region.zones.RegionZone
 import rs.emulator.region.zones.events.EnterZoneEvent
 import rs.emulator.region.zones.events.LeaveZoneEvent
 import rs.emulator.skills.SkillAttributes
+import rs.emulator.utilities.koin.get
 import rs.emulator.world.World
 import java.util.concurrent.atomic.AtomicLong
 
