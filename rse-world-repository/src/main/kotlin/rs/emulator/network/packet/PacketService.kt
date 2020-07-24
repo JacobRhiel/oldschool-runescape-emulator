@@ -321,6 +321,14 @@ class PacketService : AbstractIdleService(), KoinComponent {
             listener = ReportAbuseListener()
         )
 
+        packetRepository.putDecoder(
+            24,
+            decoder = ZeroSizeDecoder { CloseWidgetMessage() },
+            length = 0,
+            clazz = CloseWidgetMessage::class,
+            listener = CloseWidgetListener()
+        )
+
     }
 
     private fun addEncoders() {

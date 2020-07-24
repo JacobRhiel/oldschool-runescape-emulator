@@ -1,6 +1,5 @@
 package rs.emulator.definitions
 
-import org.junit.jupiter.api.Test
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
 import rs.emulator.cache.definition.DefinitionRepository
@@ -22,7 +21,6 @@ import java.nio.file.Paths
 
 class LocLoadingSpeedTest {
 
-    @Test
     fun speedTest() {
 
         val path = Paths.get("/home/Javatar/IdeaProjects/oldschool-runescape-emulator/data/cache")

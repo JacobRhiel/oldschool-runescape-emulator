@@ -1,5 +1,6 @@
 package rs.emulator.network.packet.encoder.impl
 
+import rs.emulator.Repository
 import rs.emulator.buffer.manipulation.DataType
 import rs.emulator.network.packet.GamePacketBuilder
 import rs.emulator.network.packet.encoder.PacketEncoder
@@ -12,8 +13,11 @@ import rs.emulator.network.packet.message.outgoing.UpdateDisplayWidgetsMessage
 class UpdateDisplayWidgetsEncoder : PacketEncoder<UpdateDisplayWidgetsMessage>()
 {
 
-    override fun encode(message: UpdateDisplayWidgetsMessage, builder: GamePacketBuilder)
-    {
+    override fun encode(message: UpdateDisplayWidgetsMessage, builder: GamePacketBuilder) {
+
+        val children = Repository.getWidgetDefinition(165)
+
+
 
         builder.put(DataType.SHORT, 165) //root id
 

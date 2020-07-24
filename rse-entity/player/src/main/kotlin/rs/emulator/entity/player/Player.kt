@@ -9,7 +9,6 @@ import rs.emulator.entity.actor.Actor
 import rs.emulator.entity.actor.player.IPlayer
 import rs.emulator.entity.actor.player.messages.AbstractMessageHandler
 import rs.emulator.entity.actor.player.messages.IMessages
-import rs.emulator.entity.actor.player.messages.IWidgetMessages
 import rs.emulator.entity.actor.player.storage.IItemContainerManager
 import rs.emulator.entity.attributes.Attributes
 import rs.emulator.entity.player.chat.PublicChatText
@@ -20,25 +19,24 @@ import rs.emulator.entity.player.update.sync.SyncInformation
 import rs.emulator.entity.player.viewport.Viewport
 import rs.emulator.entity.widgets.WidgetViewport
 import rs.emulator.entity.widgets.events.ComponentOpenEvent
-import rs.emulator.entity.widgets.widgets.FixedGameFrameWidget
 import rs.emulator.network.packet.message.outgoing.*
 import rs.emulator.packet.api.IPacketMessage
 import rs.emulator.plugins.RSPluginManager
 import rs.emulator.plugins.extensions.factories.ContainerRegistrationException
 import rs.emulator.plugins.extensions.factories.ItemContainerFactory
 import rs.emulator.plugins.extensions.factories.LoginActionFactory
-import rs.emulator.reactive.createSubZone
 import rs.emulator.region.coordinate.Coordinate
-import rs.emulator.region.zones.RegionZone
-import rs.emulator.region.zones.events.EnterZoneEvent
-import rs.emulator.region.zones.events.LeaveZoneEvent
 import rs.emulator.skills.SkillAttributes
-import rs.emulator.utilities.koin.get
+import rs.emulator.widgets.WidgetViewport
+import rs.emulator.widgets.components.Component
+import rs.emulator.widgets.components.Widget
+import rs.emulator.widgets.events.ComponentClickEvent
+import rs.emulator.widgets.subscribe
 import rs.emulator.world.World
 import java.util.concurrent.atomic.AtomicLong
 
-class Player(index: Int, val outgoingPackets: PublishProcessor<IPacketMessage>) : Actor(index), IPlayer
-{
+class Player(val outgoingPackets: PublishProcessor<IPacketMessage>) : Actor(), IPlayer,
+    KoinComponent {
 
     val world: World = get()
 
@@ -72,12 +70,18 @@ class Player(index: Int, val outgoingPackets: PublishProcessor<IPacketMessage>) 
 
     fun onLogin() {
 
-        widgetViewport.subscribeTo<ComponentOpenEvent>(WidgetViewport.Frames.VIEW_PORT) {
-            outgoingPackets.offer(IfOpenSubMessage(it.root.widgetId, it.dynamicComponent.id, it.source.id, 0))
+        //TODO - dispose of overlay on logout
+
+        widgetViewport.getContainerComponent(WidgetViewport.Frames.VIEW_PORT).subscribe {
+            outgoingPackets.offer(IfOpenSubMessage(it.parent, it.child, it.widgetId, 0))
         }
-        widgetViewport.subscribeTo<ComponentOpenEvent>(WidgetViewport.Frames.COMMUNICATION_HUB) {
-            outgoingPackets.offer(IfOpenSubMessage(it.root.widgetId, it.dynamicComponent.id, it.source.id, 0))
-        }
+
+        widgetViewport.getContainerComponent(WidgetViewport.Frames.COMMUNICATION_HUB)[Widget(162)]
+            .subscribe<ComponentClickEvent>(Component(33)) {
+                widgetViewport.open(WidgetViewport.Frames.VIEW_PORT, Widget(553)) {
+                    messages().sendClientScript(1104, 1, 1)
+                }
+            }
 
         outgoingPackets.offer(
             RebuildRegionMessage(

@@ -122,6 +122,8 @@ class IfButtonListener : GamePacketListener<IfButtonMessage> {
 
         } else {
 
+            player.widgetViewport.fireClickEvent(interfaceId, component, message.slot, message.item)
+
             /*if(player.widgetViewport.rootWidget[interfaceId].component.id == component) {
 
             }
