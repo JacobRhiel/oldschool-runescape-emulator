@@ -35,7 +35,7 @@ import rs.emulator.widgets.subscribe
 import rs.emulator.world.World
 import java.util.concurrent.atomic.AtomicLong
 
-class Player(val outgoingPackets: PublishProcessor<IPacketMessage>) : Actor(), IPlayer,
+class Player(index: Int, val outgoingPackets: PublishProcessor<IPacketMessage>) : Actor(index), IPlayer,
     KoinComponent {
 
     val world: World = get()
