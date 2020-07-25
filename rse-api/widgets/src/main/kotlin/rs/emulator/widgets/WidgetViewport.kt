@@ -7,6 +7,7 @@ import rs.emulator.widgets.components.Widget
 import rs.emulator.widgets.events.ComponentClickEvent
 import rs.emulator.widgets.events.ComponentCloseEvent
 import rs.emulator.widgets.events.ComponentOpenEvent
+import rs.emulator.widgets.events.OverlayClickEvent
 import kotlin.properties.Delegates
 
 /**
@@ -27,12 +28,18 @@ class WidgetViewport {
         }
     }
 
-    private var overlay: OverlayComponent = OverlayWidgets.FIXED_GAME_FRAME.overlay
+    var overlay: OverlayComponent = OverlayWidgets.FIXED_GAME_FRAME.overlay
+        private set(value) {
+            field = value
+        }
 
     fun fireClickEvent(interfaceId: Int, component: Int, slot: Int, item: Int) {
         val widget = Widget(interfaceId)
         val comp = Component(component)
         when {
+            interfaceId == overlay.id -> {
+                overlay.events.onNext(OverlayClickEvent(overlay, comp))
+            }
             getContainerComponent(Frames.VIEW_PORT).isActive(widget) -> {
                 val con = getContainerComponent(Frames.VIEW_PORT)[widget]
                 if (con.isActive(comp)) {

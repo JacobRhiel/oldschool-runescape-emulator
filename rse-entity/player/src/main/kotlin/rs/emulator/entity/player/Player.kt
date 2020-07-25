@@ -1,5 +1,9 @@
 package rs.emulator.entity.player
 
+import io.netty.channel.Channel
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
+import io.reactivex.internal.disposables.DisposableContainer
 import io.reactivex.processors.PublishProcessor
 import io.reactivex.rxkotlin.toObservable
 import org.koin.core.KoinComponent
@@ -17,8 +21,6 @@ import rs.emulator.entity.player.storage.containers.Inventory
 import rs.emulator.entity.player.update.flag.PlayerUpdateFlag
 import rs.emulator.entity.player.update.sync.SyncInformation
 import rs.emulator.entity.player.viewport.Viewport
-import rs.emulator.entity.widgets.WidgetViewport
-import rs.emulator.entity.widgets.events.ComponentOpenEvent
 import rs.emulator.network.packet.message.outgoing.*
 import rs.emulator.packet.api.IPacketMessage
 import rs.emulator.plugins.RSPluginManager
@@ -31,12 +33,19 @@ import rs.emulator.widgets.WidgetViewport
 import rs.emulator.widgets.components.Component
 import rs.emulator.widgets.components.Widget
 import rs.emulator.widgets.events.ComponentClickEvent
+import rs.emulator.widgets.events.OverlayClickEvent
 import rs.emulator.widgets.subscribe
 import rs.emulator.world.World
 import java.util.concurrent.atomic.AtomicLong
 
-class Player(index: Int, val outgoingPackets: PublishProcessor<IPacketMessage>) : Actor(index), IPlayer,
-    KoinComponent {
+class Player(
+    index: Int,
+    internal val channel: Channel,
+    val outgoingPackets: PublishProcessor<IPacketMessage>,
+    val username: String,
+    private val disposable: CompositeDisposable
+) : Actor(index), IPlayer,
+    KoinComponent, Disposable by disposable, DisposableContainer by disposable {
 
     val world: World = get()
 
@@ -72,16 +81,28 @@ class Player(index: Int, val outgoingPackets: PublishProcessor<IPacketMessage>) 
 
         //TODO - dispose of overlay on logout
 
-        widgetViewport.getContainerComponent(WidgetViewport.Frames.VIEW_PORT).subscribe {
+        this.add(widgetViewport.getContainerComponent(WidgetViewport.Frames.VIEW_PORT).subscribe {
             outgoingPackets.offer(IfOpenSubMessage(it.parent, it.child, it.widgetId, 0))
-        }
+        })
 
-        widgetViewport.getContainerComponent(WidgetViewport.Frames.COMMUNICATION_HUB)[Widget(162)]
+        this.add(widgetViewport.getContainerComponent(WidgetViewport.Frames.COMMUNICATION_HUB)[Widget(162)]
             .subscribe<ComponentClickEvent>(Component(33)) {
                 widgetViewport.open(WidgetViewport.Frames.VIEW_PORT, Widget(553)) {
                     messages().sendClientScript(1104, 1, 1)
                 }
+            })
+
+        this.add(
+            widgetViewport.overlay.subscribeTo<OverlayClickEvent>(Component(37)) {
+                this.add(
+                    widgetViewport.getContainerComponent(WidgetViewport.Frames.TABS)[Widget(182)]
+                        .subscribe<ComponentClickEvent>(Component(8)) {
+                            //TODO - logout player
+                            logout()
+                        }
+                )
             }
+        )
 
         outgoingPackets.offer(
             RebuildRegionMessage(
@@ -262,9 +283,22 @@ class Player(index: Int, val outgoingPackets: PublishProcessor<IPacketMessage>) 
         }
     }
 
-    override fun username(): String = "Javatar"
+    override fun dispose() {
+        //TODO - logout code
+        attributes.attributeMap.clear()
+        movement.clear()
+        if (outgoingPackets.offer(LogoutFullMessage())) {
+            disposable.dispose()
+        }
+    }
 
-    override fun displayName(): String = "Javatar"
+    override fun logout() {
+        this.dispose()
+    }
+
+    override fun username(): String = username
+
+    override fun displayName(): String = username
 
     override fun containerManager(): IItemContainerManager {
         return itemContainerManager

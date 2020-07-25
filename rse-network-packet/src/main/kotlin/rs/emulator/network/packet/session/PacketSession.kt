@@ -21,9 +21,11 @@ import rs.emulator.packet.api.IPacketMessage
  *
  * @author Chk
  */
-class PacketSession(val channel: Channel,
-                    val isaacKeys: IntArray) : KoinComponent, NetworkSession
-{
+class PacketSession(
+    val channel: Channel,
+    val isaacKeys: IntArray,
+    var compositeDisposable: CompositeDisposable
+) : KoinComponent, NetworkSession {
 
     private val packetRepository: PacketRepository = get()
 
@@ -58,11 +60,9 @@ class PacketSession(val channel: Channel,
 
     }
 
-    override fun onMessage(ctx: ChannelHandlerContext, msg: NetworkMessage)
-    {
+    override fun onMessage(ctx: ChannelHandlerContext, msg: NetworkMessage) {
 
-        if(msg is GamePacketMessage)
-        {
+        if (msg is GamePacketMessage) {
 
             val metaData = packetRepository.fetchDecoder(msg.opcode)
 
@@ -76,12 +76,11 @@ class PacketSession(val channel: Channel,
 
     }
 
-    override fun onDestroy(ctx: ChannelHandlerContext)
-    {
+    override fun onDestroy(ctx: ChannelHandlerContext) {
 
         //todo: remove player from WorldRepository.players?
 
-        composite.dispose()
+        compositeDisposable.dispose()
 
     }
 

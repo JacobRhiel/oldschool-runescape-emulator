@@ -17,24 +17,22 @@ import rs.emulator.cache.definition.definition
 import rs.emulator.cache.store.VirtualFileStore
 import rs.emulator.cache.store.data.DataFile
 import rs.emulator.cache.store.index.IndexConfig
-import rs.emulator.cache.store.index.archive.ArchiveConfig
 import rs.emulator.cache.store.reference.ReferenceTable
-import rs.emulator.definitions.entity.loc.LocDefinition
+import rs.emulator.database.service.JDBCPoolingService
 import rs.emulator.encryption.huffman.HuffmanCodec
 import rs.emulator.encryption.rsa.RSAService
 import rs.emulator.encryption.xtea.XteaKeyService
 import rs.emulator.engine.service.CyclicEngineService
 import rs.emulator.engine.service.schedule.CyclicDelaySchedule
 import rs.emulator.fileserver.FileStoreService
-import rs.emulator.network.packet.repository.PacketRepository
 import rs.emulator.network.packet.PacketService
+import rs.emulator.network.packet.repository.PacketRepository
 import rs.emulator.network.pipeline.DefaultPipelineProvider
 import rs.emulator.network.world.network.channel.pipeline.WorldPipelineProvider
 import rs.emulator.network.world.service.WorldService
 import rs.emulator.plugins.RSPluginManager
 import rs.emulator.service.login.worker.LoginWorkerSchedule
 import rs.emulator.service.login.worker.LoginWorkerService
-import rs.emulator.utilities.koin.get
 import rs.emulator.world.World
 import rs.emulator.world.WorldAccess
 import rs.emulator.world.WorldActivity
@@ -87,7 +85,7 @@ class Test : KoinComponent {
 
                 single { RSAService() }
 
-                //single { JDBCPoolingService() }
+                single { JDBCPoolingService() }
 
                 single { LoginWorkerSchedule() }
 
@@ -117,7 +115,7 @@ class Test : KoinComponent {
                 single {
                     ServiceManager(
                         listOf(
-                            // get<JDBCPoolingService>(),
+                            get<JDBCPoolingService>(),
                             get<RSAService>(),
                             get<FileStoreService>(),
                             get<XteaKeyService>(),

@@ -2,7 +2,8 @@ package rs.emulator.service.login.network.message
 
 import io.netty.channel.Channel
 import io.netty.channel.ChannelHandlerContext
-import io.reactivex.rxkotlin.addTo
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import org.koin.core.KoinComponent
 import org.koin.core.get
 import rs.emulator.entity.player.Player
@@ -31,11 +32,6 @@ data class LoginRequestMessage(
     private val loginService: LoginWorkerService = get()
 
     override fun handle(ctx: ChannelHandlerContext) {
-
-        ctx.channel().attr(SESSION_KEY).set(PacketSession(ctx.channel(), isaac))
-
-        val session = ctx.channel().attr(SESSION_KEY).get() as PacketSession
-
         val loginResult: LoginResult
 
         var isaac: IntArray = intArrayOf()
@@ -56,23 +52,35 @@ data class LoginRequestMessage(
 
         ctx.channel().write(LoginResponseMessage(isaac, loginResult))
 
-        val player = Player(WorldRepository.nextPlayerIndex, session.outgoingPackets)
+        val compositeDisposable = CompositeDisposable()
+
+        ctx.channel().attr(SESSION_KEY).set(PacketSession(ctx.channel(), isaac, compositeDisposable))
+        val session = ctx.channel().attr(SESSION_KEY).get() as PacketSession
+
+        val player = Player(
+            WorldRepository.nextPlayerIndex,
+            ctx.channel(),
+            session.outgoingPackets,
+            credentials.username,
+            compositeDisposable
+        )
+
+        player.add(ChannelCloseDisposable(ctx.channel()))
 
         player.viewport.localPlayers[player.index] = player
 
         player.viewport.globalPlayers[player.index] = player
 
-        session.outgoingPackets
-            .subscribe { ctx.channel().writeAndFlush(it) }
-            .addTo(session.composite)
-        session.incomingPackets
+        player.add(session.outgoingPackets
+            .subscribe { ctx.channel().writeAndFlush(it) })
+        player.add(session.incomingPackets
             .subscribe({
                 val (metaData, gamePacket) = it
                 metaData.handle(ctx.channel(), player, gamePacket)
             }, {
                 it.printStackTrace()
-            }).addTo(session.composite)
-
+            })
+        )
 
         player.onLogin()
 
@@ -81,6 +89,17 @@ data class LoginRequestMessage(
 
         if (ctx.channel().isActive)
             ctx.channel().flush()
+
+    }
+
+    class ChannelCloseDisposable(val channel: Channel) : Disposable {
+        override fun isDisposed(): Boolean {
+            return channel.isActive
+        }
+
+        override fun dispose() {
+            channel.close()
+        }
 
     }
 

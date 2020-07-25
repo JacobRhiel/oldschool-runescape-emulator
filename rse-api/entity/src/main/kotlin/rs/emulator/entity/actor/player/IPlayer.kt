@@ -15,4 +15,6 @@ interface IPlayer : IActor {
 
     fun messages(): AbstractMessageHandler
 
+    fun logout()
+
 }
