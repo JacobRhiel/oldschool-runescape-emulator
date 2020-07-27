@@ -1,9 +1,11 @@
 package rs.emulator.entity.actor.player.storage.container
 
+import com.google.gson.Gson
 import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.PublishSubject
 import rs.emulator.containers.Container
 import rs.emulator.entity.material.items.Item
+import rs.emulator.utilities.koin.get
 
 /**
  *
@@ -13,14 +15,18 @@ import rs.emulator.entity.material.items.Item
 abstract class ItemContainer<ITEM : Item>(array: Array<ITEM>, default: ITEM) :
     Container<ITEM, ItemObserver<ITEM>>(array, default) {
 
+    @Transient
     protected val addPublisher = PublishSubject.create<ContainerEvent<ITEM>>()
+    @Transient
     protected val removePublisher = PublishSubject.create<ContainerEvent<ITEM>>()
+    @Transient
     protected val syncPublisher = PublishSubject.create<ItemContainer<ITEM>>()
-    internal var syncSupplier : () -> ContainerObserver<ITEM> = { ContainerObserver() }
+    @Transient
+    internal var syncSupplier: () -> ContainerObserver<ITEM> = { ContainerObserver() }
 
     abstract fun nextSlot(): Int
 
-    fun swap(from : Int, to : Int) {
+    fun swap(from: Int, to: Int) {
         val fromItem = this[from]
         val toItem = this[to]
         removePublisher.onNext(fromItem.createEvent(from))
@@ -68,8 +74,11 @@ abstract class ItemContainer<ITEM : Item>(array: Array<ITEM>, default: ITEM) :
         return this to con
     }
 
-    fun ITEM.createEvent(slot : Int) : ContainerEvent<ITEM> {
+    fun ITEM.createEvent(slot: Int): ContainerEvent<ITEM> {
         return ContainerEvent(this, slot)
     }
 
+    override fun toString(): String {
+        return get<Gson>().toJson(this)
+    }
 }

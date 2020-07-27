@@ -1,6 +1,7 @@
 package rs.emulator.application
 
 import com.google.common.util.concurrent.ServiceManager
+import com.google.gson.Gson
 import kotlinx.coroutines.runBlocking
 import org.koin.core.KoinComponent
 import org.koin.core.context.startKoin
@@ -97,13 +98,19 @@ class Test : KoinComponent {
 
                 single { PacketService() }
 
-                single { World.newBuilder().setMembers(true).setOrigin(WorldOrigin.UNITED_STATES).setAccess(WorldAccess.DEVELOPMENT).setActivity(WorldActivity.NONE).build() }
+                single {
+                    World.newBuilder().setMembers(true).setOrigin(WorldOrigin.UNITED_STATES)
+                        .setAccess(WorldAccess.DEVELOPMENT).setActivity(WorldActivity.NONE).build()
+                }
+
+                single { Gson() }
 
                 single {
 
                     val fileStore: VirtualFileStore = get()
 
-                    val huffmanFile = fileStore.fetchIndex(IndexConfig.BINARY.identifier).fetchNamedArchive("huffman")!!.fetchEntry(0)
+                    val huffmanFile =
+                        fileStore.fetchIndex(IndexConfig.BINARY.identifier).fetchNamedArchive("huffman")!!.fetchEntry(0)
 
                     HuffmanCodec(huffmanFile.fetchBuffer(true).toArray())
 

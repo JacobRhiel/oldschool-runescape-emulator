@@ -1,5 +1,6 @@
 package rs.emulator.entity.player
 
+import com.google.gson.Gson
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.internal.disposables.DisposableContainer
@@ -8,15 +9,21 @@ import io.reactivex.rxkotlin.toObservable
 import org.koin.core.KoinComponent
 import org.koin.core.get
 import rs.dusk.engine.path.Finder
+import rs.emulator.database.service.JDBCPoolingService
 import rs.emulator.entity.actor.Actor
 import rs.emulator.entity.actor.player.IPlayer
 import rs.emulator.entity.actor.player.messages.AbstractMessageHandler
 import rs.emulator.entity.actor.player.messages.IMessages
 import rs.emulator.entity.actor.player.storage.IItemContainerManager
+import rs.emulator.entity.actor.player.storage.equipment
+import rs.emulator.entity.actor.player.storage.inventory
 import rs.emulator.entity.attributes.Attributes
 import rs.emulator.entity.details.PlayerDetails
+import rs.emulator.entity.material.items.Item
 import rs.emulator.entity.player.chat.PublicChatText
 import rs.emulator.entity.player.storage.ItemContainerManager
+import rs.emulator.entity.player.storage.containers.Bank
+import rs.emulator.entity.player.storage.containers.Equipment
 import rs.emulator.entity.player.storage.containers.Inventory
 import rs.emulator.entity.player.update.flag.PlayerUpdateFlag
 import rs.emulator.entity.player.update.sync.SyncInformation
@@ -78,7 +85,7 @@ class Player(
 
     fun onLogin() {
 
-        //TODO - dispose of overlay on logout
+        //TODO - dispose of overlay on logout (on second thought since overlay is const don't do this)
 
         this.add(widgetViewport.getContainerComponent(WidgetViewport.Frames.VIEW_PORT).subscribe {
             outgoingPackets.offer(IfOpenSubMessage(it.parent, it.child, it.widgetId, 0))
@@ -257,14 +264,6 @@ class Player(
 
         skillAttributes.forceSync()
 
-        containerManager().register(93, Inventory()) {
-            syncBlock {
-                onNext {
-                    messages().sendItemContainerFull(149, 0, 93, this@register)
-                }
-            }
-        }
-
         RSPluginManager.getExtensions<LoginActionFactory>()
             .toObservable()
             .map { it.registerLoginAction(this) }
@@ -290,7 +289,36 @@ class Player(
         }
     }
 
+    override fun save() {
+        val serv = get<JDBCPoolingService>()
+        val con = containerManager()
+
+        this.inventory()?.let { details.inventory = it.toString() }
+        this.equipment()?.let { details.equipment = it.toString() }
+        con.container<Item>(95)?.let { details.bank = it.toString() }
+
+        serv.withTransaction { it.saveOrUpdate(details); this.commit() }
+    }
+
+    fun load() {
+        val gson = get<Gson>()
+        val inventory: Inventory? = gson.fromJson(details.inventory, Inventory::class.java)
+        val equipment: Equipment? = gson.fromJson(details.inventory, Equipment::class.java)
+        val bank: Bank? = gson.fromJson(details.inventory, Bank::class.java)
+        containerManager().register(93, inventory ?: Inventory()) {
+            syncBlock {
+                onNext {
+                    messages().sendItemContainerFull(149, 0, 93, this@register)
+                }
+            }
+        }
+        containerManager().register(94, equipment ?: Equipment())
+        containerManager().register(95, bank ?: Bank())
+
+    }
+
     override fun logout() {
+        this.save()
         this.dispose()
     }
 

@@ -10,5 +10,11 @@ interface IPlayerDetails {
     val username: String
     var displayName: String
     val privilege: IPrivilege
+    var inventory: String
+    var bank: String
+    var equipment: String
+    var varbits: String
+    var banned: Boolean
+    var muted: Boolean
 
 }

@@ -31,7 +31,7 @@ class ObjActionListener : GamePacketListener<ObjActionMessage> {
                         val reqs = e.requirements
                         //TODO - check equipment level requirements
                     }
-                    player.containerManager().equipment().add(item)
+                    player.equipment().add(item)
                 }
             }
 

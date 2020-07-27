@@ -11,7 +11,7 @@ import rs.emulator.entity.material.items.Item
 
 class ItemContainerManager : IItemContainerManager {
 
-    val containers : MutableMap<Int, ItemContainer<*>> = mutableMapOf()
+    val containers: MutableMap<Int, ItemContainer<*>> = mutableMapOf()
 
 
     override fun <I : Item, C : ItemContainer<I>> register(key: Int, container: C, block: C.() -> Unit) {
@@ -19,8 +19,8 @@ class ItemContainerManager : IItemContainerManager {
         containers[key] = container
     }
 
-    override fun <G : Item> container(key: Int): ItemContainer<G> {
-        return containers[key]!! as ItemContainer<G>
+    override fun <G : Item> container(key: Int): ItemContainer<G>? {
+        return containers[key] as ItemContainer<G>
     }
 
 }

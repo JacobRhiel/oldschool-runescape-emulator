@@ -19,7 +19,7 @@ class ItemOnGroundItemListener : GamePacketListener<ObjOnGroundObjMessage> {
 
         //TODO - validate item exists on ground
 
-        if (player.containerManager().inventory()[message.selectedItemSlot].id == message.widgetItemId) {
+        if (player.inventory()[message.selectedItemSlot].id == message.widgetItemId) {
 
             RSPluginManager.getExtensions<ItemOnGroundItemActionFactory>()
                 .toObservable()

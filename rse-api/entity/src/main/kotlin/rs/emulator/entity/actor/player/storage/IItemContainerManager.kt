@@ -12,6 +12,6 @@ interface IItemContainerManager {
 
     fun <I : Item, C : ItemContainer<I>> register(key : Int, container : C, block : C.() -> Unit = {})
 
-    fun <G : Item> container(key : Int) : ItemContainer<G>
+    fun <G : Item> container(key: Int): ItemContainer<G>?
 
 }

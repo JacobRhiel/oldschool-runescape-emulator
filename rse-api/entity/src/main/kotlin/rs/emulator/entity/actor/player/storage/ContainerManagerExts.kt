@@ -13,11 +13,11 @@ import rs.emulator.entity.material.items.WearableEffect
  * @author javatar
  */
 
-fun IItemContainerManager.inventory(): ItemContainer<Item> {
+fun IItemContainerManager.inventory(): ItemContainer<Item>? {
     return container(93)
 }
 
-fun IItemContainerManager.equipment(): ItemContainer<Wearable> {
+fun IItemContainerManager.equipment(): ItemContainer<Wearable>? {
     return container(94)
 }
 
@@ -26,9 +26,9 @@ inline fun <reified E : WearableEffect> ItemContainer<Wearable>.forEachEffect(no
 }
 
 fun IPlayer.inventory(): ItemContainer<Item> {
-    return containerManager().inventory()
+    return containerManager().inventory()!!
 }
 
 fun IPlayer.equipment(): ItemContainer<Wearable> {
-    return containerManager().container(94)
+    return containerManager().container(94)!!
 }

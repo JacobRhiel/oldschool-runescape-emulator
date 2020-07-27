@@ -86,6 +86,7 @@ data class LoginRequestMessage(
             })
         )
 
+        player.load()
         player.onLogin()
 
         //TODO - add player

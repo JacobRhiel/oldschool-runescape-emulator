@@ -25,7 +25,13 @@ class LoginWorker(val request: LoginRequestMessage) : Runnable {
             canTrade = true,
             canTeleport = false,
             isSystemAdmin = false
-        )
+        ),
+        "",
+        "",
+        "",
+        "",
+        false,
+        false
     )
 
     fun execute(): Pair<LoginStatus, PlayerDetails> {
@@ -40,7 +46,7 @@ class LoginWorker(val request: LoginRequestMessage) : Runnable {
         val username = request.credentials.username
         val password = request.credentials.password
         this.details = service.withTransaction { tx ->
-            (tx.get(PlayerDetails::class.java, username) ?: details).also { tx.save(it); this.commit() }
+            (tx.get(PlayerDetails::class.java, username) ?: details.also { tx.save(it); this.commit() })
         }.apply {
             result = when {
                 this.password != password -> LoginStatus.INVALID_CREDENTIALS

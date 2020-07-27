@@ -19,7 +19,19 @@ open class PlayerDetails(
     override var displayName: String,
     @Column(name = "password")
     open val password: String,
-    @OneToOne(cascade = [CascadeType.REFRESH])
+    @OneToOne(cascade = [CascadeType.ALL])
     @JoinColumn(name = "privilege", referencedColumnName = "privilege_id")
-    override val privilege: Privilege
+    override val privilege: Privilege,
+    @Column(name = "inventory", columnDefinition = "text")
+    override var inventory: String,
+    @Column(name = "bank", columnDefinition = "text")
+    override var bank: String,
+    @Column(name = "equipment", columnDefinition = "text")
+    override var equipment: String,
+    @Column(name = "varbits", columnDefinition = "text")
+    override var varbits: String,
+    @Column(name = "banned")
+    override var banned: Boolean,
+    @Column(name = "muted")
+    override var muted: Boolean
 ) : IPlayerDetails, Entry
