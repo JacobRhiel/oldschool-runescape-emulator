@@ -5,7 +5,8 @@ import rs.dusk.engine.model.entity.Direction
 import rs.dusk.engine.model.world.map.collision.*
 import rs.dusk.engine.model.world.map.collision.CollisionFlag.FLOOR
 import rs.emulator.cache.definition.definition
-import rs.emulator.cache.definition.region.landscape.*
+import rs.emulator.cache.definition.region.landscape.LandscapeDefinition
+import rs.emulator.cache.definition.region.landscape.LandscapeLoc
 import rs.emulator.cache.definition.region.mapscape.MapScapeDefinition
 import rs.emulator.cache.definition.region.mapscape.MapScapeTile
 import rs.emulator.definitions.entity.loc.LocDefinition
@@ -13,7 +14,6 @@ import rs.emulator.encryption.xtea.XteaKeyService
 import rs.emulator.map.grid.AreaGrid
 import rs.emulator.map.grid.tile.GridTile
 import rs.emulator.map.region.chunk.ChunkGrid
-import rs.emulator.region.RegionCoordinate
 import rs.emulator.region.WorldCoordinate
 import rs.emulator.region.zones.RegionZone
 import rs.emulator.utilities.koin.get
@@ -94,18 +94,6 @@ class RegionGrid(val id: Int)
                     landscapeTile?.locs?.forEach {
                         modifyCollision(worldCoordinate, it, ADD_MASK)
                     }
-
-                    if(coords.reactiveZone.isWithin(worldCoordinate.x, worldCoordinate.z))
-                    {
-
-                        landscapeTile?.locs?.forEach {
-
-                            println("collision info: " + collisions[worldCoordinate.x, worldCoordinate.z, plane])
-
-                        }
-
-                    }
-
                 }
 
             }
@@ -163,13 +151,11 @@ class RegionGrid(val id: Int)
 
         if (definition.impenetrable) //solid
         {
-            println("sky?")
             mask = mask or CollisionFlag.SKY
         }
 
         if (!definition.solid) //not alt
         {
-            println("not solid")
             mask = mask or CollisionFlag.IGNORED
         }
 

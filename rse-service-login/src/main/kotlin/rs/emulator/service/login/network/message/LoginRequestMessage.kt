@@ -6,6 +6,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import org.koin.core.KoinComponent
 import org.koin.core.get
+import rs.emulator.entity.details.PlayerDetails
 import rs.emulator.entity.player.Player
 import rs.emulator.network.SESSION_KEY
 import rs.emulator.network.message.NetworkMessage
@@ -33,22 +34,26 @@ data class LoginRequestMessage(
 
     override fun handle(ctx: ChannelHandlerContext) {
         val loginResult: LoginResult
+        val playerDetails: PlayerDetails
 
         var isaac: IntArray = intArrayOf()
 
-        val a = CompletableFuture<LoginResult>().completeAsync {
+        val a = CompletableFuture<Pair<LoginResult, PlayerDetails>>().completeAsync {
 
             val worker = LoginWorker(this@LoginRequestMessage)
 
-            val loginResult = LoginResult(worker.execute())
+            val pair = worker.execute()
+
+            val loginResult = LoginResult(pair.first)
 
             isaac = worker.request.isaac
 
-            loginResult
-
+            loginResult to pair.second
         }
 
-        loginResult = a.get(5, TimeUnit.SECONDS)
+        val pair = a.get(5, TimeUnit.SECONDS)
+        loginResult = pair.first
+        playerDetails = pair.second
 
         ctx.channel().write(LoginResponseMessage(isaac, loginResult))
 
@@ -59,10 +64,9 @@ data class LoginRequestMessage(
 
         val player = Player(
             WorldRepository.nextPlayerIndex,
-            ctx.channel(),
             session.outgoingPackets,
-            credentials.username,
-            compositeDisposable
+            compositeDisposable,
+            playerDetails
         )
 
         player.add(ChannelCloseDisposable(ctx.channel()))
@@ -94,7 +98,7 @@ data class LoginRequestMessage(
 
     class ChannelCloseDisposable(val channel: Channel) : Disposable {
         override fun isDisposed(): Boolean {
-            return channel.isActive
+            return !channel.isActive
         }
 
         override fun dispose() {

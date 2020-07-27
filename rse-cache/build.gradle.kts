@@ -14,8 +14,6 @@ dependencies {
 
     api(project(":rse-encryption"))
 
-    testImplementation(":rse-cache:definition")
-
 }
 
 tasks.withType<Test> {

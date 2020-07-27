@@ -2,7 +2,11 @@ package rs.emulator.database.service
 
 import com.google.common.util.concurrent.AbstractIdleService
 import io.github.classgraph.ClassGraph
+import io.reactivex.Observable
+import io.reactivex.schedulers.Schedulers
+import org.hibernate.Session
 import org.hibernate.SessionFactory
+import org.hibernate.Transaction
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder
 import org.hibernate.cfg.Configuration
 import org.hibernate.service.ServiceRegistry
@@ -15,13 +19,23 @@ import java.util.*
  *
  * @author Chk
  */
-class JDBCPoolingService : AbstractIdleService()
-{
+class JDBCPoolingService : AbstractIdleService() {
 
     lateinit var factory: SessionFactory
 
-    override fun startUp()
-    {
+    inline fun <reified T> withTransaction(crossinline block: Transaction.(Session) -> T): T {
+        return Observable.just(factory)
+            .observeOn(Schedulers.io())
+            .map { it.openSession() }
+            .map { it to it.beginTransaction() }
+            .switchMap { p ->
+                Observable.just(block(p.second, p.first))
+                    .doOnError { p.second.rollback() }
+                    .doFinally { p.first.close() }
+            }.singleElement().blockingGet()
+    }
+
+    override fun startUp() {
 
         val properties = Properties()
 
@@ -49,14 +63,24 @@ class JDBCPoolingService : AbstractIdleService()
 
         }
 
-        val serviceRegistry: ServiceRegistry = StandardServiceRegistryBuilder().applySettings(configuration.properties).build()
+        val serviceRegistry: ServiceRegistry =
+            StandardServiceRegistryBuilder().applySettings(configuration.properties).build()
 
-        factory = configuration.buildSessionFactory(serviceRegistry)
+        try {
+
+            factory = configuration
+                .buildSessionFactory(
+                    serviceRegistry
+                )
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
 
     }
 
-    override fun shutDown()
-    {
+    override fun shutDown() {
+
+        factory.close()
 
     }
 

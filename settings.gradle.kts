@@ -8,7 +8,8 @@ include(
     "rse-entity:actor",
     "rse-entity:player",
     "rse-entity:npc",
-    "rse-entity:update"
+    "rse-entity:update",
+    "rse-entity:details"
 )
 include("rse-entity", "rse-entity:actor", "rse-entity:player", "rse-entity:npc", "rse-entity:update", "rse-entity:widget")
 include("rse-world")
@@ -26,7 +27,8 @@ include(
     "rse-api:widgets",
     "rse-api:skills",
     "rse-api:reactive",
-    "rse-api:region-zones"
+    "rse-api:region-zones",
+    "rse-api:persistent-details"
 )
 include(
     "rse-plugins",

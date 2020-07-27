@@ -1,6 +1,5 @@
 package rs.emulator.entity.player
 
-import io.netty.channel.Channel
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.internal.disposables.DisposableContainer
@@ -15,6 +14,7 @@ import rs.emulator.entity.actor.player.messages.AbstractMessageHandler
 import rs.emulator.entity.actor.player.messages.IMessages
 import rs.emulator.entity.actor.player.storage.IItemContainerManager
 import rs.emulator.entity.attributes.Attributes
+import rs.emulator.entity.details.PlayerDetails
 import rs.emulator.entity.player.chat.PublicChatText
 import rs.emulator.entity.player.storage.ItemContainerManager
 import rs.emulator.entity.player.storage.containers.Inventory
@@ -40,10 +40,9 @@ import java.util.concurrent.atomic.AtomicLong
 
 class Player(
     index: Int,
-    internal val channel: Channel,
     val outgoingPackets: PublishProcessor<IPacketMessage>,
-    val username: String,
-    private val disposable: CompositeDisposable
+    private val disposable: CompositeDisposable,
+    override val details: PlayerDetails
 ) : Actor(index), IPlayer,
     KoinComponent, Disposable by disposable, DisposableContainer by disposable {
 
@@ -285,7 +284,6 @@ class Player(
 
     override fun dispose() {
         //TODO - logout code
-        attributes.attributeMap.clear()
         movement.clear()
         if (outgoingPackets.offer(LogoutFullMessage())) {
             disposable.dispose()
@@ -296,9 +294,9 @@ class Player(
         this.dispose()
     }
 
-    override fun username(): String = username
+    override fun username(): String = details.username
 
-    override fun displayName(): String = username
+    override fun displayName(): String = details.displayName
 
     override fun containerManager(): IItemContainerManager {
         return itemContainerManager
