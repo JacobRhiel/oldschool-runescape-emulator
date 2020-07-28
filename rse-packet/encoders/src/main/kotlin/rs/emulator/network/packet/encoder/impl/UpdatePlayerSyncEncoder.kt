@@ -3,7 +3,6 @@ package rs.emulator.network.packet.encoder.impl
 import rs.dusk.engine.model.entity.Direction
 import rs.emulator.buffer.manipulation.DataType
 import rs.emulator.entity.player.Player
-import rs.emulator.entity.player.update.flag.PlayerUpdateFlag
 import rs.emulator.entity.player.update.mask.*
 import rs.emulator.entity.player.update.sync.SyncInformation
 import rs.emulator.entity.player.viewport.Viewport
@@ -24,7 +23,7 @@ class UpdatePlayerSyncEncoder : PacketEncoder<UpdatePlayerSyncMessage<Player>>()
     override fun encode(message: UpdatePlayerSyncMessage<Player>, builder: GamePacketBuilder)
     {
 
-        println("test player update")
+        //println("test player update")
 
         val maskBuilder = GamePacketBuilder()
 
@@ -186,7 +185,7 @@ class UpdatePlayerSyncEncoder : PacketEncoder<UpdatePlayerSyncMessage<Player>>()
             else
             {
 
-                println("skip")
+                //println("skip")
 
                 skipCount = generateSkipCount(viewport, builder, true, inverse)
 

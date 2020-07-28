@@ -9,6 +9,7 @@ interface IPlayerDetails {
 
     val username: String
     var displayName: String
+    var coordinate: Int
     val privilege: IPrivilege
     var inventory: String
     var bank: String

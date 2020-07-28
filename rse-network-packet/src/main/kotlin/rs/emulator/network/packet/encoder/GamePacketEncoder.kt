@@ -51,7 +51,7 @@ class GamePacketEncoder(private val isaac: IsaacRandom) : KoinComponent, Message
 
         }
 
-        println("Encoding packet: ${msg.javaClass.simpleName}. ${msg.opcode}")
+        //println("Encoding packet: ${msg.javaClass.simpleName}. ${msg.opcode}")
 
         out.writeBytes(msg.payload)
 

@@ -1,6 +1,7 @@
 package rs.emulator.collections.varbits
 
-import kotlin.reflect.KProperty
+import com.google.gson.Gson
+import rs.emulator.utilities.koin.get
 
 /**
  *
@@ -15,13 +16,16 @@ class VarbitList {
         return VarbitDelegate(this, id, varbits.getOrDefault(id, 0))
     }
 
-    operator fun invoke(id : Int) : VarbitDelegate {
+    operator fun invoke(id: Int): VarbitDelegate {
         return VarbitDelegate(this, id, this[id])
     }
 
-    internal operator fun get(key : Int) : Int = varbits.getOrDefault(key, 0)
-    internal operator fun set(key : Int, value : Int) {
+    internal operator fun get(key: Int): Int = varbits.getOrDefault(key, 0)
+    internal operator fun set(key: Int, value: Int) {
         varbits[key] = value
     }
 
+    override fun toString(): String {
+        return get<Gson>().toJson(this)
+    }
 }

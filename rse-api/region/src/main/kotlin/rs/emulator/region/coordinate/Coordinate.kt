@@ -1,8 +1,10 @@
 package rs.emulator.region.coordinate
 
+import com.google.gson.Gson
 import rs.emulator.region.RegionCoordinate
 import rs.emulator.region.WorldCoordinate
 import rs.emulator.region.chunk.ChunkCoordinate
+import rs.emulator.utilities.koin.get
 
 /**
  *
@@ -47,7 +49,7 @@ abstract class Coordinate(var x: Int, var z: Int, var plane: Int = 0)
 
     abstract fun copy(offsetX: Int = 0, offsetZ: Int = 0, offsetPlane: Int = 0): Coordinate
 
-    override fun toString(): String = "x: $x z: $z : plane $plane"
+    override fun toString(): String = get<Gson>().toJson(this)
 
     override fun equals(other: Any?): Boolean
     {

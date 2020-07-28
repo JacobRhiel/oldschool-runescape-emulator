@@ -24,8 +24,11 @@ class CommandExtension : CommandFactory {
         val name = command.split(" ")[0]
         val args = command.substringAfter(name).trim().split(" ")
 
+        println("$name - $args")
+
         when (name) {
             "item" -> {
+                println("Spawning item")
                 val item = ArgParser(args.toTypedArray()).parseInto(::SpawnItem)
                 val spawned: Item = ItemProvider.provide(item.id, item.amt)
                 player.inventory().add(spawned)

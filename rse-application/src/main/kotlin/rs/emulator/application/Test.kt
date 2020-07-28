@@ -1,7 +1,7 @@
 package rs.emulator.application
 
 import com.google.common.util.concurrent.ServiceManager
-import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import kotlinx.coroutines.runBlocking
 import org.koin.core.KoinComponent
 import org.koin.core.context.startKoin
@@ -25,7 +25,9 @@ import rs.emulator.encryption.rsa.RSAService
 import rs.emulator.encryption.xtea.XteaKeyService
 import rs.emulator.engine.service.CyclicEngineService
 import rs.emulator.engine.service.schedule.CyclicDelaySchedule
+import rs.emulator.entity.material.items.Item
 import rs.emulator.fileserver.FileStoreService
+import rs.emulator.gson.ItemAdapter
 import rs.emulator.network.packet.PacketService
 import rs.emulator.network.packet.repository.PacketRepository
 import rs.emulator.network.pipeline.DefaultPipelineProvider
@@ -103,7 +105,9 @@ class Test : KoinComponent {
                         .setAccess(WorldAccess.DEVELOPMENT).setActivity(WorldActivity.NONE).build()
                 }
 
-                single { Gson() }
+                single {
+                    GsonBuilder().registerTypeAdapter(Item::class.java, ItemAdapter()).create()
+                }
 
                 single {
 

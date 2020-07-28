@@ -30,6 +30,8 @@ dependencies {
 
     implementation(project(":rse-map:route"))
 
+    implementation(project(":rse-gson"))
+
 }
 
 tasks.withType<Test> {

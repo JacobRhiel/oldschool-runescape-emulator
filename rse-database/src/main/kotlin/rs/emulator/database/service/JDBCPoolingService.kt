@@ -30,8 +30,13 @@ class JDBCPoolingService : AbstractIdleService() {
             .map { it to it.beginTransaction() }
             .switchMap { p ->
                 Observable.just(block(p.second, p.first))
-                    .doOnError { p.second.rollback() }
-                    .doFinally { p.first.close() }
+                    .doOnError {
+                        p.second.rollback()
+                        it.printStackTrace()
+                    }
+                    .doFinally {
+                        p.first.close()
+                    }
             }.singleElement().blockingGet()
     }
 

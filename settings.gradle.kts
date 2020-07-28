@@ -3,6 +3,7 @@ include("rse-engine")
 include("rse-utilities")
 include("rse-cache")
 include("rse-application")
+include("rse-gson")
 include(
     "rse-entity",
     "rse-entity:actor",

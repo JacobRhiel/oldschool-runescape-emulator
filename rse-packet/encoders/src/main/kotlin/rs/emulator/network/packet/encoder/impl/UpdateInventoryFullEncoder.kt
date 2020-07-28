@@ -22,12 +22,16 @@ class UpdateInventoryFullEncoder : PacketEncoder<UpdateInventoryFullMessage>()
 
         builder.put(DataType.SHORT, message.container.array.size)
 
-        message.container.forEach { item ->
-            println(item)
-            builder.put(DataType.BYTE, 255.coerceAtMost(item.amount))
-            builder.put(DataType.SHORT, DataOrder.LITTLE, item.id + 1)
-            if (item.amount >= 255) {
-                builder.put(DataType.INT, DataOrder.LITTLE, item.amount)
+        message.container.array.forEach { item ->
+            if (item.id != -1) {
+                builder.put(DataType.BYTE, 255.coerceAtMost(item.amount))
+                builder.put(DataType.SHORT, DataOrder.LITTLE, item.id + 1)
+                if (item.amount >= 255) {
+                    builder.put(DataType.INT, DataOrder.LITTLE, item.amount)
+                }
+            } else {
+                builder.put(DataType.BYTE, 0)
+                builder.put(DataType.SHORT, DataOrder.LITTLE, 0)
             }
         }
     }

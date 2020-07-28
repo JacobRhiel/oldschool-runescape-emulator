@@ -10,7 +10,7 @@ import rs.emulator.entity.material.EquipmentSlot
 class Wearable(
     var mainSlot: EquipmentSlot = EquipmentSlot.WEAPON,
     var secondarySlot: EquipmentSlot = mainSlot,
-    var effectBlock: () -> Unit = {},
+    @Transient var effectBlock: () -> Unit = {},
     id: Int = -1,
     amount: Int = 1,
     stackable: Boolean = false

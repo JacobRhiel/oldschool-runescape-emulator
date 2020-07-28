@@ -34,6 +34,7 @@ import rs.emulator.plugins.RSPluginManager
 import rs.emulator.plugins.extensions.factories.ContainerRegistrationException
 import rs.emulator.plugins.extensions.factories.ItemContainerFactory
 import rs.emulator.plugins.extensions.factories.LoginActionFactory
+import rs.emulator.region.WorldCoordinate
 import rs.emulator.region.coordinate.Coordinate
 import rs.emulator.skills.SkillAttributes
 import rs.emulator.widgets.WidgetViewport
@@ -263,6 +264,10 @@ class Player(
         }
 
         skillAttributes.forceSync()
+        containerManager().inventory()?.forceSync()
+        val coords = WorldCoordinate.from30BitHash(details.coordinate)
+        coordinate.set(coords.x, coords.z, coords.plane)
+        pendingTeleport = coordinate
 
         RSPluginManager.getExtensions<LoginActionFactory>()
             .toObservable()
@@ -292,29 +297,27 @@ class Player(
     override fun save() {
         val serv = get<JDBCPoolingService>()
         val con = containerManager()
-
-        this.inventory()?.let { details.inventory = it.toString() }
-        this.equipment()?.let { details.equipment = it.toString() }
+        containerManager().inventory()?.let { details.inventory = it.toString() }
+        containerManager().equipment()?.let { details.equipment = it.toString() }
+        details.coordinate = coordinate.as30BitInteger
         con.container<Item>(95)?.let { details.bank = it.toString() }
-
-        serv.withTransaction { it.saveOrUpdate(details); this.commit() }
+        serv.withTransaction { s ->
+            s.update(details)
+            this.commit()
+        }
     }
 
     fun load() {
         val gson = get<Gson>()
-        val inventory: Inventory? = gson.fromJson(details.inventory, Inventory::class.java)
-        val equipment: Equipment? = gson.fromJson(details.inventory, Equipment::class.java)
-        val bank: Bank? = gson.fromJson(details.inventory, Bank::class.java)
-        containerManager().register(93, inventory ?: Inventory()) {
+        containerManager().register(93, gson.fromJson(details.inventory, Inventory::class.java)) {
             syncBlock {
                 onNext {
                     messages().sendItemContainerFull(149, 0, 93, this@register)
                 }
             }
         }
-        containerManager().register(94, equipment ?: Equipment())
-        containerManager().register(95, bank ?: Bank())
-
+        containerManager().register(94, gson.fromJson(details.inventory, Equipment::class.java))
+        containerManager().register(95, gson.fromJson(details.inventory, Bank::class.java))
     }
 
     override fun logout() {

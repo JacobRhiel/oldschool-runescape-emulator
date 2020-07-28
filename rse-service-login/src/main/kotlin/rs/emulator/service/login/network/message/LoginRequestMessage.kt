@@ -94,7 +94,6 @@ data class LoginRequestMessage(
 
         if (ctx.channel().isActive)
             ctx.channel().flush()
-
     }
 
     class ChannelCloseDisposable(val channel: Channel) : Disposable {

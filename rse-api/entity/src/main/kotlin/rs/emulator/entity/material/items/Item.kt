@@ -12,6 +12,7 @@ import rs.emulator.region.WorldCoordinate
 abstract class Item(var id: Int, var amount: Int = 1, var stackable: Boolean = false) : IEntity {
 
     override val coordinate: WorldCoordinate = WorldCoordinate(-1, -1)
+    @Transient
     override val lastCoordinate: WorldCoordinate = coordinate
     override val attributes: Attributes = Attributes()
 

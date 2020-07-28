@@ -1,8 +1,13 @@
 package rs.emulator.service.login.worker
 
+import rs.emulator.collections.varbits.VarbitList
 import rs.emulator.database.service.JDBCPoolingService
 import rs.emulator.entity.details.PlayerDetails
 import rs.emulator.entity.details.Privilege
+import rs.emulator.entity.player.storage.containers.Bank
+import rs.emulator.entity.player.storage.containers.Equipment
+import rs.emulator.entity.player.storage.containers.Inventory
+import rs.emulator.region.WorldCoordinate
 import rs.emulator.service.login.LoginStatus
 import rs.emulator.service.login.network.message.LoginRequestMessage
 import rs.emulator.utilities.koin.get
@@ -26,12 +31,13 @@ class LoginWorker(val request: LoginRequestMessage) : Runnable {
             canTeleport = false,
             isSystemAdmin = false
         ),
-        "",
-        "",
-        "",
-        "",
+        Inventory().toString(),
+        Bank().toString(),
+        Equipment().toString(),
+        VarbitList().toString(),
         false,
-        false
+        false,
+        WorldCoordinate(x = 3222, z = 3218).as30BitInteger
     )
 
     fun execute(): Pair<LoginStatus, PlayerDetails> {
