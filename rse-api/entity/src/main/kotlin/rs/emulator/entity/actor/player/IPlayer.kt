@@ -11,6 +11,11 @@ interface IPlayer : IActor {
     val widgetViewport: WidgetViewport
     val details: IPlayerDetails
 
+    var energy: Int
+    var skullIcon: Int
+    var prayerIcon: Int
+    var isFemale: Boolean
+
     fun username(): String
     fun displayName(): String
     fun containerManager(): IItemContainerManager

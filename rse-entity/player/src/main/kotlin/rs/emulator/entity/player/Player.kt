@@ -72,9 +72,21 @@ class Player(
 
     override val skillAttributes: SkillAttributes = SkillAttributes()
 
+    override val widgetViewport = WidgetViewport()
+
     override val attributes: Attributes = Attributes()
 
-    override val widgetViewport = WidgetViewport()
+    override var energy: Int by attributes.Int(100).markPersistent().apply {
+        add(this.changeListener.subscribe {
+            outgoingPackets.offer(UpdateRunEnergyMessage(it))
+        })
+    }
+
+    override var isFemale: Boolean by attributes.Boolean().markPersistent()
+
+    override var skullIcon: Int by attributes.Int(-1).markPersistent()
+
+    override var prayerIcon: Int by attributes.Int(-1)
 
     var pendingAnimation: Int = -1
 
@@ -252,6 +264,7 @@ class Player(
         outgoingPackets.offer(RunClientScriptMessage(2015, 0))
 
         outgoingPackets.offer(UnknownMessage(true))
+        outgoingPackets.offer(UpdateRunEnergyMessage(energy))
 
         skillAttributes.attributeChangedProcessor.subscribe {
             outgoingPackets.offer(
@@ -268,6 +281,12 @@ class Player(
         val coords = WorldCoordinate.from30BitHash(details.coordinate)
         coordinate.set(coords.x, coords.z, coords.plane)
         pendingTeleport = coordinate
+
+        this.add(attributes.valueChangeListener.subscribe {
+            if (it == Player::energy.name) {
+                outgoingPackets.offer(UpdateRunEnergyMessage(energy))
+            }
+        })
 
         RSPluginManager.getExtensions<LoginActionFactory>()
             .toObservable()
@@ -301,6 +320,7 @@ class Player(
         containerManager().equipment()?.let { details.equipment = it.toString() }
         details.coordinate = coordinate.as30BitInteger
         con.container<Item>(95)?.let { details.bank = it.toString() }
+        details.attributes.putAll(attributes.attributes)
         serv.withTransaction { s ->
             s.update(details)
             this.commit()
@@ -318,6 +338,7 @@ class Player(
         }
         containerManager().register(94, gson.fromJson(details.inventory, Equipment::class.java))
         containerManager().register(95, gson.fromJson(details.inventory, Bank::class.java))
+        attributes.attributes.putAll(details.attributes)
     }
 
     override fun logout() {

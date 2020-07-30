@@ -20,7 +20,7 @@ open class PlayerDetails(
     override var displayName: String,
     @Column(name = "password")
     open val password: String,
-    @OneToOne(cascade = [CascadeType.ALL])
+    @OneToOne
     @JoinColumn(name = "privilege", referencedColumnName = "privilege_id")
     override val privilege: Privilege,
     @Type(type = "text")
@@ -40,5 +40,9 @@ open class PlayerDetails(
     @Column(name = "muted")
     override var muted: Boolean,
     @Column(name = "coordinates")
-    override var coordinate: Int
+    override var coordinate: Int,
+    @ElementCollection
+    @MapKeyColumn(name = "key")
+    @Column(name = "attributes")
+    override var attributes: MutableMap<String, String>
 ) : IPlayerDetails, Entry

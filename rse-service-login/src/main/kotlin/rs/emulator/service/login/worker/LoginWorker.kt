@@ -37,7 +37,8 @@ class LoginWorker(val request: LoginRequestMessage) : Runnable {
         VarbitList().toString(),
         false,
         false,
-        WorldCoordinate(x = 3222, z = 3218).as30BitInteger
+        WorldCoordinate(x = 3222, z = 3218).as30BitInteger,
+        mutableMapOf()
     )
 
     fun execute(): Pair<LoginStatus, PlayerDetails> {
@@ -53,6 +54,7 @@ class LoginWorker(val request: LoginRequestMessage) : Runnable {
         val password = request.credentials.password
         this.details = service.withTransaction { tx ->
             (tx.get(PlayerDetails::class.java, username) ?: details.also { tx.save(it); this.commit() })
+                .also { it.attributes.getOrDefault("null", "") /*Do this to fetch from database */ }
         }.apply {
             result = when {
                 this.password != password -> LoginStatus.INVALID_CREDENTIALS

@@ -21,19 +21,17 @@ class PlayerAppearanceMask : UpdateMask<Player>
 
         val writer = BufferedWriter()
 
-        writer.put(DataType.BYTE, 0)//gender
-        writer.put(DataType.BYTE, -1)//skull icon
-        writer.put(DataType.BYTE, -1)//prayer icon
+        writer.put(DataType.BYTE, if (entity.isFemale) 1 else 0)//gender
+        writer.put(DataType.BYTE, entity.skullIcon)//skull icon
+        writer.put(DataType.BYTE, entity.prayerIcon)//prayer icon
 
-        var styles = intArrayOf(0, 0, 0, 0, 21, 0, 26, 38, 3, 33, 42, 14)
+        val styles = intArrayOf(0, 0, 0, 0, 21, 0, 26, 38, 3, 33, 42, 14)
 
-        for(index in 0 until 12)
-        {
+        for (index in 0 until 12) {
 
-                if(styles[index] == 0)
-                    writer.put(DataType.BYTE, 0)
-                else
-                {
+            if (styles[index] == 0)
+                writer.put(DataType.BYTE, 0)
+            else {
                     writer.put(DataType.BYTE, 1)
                     writer.put(DataType.BYTE, styles[index])
                 }

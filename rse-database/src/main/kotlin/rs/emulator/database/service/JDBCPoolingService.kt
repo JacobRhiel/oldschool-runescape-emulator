@@ -34,9 +34,7 @@ class JDBCPoolingService : AbstractIdleService() {
                         p.second.rollback()
                         it.printStackTrace()
                     }
-                    .doFinally {
-                        p.first.close()
-                    }
+                    .doFinally { p.first.close() }
             }.singleElement().blockingGet()
     }
 

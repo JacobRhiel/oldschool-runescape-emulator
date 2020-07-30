@@ -17,5 +17,6 @@ interface IPlayerDetails {
     var varbits: String
     var banned: Boolean
     var muted: Boolean
+    var attributes: MutableMap<String, String>
 
 }
