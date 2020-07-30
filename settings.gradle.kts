@@ -10,7 +10,8 @@ include(
     "rse-entity:player",
     "rse-entity:npc",
     "rse-entity:update",
-    "rse-entity:details"
+    "rse-entity:details",
+    "rse-entity:action"
 )
 include("rse-entity", "rse-entity:actor", "rse-entity:player", "rse-entity:npc", "rse-entity:update", "rse-entity:widget")
 include("rse-world")

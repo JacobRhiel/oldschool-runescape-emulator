@@ -37,6 +37,8 @@ object PreUpdatePlayerSynchronizationTask: IEvent
 
             }
 
+            it.actions.cycle()
+
         }
 
     }

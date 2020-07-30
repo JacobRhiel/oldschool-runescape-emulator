@@ -22,6 +22,8 @@ class CyclicEngineService : KoinComponent, AbstractScheduledService() {
 
     private val staticEvents = mutableListOf<IEvent>()
 
+    fun fetchExecutor() = executor()
+
     override fun scheduler() = inject<CyclicDelaySchedule>().value
 
     override fun runOneIteration() {

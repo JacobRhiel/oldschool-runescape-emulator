@@ -2,6 +2,7 @@ package rs.emulator.application
 
 import com.google.common.util.concurrent.ServiceManager
 import com.google.gson.GsonBuilder
+import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.runBlocking
 import org.koin.core.KoinComponent
 import org.koin.core.context.startKoin
@@ -136,6 +137,16 @@ class Test : KoinComponent {
                             get<PacketService>()
                         )
                     )
+                }
+
+                single {
+
+                    val engine: CyclicEngineService = get()
+
+                    //ExecutorCoroutineDispatcher
+
+                    engine.fetchExecutor().asCoroutineDispatcher()
+
                 }
 
             }
