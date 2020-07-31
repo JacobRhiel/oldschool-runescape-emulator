@@ -8,6 +8,7 @@ import rs.dusk.engine.path.target.RectangleTargetStrategy
 import rs.dusk.engine.path.target.TileTargetStrategy
 import rs.dusk.engine.path.traverse.SmallTraversal
 import rs.emulator.entity.Entity
+import rs.emulator.entity.action.queue.ActionQueue
 import rs.emulator.map.region.Region
 import rs.emulator.region.WorldCoordinate
 import rs.emulator.region.coordinate.Coordinate
@@ -43,6 +44,8 @@ abstract class Actor(var index: Int) : Entity(), IActor
              tile = targetCoordinate ?: coordinate,
              size = target?.size ?: size
          )
+
+    val actions = ActionQueue()
 
     //pathfinding
     fun find(tile: Coordinate): PathResult

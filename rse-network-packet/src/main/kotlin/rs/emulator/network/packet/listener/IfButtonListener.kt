@@ -24,6 +24,24 @@ class IfButtonListener : GamePacketListener<IfButtonMessage> {
 
         val option = message.option + 1
 
+        if(interfaceId == 216 && component == 1)
+        {
+
+            if(option == 14) {
+
+                player.actions.submit {
+
+                    player.messageHandler.sendChatMessage("first")
+
+                    wait(5)
+
+                    player.messageHandler.sendChatMessage("second", 0)
+
+                }
+            }
+
+        }
+
         if (interfaceId == 378 && component == 78) {
 
             if (option == 14) {
