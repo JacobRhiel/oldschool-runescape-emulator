@@ -1,4 +1,4 @@
-package rs.emulator.entity.attributes
+package rs.emulator.entity.actor.attributes
 
 import io.reactivex.subjects.PublishSubject
 import rs.emulator.entity.IEntity
@@ -10,7 +10,7 @@ import kotlin.reflect.KProperty
  */
 
 abstract class AttributeDelegate<Attribute : AttributeValue, Entity : IEntity, V>(
-    val attributes: Attributes,
+    val actorAttributes: ActorAttributes,
     val attribute: Attribute,
     persistent: Boolean = false
 ) {

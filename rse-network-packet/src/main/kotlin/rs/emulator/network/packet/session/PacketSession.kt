@@ -36,8 +36,6 @@ class PacketSession(
     val incomingPackets = PublishProcessor.create<IncomingPacket>()
     val outgoingPackets = PublishProcessor.create<IPacketMessage>()
 
-    val composite = CompositeDisposable()
-
     init {
 
         channel.pipeline().addBefore(

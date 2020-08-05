@@ -11,13 +11,13 @@ import org.koin.core.get
 import rs.dusk.engine.path.Finder
 import rs.emulator.database.service.JDBCPoolingService
 import rs.emulator.entity.actor.Actor
+import rs.emulator.entity.actor.attributes.ActorAttributes
 import rs.emulator.entity.actor.player.IPlayer
 import rs.emulator.entity.actor.player.messages.AbstractMessageHandler
 import rs.emulator.entity.actor.player.messages.IMessages
 import rs.emulator.entity.actor.player.storage.IItemContainerManager
 import rs.emulator.entity.actor.player.storage.equipment
 import rs.emulator.entity.actor.player.storage.inventory
-import rs.emulator.entity.attributes.Attributes
 import rs.emulator.entity.details.PlayerDetails
 import rs.emulator.entity.material.items.Item
 import rs.emulator.entity.player.chat.PublicChatText
@@ -74,19 +74,19 @@ class Player(
 
     override val widgetViewport = WidgetViewport()
 
-    override val attributes: Attributes = Attributes()
+    override val actorAttributes: ActorAttributes = ActorAttributes()
 
-    override var energy: Int by attributes.Int(100).markPersistent().apply {
+    override var energy: Int by actorAttributes.Int(100).markPersistent().apply {
         add(this.changeListener.subscribe {
             outgoingPackets.offer(UpdateRunEnergyMessage(it))
         })
     }
 
-    override var isFemale: Boolean by attributes.Boolean().markPersistent()
+    override var isFemale: Boolean by actorAttributes.Boolean().markPersistent()
 
-    override var skullIcon: Int by attributes.Int(-1).markPersistent()
+    override var skullIcon: Int by actorAttributes.Int(-1).markPersistent()
 
-    override var prayerIcon: Int by attributes.Int(-1)
+    override var prayerIcon: Int by actorAttributes.Int(-1)
 
     var pendingAnimation: Int = -1
 
@@ -282,7 +282,7 @@ class Player(
         coordinate.set(coords.x, coords.z, coords.plane)
         pendingTeleport = coordinate
 
-        this.add(attributes.valueChangeListener.subscribe {
+        this.add(actorAttributes.valueChangeListener.subscribe {
             if (it == Player::energy.name) {
                 outgoingPackets.offer(UpdateRunEnergyMessage(energy))
             }
@@ -320,7 +320,7 @@ class Player(
         containerManager().equipment()?.let { details.equipment = it.toString() }
         details.coordinate = coordinate.as30BitInteger
         con.container<Item>(95)?.let { details.bank = it.toString() }
-        details.attributes.putAll(attributes.attributes)
+        details.attributes.putAll(actorAttributes.attributes)
         serv.withTransaction { s ->
             s.update(details)
             this.commit()
@@ -338,7 +338,7 @@ class Player(
         }
         containerManager().register(94, gson.fromJson(details.inventory, Equipment::class.java))
         containerManager().register(95, gson.fromJson(details.inventory, Bank::class.java))
-        attributes.attributes.putAll(details.attributes)
+        actorAttributes.attributes.putAll(details.attributes)
     }
 
     override fun logout() {

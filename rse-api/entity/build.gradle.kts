@@ -8,6 +8,9 @@ dependencies {
     api(project(":rse-api:persistent-details"))
     api(project(":rse-utilities"))
 
+    testApi(project(":rse-cache"))
+    testApi(project(":rse-cache:definition"))
+
 }
 
 tasks.withType<Test> {

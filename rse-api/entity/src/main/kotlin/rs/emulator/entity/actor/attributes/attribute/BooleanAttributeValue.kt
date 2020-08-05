@@ -1,9 +1,9 @@
-package rs.emulator.entity.attributes.attribute
+package rs.emulator.entity.actor.attributes.attribute
 
 import rs.emulator.entity.IEntity
-import rs.emulator.entity.attributes.AttributeDelegate
-import rs.emulator.entity.attributes.AttributeValue
-import rs.emulator.entity.attributes.Attributes
+import rs.emulator.entity.actor.attributes.ActorAttributes
+import rs.emulator.entity.actor.attributes.AttributeDelegate
+import rs.emulator.entity.actor.attributes.AttributeValue
 import kotlin.reflect.KProperty
 
 /**
@@ -17,17 +17,21 @@ class BooleanAttributeValue(var value: Boolean = false) : AttributeValue() {
     }
 
     override fun deserialize(serialized: String) {
-        value = serialized.toBoolean()
+        value = if (serialized.isNotEmpty()) {
+            serialized.toBoolean()
+        } else {
+            false
+        }
     }
 }
 
-class BooleanAttributeDelegate(attributes: Attributes, attribute: BooleanAttributeValue) :
+class BooleanAttributeDelegate(actorAttributes: ActorAttributes, attribute: BooleanAttributeValue) :
     AttributeDelegate<BooleanAttributeValue, IEntity, Boolean>(
-        attributes, attribute
+        actorAttributes, attribute
     ) {
     override fun getValue(entity: IEntity, property: KProperty<*>): Boolean {
         if (persistent) {
-            attribute.deserialize(attributes[property.name])
+            attribute.deserialize(actorAttributes[property.name])
         }
         return attribute.value
     }
@@ -36,7 +40,7 @@ class BooleanAttributeDelegate(attributes: Attributes, attribute: BooleanAttribu
         attribute.value = value
         changeListener.onNext(value)
         if (persistent) {
-            attributes[property.name] = attribute
+            actorAttributes[property.name] = attribute
         }
     }
 }

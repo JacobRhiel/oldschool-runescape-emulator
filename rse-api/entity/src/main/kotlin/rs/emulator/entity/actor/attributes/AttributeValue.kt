@@ -1,4 +1,4 @@
-package rs.emulator.entity.attributes
+package rs.emulator.entity.actor.attributes
 
 import com.google.gson.Gson
 import rs.emulator.utilities.koin.get
