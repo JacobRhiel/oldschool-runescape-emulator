@@ -5,13 +5,16 @@ import com.github.benmanes.caffeine.cache.Caffeine
 import org.koin.core.KoinComponent
 import org.koin.core.get
 import rs.emulator.AbstractDefinitionRepository
+import rs.emulator.buffer.reader.BufferedReader
 import rs.emulator.cache.definition.entity.loc.LocDefinitionGenerator
 import rs.emulator.cache.definition.entity.npc.NpcDefinitionGenerator
+import rs.emulator.cache.definition.entity.npc.meta.NpcMetaDataDefinitionGenerator
 import rs.emulator.cache.definition.entity.obj.ObjDefinitionGenerator
 import rs.emulator.cache.definition.entity.obj.meta.ObjMetaDataDefinitionGenerator
 import rs.emulator.cache.definition.entity.sequence.SequenceDefinitionGenerator
 import rs.emulator.cache.definition.entity.spotanim.SpotAnimDefinitionGenerator
 import rs.emulator.cache.definition.generator.DefinitionGenerator
+import rs.emulator.cache.definition.generator.MetaDataDefinitionGenerator
 import rs.emulator.cache.definition.region.landscape.LandscapeDefinitionGenerator
 import rs.emulator.cache.definition.region.mapscape.MapScapeDefinitionGenerator
 import rs.emulator.cache.definition.varp.bit.VarBitDefinitionGenerator
@@ -53,7 +56,9 @@ class DefinitionRepository : KoinComponent, AbstractDefinitionRepository()
         SpotAnimDefinitionGenerator(),
         EnumDefinitionGenerator(),
         ScriptDefinitionGenerator(),
-        StructDefinitionGenerator()
+        StructDefinitionGenerator(),
+        ObjMetaDataDefinitionGenerator(),
+        NpcMetaDataDefinitionGenerator()
     )
 
     @PublishedApi
@@ -69,7 +74,6 @@ class DefinitionRepository : KoinComponent, AbstractDefinitionRepository()
         .expireAfterAccess(2, TimeUnit.MINUTES)
         .recordStats()
         .build()
-
 
     private fun submitType(clazz: Class<Definition>) = definitionCache.put(clazz, hashMapOf())
 
@@ -104,46 +108,55 @@ class DefinitionRepository : KoinComponent, AbstractDefinitionRepository()
 
         val hasShiftedId = shiftedId != -1
 
-        val reader = when
+        var reader: BufferedReader? = null
+
+        if(generator !is MetaDataDefinitionGenerator)
         {
 
-            generator.namedArchive ->
+            reader = when
             {
 
-                val archiveName = generator.generateArchiveName(identifier)
+                generator.namedArchive -> {
 
-                val foundArchive = fileStore.fetchIndex(generator.indexConfig.identifier).fetchNamedArchive(archiveName)!!
+                    val archiveName = generator.generateArchiveName(identifier)
 
-                foundArchive.fetchBuffer(true, keys)
+                    val foundArchive =
+                        fileStore.fetchIndex(generator.indexConfig.identifier).fetchNamedArchive(archiveName)!!
 
-            }
-            else                   ->
-            {
+                    foundArchive.fetchBuffer(true, keys)
 
-                fileStore.fetchIndex(generator.indexConfig.identifier)
-                    .fetchArchive(
-                        if (child == -1)
-                            if (generator.archive == -1)
-                                identifier
-                            else
-                                generator.archive
-                        else if (hasShiftedId)
-                            shiftedId
-                        else identifier
-                    )
-                    .fetchEntry(
-                        if (child == -1)
-                            if (hasShiftedId)
+                }
+                else -> {
+
+                    fileStore.fetchIndex(generator.indexConfig.identifier)
+                        .fetchArchive(
+                            if (child == -1)
+                                if (generator.archive == -1)
+                                    identifier
+                                else
+                                    generator.archive
+                            else if (hasShiftedId)
                                 shiftedId
+                            else identifier
+                        )
+                        .fetchEntry(
+                            if (child == -1)
+                                if (hasShiftedId)
+                                    shiftedId
+                                else
+                                    identifier
                             else
-                                identifier
-                        else
-                            child
-                    ).fetchBuffer(true)
+                                child
+                        ).fetchBuffer(true)
+                }
             }
+
         }
 
-        val definition = generator.decodeHeader(identifier, reader)
+        //todo? check if reader is null?
+        val definition = if(generator is MetaDataDefinitionGenerator) generator.decodeHeader(identifier) else generator.decodeHeader(identifier, reader!!)
+
+        println("here/")
 
         submitEntry(definition)
 

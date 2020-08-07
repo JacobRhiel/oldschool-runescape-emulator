@@ -1,28 +1,32 @@
 package rs.emulator.cache.definition.entity.obj.meta
 
-import com.google.gson.Gson
-import rs.emulator.buffer.manipulation.DataType
-import rs.emulator.buffer.reader.BufferedReader
-import rs.emulator.cache.definition.generator.DefinitionGenerator
-import rs.emulator.cache.store.index.IndexConfig
-import rs.emulator.cache.store.index.archive.ArchiveConfig
+import com.google.gson.reflect.TypeToken
+import rs.emulator.cache.definition.generator.MetaDataDefinitionGenerator
 import rs.emulator.definitions.entity.obj.ObjMetaDataDefinition
+import java.io.File
+import java.io.FileReader
 
 /**
  *
  * @author Chk
  */
-class ObjMetaDataDefinitionGenerator : DefinitionGenerator<ObjMetaDataDefinition>()
+class ObjMetaDataDefinitionGenerator : MetaDataDefinitionGenerator<ObjMetaDataDefinition>()
 {
 
     override val definitionClass: Class<ObjMetaDataDefinition> = ObjMetaDataDefinition::class.java
 
-    override val indexConfig: IndexConfig = IndexConfig.META_DATA
+    override fun decodeHeader(id: Int): ObjMetaDataDefinition = generate(id)
 
-    override val archive: Int = ArchiveConfig.OBJ.identifier
+    override fun generate(id: Int): ObjMetaDataDefinition
+    {
 
-    override fun decodeHeader(id: Int, reader: BufferedReader): ObjMetaDataDefinition = generate(id, reader)
+        val map : MutableMap<Int, ObjMetaDataDefinition> = gson.fromJson(
+            FileReader(File("./data/osrsbox/item/items-complete.json")),
+            object : TypeToken<HashMap<Int, ObjMetaDataDefinition>>(){}.type
+        )
 
-    override fun generate(id: Int, reader: BufferedReader): ObjMetaDataDefinition = Gson().fromJson(String(reader.toArray()), ObjMetaDataDefinition::class.java)
+        return map[id]!!
+
+    }
 
 }

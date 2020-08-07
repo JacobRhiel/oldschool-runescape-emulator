@@ -41,9 +41,12 @@ class WalkHereListener : GamePacketListener<WalkHereMessage>, KoinComponent {
 
             val path = player.find(WorldCoordinate(message.destX, message.destZ, player.coordinate.plane))
 
+            player.targetCoordinate = WorldCoordinate(message.destX, message.destZ, player.coordinate.plane)
+
             println("Path dest $path")
 
         }
+
         val region = world.mapGrid.fetchRegion(player.coordinate.toRegion().regionId)
 
         region.zones.forEach {
