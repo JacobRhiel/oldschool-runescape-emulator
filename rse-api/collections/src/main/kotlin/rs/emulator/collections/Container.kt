@@ -7,12 +7,7 @@ import kotlinx.coroutines.flow.Flow
  * @author javatar
  */
 
-abstract class Container<E, T>(val elements: Array<E>) : Iterable<E> {
-
-    abstract fun add(element: E): Flow<T>
-    abstract fun remove(element: E): Flow<T>
-
-    override fun iterator(): Iterator<E> {
-        return elements.iterator()
-    }
+interface Container<E, T> : Iterable<E> {
+    fun add(element: E): Flow<T>
+    fun remove(element: E): Flow<T>
 }

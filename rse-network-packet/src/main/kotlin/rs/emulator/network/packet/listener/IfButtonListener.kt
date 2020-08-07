@@ -1,11 +1,15 @@
 package rs.emulator.network.packet.listener
 
 import io.netty.channel.Channel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.launchIn
 import rs.emulator.Repository
 import rs.emulator.cache.definition.widget.enum.EnumDefinition
 import rs.emulator.entity.player.Player
 import rs.emulator.network.packet.message.incoming.IfButtonMessage
 import rs.emulator.network.packet.message.outgoing.*
+import rs.emulator.widget.WidgetRegistration
 
 /**
  *
@@ -140,7 +144,10 @@ class IfButtonListener : GamePacketListener<IfButtonMessage> {
 
         } else {
 
-            player.widgetViewport.fireClickEvent(interfaceId, component, message.slot, message.item)
+            if (player.widgetViewport.isWidgetActive(interfaceId)) {
+                WidgetRegistration.fireActionEvent(player, interfaceId, component, message.slot, message.item)
+                    .launchIn(CoroutineScope(Dispatchers.Default))
+            }
 
             /*if(player.widgetViewport.rootWidget[interfaceId].component.id == component) {
 

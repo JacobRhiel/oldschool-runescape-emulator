@@ -13,11 +13,19 @@ import rs.emulator.network.packet.message.outgoing.IfSetTextMessage
 
 class IfSetTextEncoder : PacketEncoder<IfSetTextMessage>() {
     override fun encode(message: IfSetTextMessage, builder: GamePacketBuilder) {
-        builder.put(
-            DataType.INT,
-            DataOrder.INVERSED_MIDDLE,
-            message.componentHash
-        )
-        builder.putString(message.text)
+        if (message.componentHash shr 16 > 673) {
+            try {
+                throw IndexOutOfBoundsException("Widget does not exist! ${message.componentHash shr 16}")
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        } else {
+            builder.put(
+                DataType.INT,
+                DataOrder.INVERSED_MIDDLE,
+                message.componentHash
+            )
+            builder.putString(message.text)
+        }
     }
 }

@@ -328,6 +328,13 @@ class PacketService : AbstractIdleService(), KoinComponent {
             clazz = CloseWidgetMessage::class,
             listener = CloseWidgetListener()
         )
+        packetRepository.putDecoder(
+            58,
+            decoder = DragItemDecoder(),
+            length = 16,
+            clazz = DragItemMessage::class,
+            listener = DragItemListener()
+        )
 
     }
 
@@ -628,6 +635,12 @@ class PacketService : AbstractIdleService(), KoinComponent {
             8,
             GrandExchangeOfferEncoder(),
             clazz = GrandExchangeOfferMessage::class
+        )
+
+        packetRepository.putEncoder(
+            18,
+            AccessMaskEncoder(),
+            clazz = AccessMaskMessage::class
         )
 
         packetRepository.putEncoder(

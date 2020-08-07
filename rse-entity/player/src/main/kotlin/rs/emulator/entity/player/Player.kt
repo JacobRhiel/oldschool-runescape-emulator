@@ -18,6 +18,7 @@ import rs.emulator.entity.actor.player.messages.IMessages
 import rs.emulator.entity.actor.player.storage.IItemContainerManager
 import rs.emulator.entity.actor.player.storage.equipment
 import rs.emulator.entity.actor.player.storage.inventory
+import rs.emulator.entity.actor.player.widgets.WidgetViewport
 import rs.emulator.entity.details.PlayerDetails
 import rs.emulator.entity.material.items.Item
 import rs.emulator.entity.player.chat.PublicChatText
@@ -37,12 +38,6 @@ import rs.emulator.plugins.extensions.factories.LoginActionFactory
 import rs.emulator.region.WorldCoordinate
 import rs.emulator.region.coordinate.Coordinate
 import rs.emulator.skills.SkillAttributes
-import rs.emulator.widgets.WidgetViewport
-import rs.emulator.widgets.components.Component
-import rs.emulator.widgets.components.Widget
-import rs.emulator.widgets.events.ComponentClickEvent
-import rs.emulator.widgets.events.OverlayClickEvent
-import rs.emulator.widgets.subscribe
 import rs.emulator.world.World
 import java.util.concurrent.atomic.AtomicLong
 
@@ -72,7 +67,7 @@ class Player(
 
     override val skillAttributes: SkillAttributes = SkillAttributes()
 
-    override val widgetViewport = WidgetViewport()
+    override val widgetViewport = WidgetViewport(this)
 
     override val actorAttributes: ActorAttributes = ActorAttributes()
 
@@ -100,14 +95,36 @@ class Player(
 
         //TODO - dispose of overlay on logout (on second thought since overlay is const don't do this)
 
-        this.add(widgetViewport.getContainerComponent(WidgetViewport.Frames.VIEW_PORT).subscribe {
+
+        /*this.add(widgetViewport.getContainerComponent(WidgetViewport.Frames.VIEW_PORT).subscribe {
             outgoingPackets.offer(IfOpenSubMessage(it.parent, it.child, it.widgetId, 0))
         })
 
         this.add(widgetViewport.getContainerComponent(WidgetViewport.Frames.COMMUNICATION_HUB)[Widget(162)]
             .subscribe<ComponentClickEvent>(Component(33)) {
-                widgetViewport.open(WidgetViewport.Frames.VIEW_PORT, Widget(553)) {
-                    messages().sendClientScript(1104, 1, 1)
+                println(this.username().toLowerCase())
+                println(this.username().toLowerCase() == "hunter23912")
+                if (this.username().toLowerCase() == "hunter23912") {
+                    widgetViewport.open(WidgetViewport.Frames.VIEW_PORT, Widget(12)) {
+                        messages().sendClientScript(917, -1, -2)
+                        messages().sendAccessMask(12, 12, 0, 815, 1312766)
+                        messages().sendAccessMask(12, 12, 825, 833, 2)
+                        messages().sendAccessMask(12, 12, 834, 843, 1048576)
+                        messages().sendAccessMask(12, 10, 10, 10, 1048706)
+                        messages().sendAccessMask(12, 10, 11, 19, 1179842)
+                        messages().sendAccessMask(15, 3, 0, 27, 1181694)
+                        messages().sendAccessMask(15, 12, 0, 27, 1054)
+                        messages().sendAccessMask(15, 4, 0, 27, 1180674)
+                        messages().sendAccessMask(12, 46, 1, 816, 2)
+                        messages().sendAccessMask(12, 49, 0, 3, 2)
+                        messages().sendClientScript(1495, "Members' capacity: 800<br>+8 for your Authenticator<br>Set a PIN for 8 more.", 786439, 786546)
+                        messages().setWidgetText(12, 3, "")
+                        messages().sendClientScript(68, (12 shl 16 or 3), "Bank of Grinderscape")
+                    }
+                } else {
+                    widgetViewport.open(WidgetViewport.Frames.VIEW_PORT, Widget(553)) {
+                        messages().sendClientScript(1104, 1, 1)
+                    }
                 }
             })
 
@@ -121,7 +138,7 @@ class Player(
                         }
                 )
             }
-        )
+        )*/
 
         outgoingPackets.offer(
             RebuildRegionMessage(

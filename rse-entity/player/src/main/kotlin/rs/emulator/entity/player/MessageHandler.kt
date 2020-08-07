@@ -28,6 +28,15 @@ class MessageHandler(val player: Player) : AbstractMessageHandler() {
         )
     }
 
+    override fun setWidgetText(widgetId: Int, defChildId: Int, text: String) {
+        player.outgoingPackets.offer(
+            IfSetTextMessage(
+                (widgetId shl 16) or defChildId,
+                text
+            )
+        )
+    }
+
     override fun sendOpenOverlay(id: Int) {
         player.outgoingPackets.offer(IfOpenOverlayMessage(id))
     }
@@ -53,6 +62,18 @@ class MessageHandler(val player: Player) : AbstractMessageHandler() {
                 messageType,
                 player.displayName(),
                 message
+            )
+        )
+    }
+
+    override fun sendAccessMask(widgetId: Int, defChildId: Int, minCs2ChildId: Int, maxCs2ChildId: Int, mask: Int) {
+        player.outgoingPackets.offer(
+            AccessMaskMessage(
+                widgetId,
+                defChildId,
+                minCs2ChildId,
+                maxCs2ChildId,
+                mask
             )
         )
     }

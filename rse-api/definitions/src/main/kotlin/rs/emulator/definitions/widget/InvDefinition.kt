@@ -1,4 +1,4 @@
-package rs.emulator.cache.definition.widget.inv
+package rs.emulator.definitions.widget
 
 import rs.emulator.definitions.Definition
 
