@@ -1,7 +1,5 @@
 package rs.emulator.definitions
 
-import rs.emulator.definitions.Definition
-
 /**
  *
  * @author Chk

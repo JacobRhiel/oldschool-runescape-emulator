@@ -60,8 +60,9 @@ object PreUpdatePlayerSynchronizationTask: IEvent
     fun step(player: Player) {
         val movement = player.movement
         val steps = movement.steps
+        println("step count: " + steps.size)
         if (steps.peek() != null) {
-            var step = steps.poll()
+            val step = steps.poll()
             if (!movement.traversal.blocked(player.coordinate, step)) {
                 movement.walkStep = step
                 movement.delta = step.delta
@@ -70,7 +71,6 @@ object PreUpdatePlayerSynchronizationTask: IEvent
                 if (movement.running) {
                     if (steps.peek() != null) {
                         val tile = player.coordinate.add(step.delta)
-                        step = steps.poll()
                         if (!movement.traversal.blocked(tile, step)) {
                             movement.runStep = step
                             movement.delta = movement.delta.add(step.delta)
@@ -83,6 +83,10 @@ object PreUpdatePlayerSynchronizationTask: IEvent
                     }
                 }
             }
+            else
+            {
+                println("path blocked for tile: " + player.coordinate + ", step: $step")
+            }
         }
     }
 
@@ -94,10 +98,11 @@ object PreUpdatePlayerSynchronizationTask: IEvent
 
         val movement = player.movement
 
-        movement.lastCoordinate = player.coordinate
-
         if(player.coordinate == player.targetCoordinate)
+        {
+            player.targetCoordinate = null
             movement.clear()
+        }
         else if (movement.delta != Coordinate.EMPTY)
         {
             val from = player.coordinate
@@ -105,8 +110,6 @@ object PreUpdatePlayerSynchronizationTask: IEvent
             println("from: $from, to: $to")
             player.lastCoordinate.set(player.coordinate)
             player.coordinate.set(to.x, to.z, to.plane)
-            //player.syncInfo.addMaskFlag(PlayerUpdateFlag.MOVEMENT)
-            //bus.emit(Moved(player, from, player.tile))
         }
     }
 

@@ -149,8 +149,8 @@ class UpdatePlayerSyncEncoder : PacketEncoder<UpdatePlayerSyncMessage<Player>>()
                 println("teleport segment.")
 
             }
-            else if(player.movement.steps.peek() != null && (player.movement.walkStep != Direction.NONE/* ||
-                player.movement.runStep != Direction.NONE*/)
+            else if(player.movement.walkStep != Direction.NONE/* ||
+                player.movement.runStep != Direction.NONE*/
             )
             {
 
@@ -164,7 +164,7 @@ class UpdatePlayerSyncEncoder : PacketEncoder<UpdatePlayerSyncMessage<Player>>()
 
                 println("direction: ${direction.ordinal}")
 
-                builder.putBits(3, getPlayerWalkingDirection(direction.delta.x, direction.delta.z))//4 - run, 3 - walk
+                builder.putBits(3, direction.ordinal)//4 - run, 3 - walk
 
                 //if(!updateRequired)
                  //   update(builder, syncInformation, viewportPlayer, maskBuilder)

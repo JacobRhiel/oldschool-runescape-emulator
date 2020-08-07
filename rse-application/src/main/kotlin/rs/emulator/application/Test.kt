@@ -195,20 +195,6 @@ class Test : KoinComponent {
                         .startAsync()
                         .awaitHealthy()
 
-                    //definition().cacheConfigDefinitions<LocDefinition>()
-
-                    /*test.world.mapGrid.fetchRegion(12595)
-                    test.world.mapGrid.fetchRegion(12596)
-                    test.world.mapGrid.fetchRegion(12597)
-                    test.world.mapGrid.fetchRegion(12849)*/
-                    test.world.mapGrid.fetchRegion(12850)
-                    //test.world.mapGrid.fetchRegion(12851)
-                    /*test.world.mapGrid.fetchRegion(13105)
-                    test.world.mapGrid.fetchRegion(13106)
-                    test.world.mapGrid.fetchRegion(13107)*/
-
-                    println("finishing region")
-
                     System.gc()
 
                 }
