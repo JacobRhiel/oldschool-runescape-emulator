@@ -10,20 +10,22 @@ import rs.emulator.entity.material.items.Item
 object ItemProvider {
     inline fun <reified T : Item> provide(id : Int, amount : Int = 1) : T {
         val def = ItemDefinitionFactory.provide(id)
-        //val meta = ItemMetaDefinitionFactory.provide(id)
-        return if(def.equipSlot == -1) {
+        val meta = ItemMetaDefinitionFactory.provide(id)
+        return if (meta.equipment.slot.isEmpty()) {
             StandardItemFactory.create {
                 this.id = id
                 this.amount = amount
                 this.stackable = def.stackable
+                this.attributes["tradeable"] = meta.tradeable
             } as T
         } else {
             WearableItemFactory.create {
                 this.id = id
                 this.amount = amount
                 this.stackable = def.stackable
-                this.mainSlot = EquipmentSlot.bySlot(def.equipSlot)
+                this.mainSlot = EquipmentSlot.valueOf(meta.equipment.slot.toUpperCase())
                 this.secondarySlot = this.mainSlot
+                this.attributes["tradeable"] = meta.tradeable
             } as T
         }
     }

@@ -1,9 +1,10 @@
 package rs.emulator.plugin.commands
 
 import com.xenomachina.argparser.ArgParser
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.pf4j.Extension
 import rs.emulator.entity.actor.player.IPlayer
-import rs.emulator.entity.actor.player.storage.inventory
+import rs.emulator.entity.material.containers.inventory
 import rs.emulator.entity.material.items.Item
 import rs.emulator.entity.material.items.StandardItem
 import rs.emulator.entity.material.provider.ItemProvider
@@ -17,6 +18,7 @@ import rs.emulator.skills.LevelEvent
  *
  * @author javatar
  */
+@ExperimentalCoroutinesApi
 @Extension(plugins = ["COMMAND_PLUGIN"])
 class CommandExtension : CommandFactory {
 
@@ -31,11 +33,11 @@ class CommandExtension : CommandFactory {
                 println("Spawning item")
                 val item = ArgParser(args.toTypedArray()).parseInto(::SpawnItem)
                 val spawned: Item = ItemProvider.provide(item.id, item.amt)
-                player.inventory().add(spawned)
+                player.inventory().addItem(spawned)
             }
             "coins" -> {
                 val coins = ItemProvider.provide<StandardItem>(995, 2147000000)
-                player.inventory().add(coins)
+                player.inventory().addItem(coins)
             }
             "testAnim" -> {
                 val animation = 3864

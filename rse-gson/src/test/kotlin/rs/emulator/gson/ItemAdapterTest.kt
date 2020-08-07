@@ -1,13 +1,13 @@
 package rs.emulator.gson
 
 import com.google.gson.GsonBuilder
-import org.junit.jupiter.api.Test
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
+import rs.emulator.entity.material.containers.impl.Inventory
 import rs.emulator.entity.material.items.Item
 import rs.emulator.entity.material.items.StandardItem
 import rs.emulator.entity.material.items.Wearable
-import rs.emulator.entity.player.storage.containers.Inventory
 
 /**
  *
@@ -16,7 +16,7 @@ import rs.emulator.entity.player.storage.containers.Inventory
 
 class ItemAdapterTest {
 
-    @Test
+    @ExperimentalCoroutinesApi
     fun testAdapter() {
 
 
@@ -41,7 +41,7 @@ class ItemAdapterTest {
 
         val con = gson.fromJson(s, Inventory::class.java)
 
-        con.array.forEach {
+        con.elements.forEach {
             println(it)
         }
 

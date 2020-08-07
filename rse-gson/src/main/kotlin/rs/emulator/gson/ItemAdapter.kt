@@ -3,6 +3,8 @@ package rs.emulator.gson
 import com.google.gson.*
 import rs.emulator.entity.material.ItemData
 import rs.emulator.entity.material.items.Item
+import rs.emulator.entity.material.items.StandardItem
+import rs.emulator.entity.material.items.Wearable
 import java.lang.reflect.Type
 
 /**
@@ -18,8 +20,10 @@ class ItemAdapter : JsonDeserializer<Item>, JsonSerializer<Item> {
 
         val itemObj = obj.get("item_data").asJsonObject
         val id = itemObj.get("id").asInt
-        if (id == -1) {
+        if (id == -1 && clazz == StandardItem::class.java) {
             return ItemData.EMPTY
+        } else if (id == -1 && clazz == Wearable::class.java) {
+            return ItemData.EMPTY_WEARABLE
         }
         return context.deserialize(obj.get("item_data"), clazz)
     }

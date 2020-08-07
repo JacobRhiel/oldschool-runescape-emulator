@@ -1,6 +1,6 @@
 package rs.emulator.network.packet.message.outgoing
 
-import rs.emulator.entity.actor.player.storage.container.ItemContainer
+import rs.emulator.entity.material.containers.ItemContainer
 import rs.emulator.network.packet.message.GamePacketMessage
 import rs.emulator.packet.api.PacketType
 

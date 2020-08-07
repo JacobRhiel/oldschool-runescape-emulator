@@ -30,6 +30,14 @@ class SkillAttributes(attributeCount: Int = 23) {
     val levelUpProcessor = PublishProcessor.create<LevelEvent>()
     val attributeChangedProcessor = PublishProcessor.create<Skill>()
 
+    fun hasActualLevel(requirement: Int, skill: Skills): Boolean {
+        return skills[skill.statId].actualLevel >= requirement
+    }
+
+    fun hasFakeLevel(requirement: Int, skill: Skills): Boolean {
+        return skills[skill.statId].currentLevel >= requirement
+    }
+
     fun addExperienceModifier(
         id: Int,
         amount: Int,

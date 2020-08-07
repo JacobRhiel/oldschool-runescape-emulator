@@ -1,7 +1,7 @@
 package rs.emulator.entity.player
 
 import rs.emulator.entity.actor.player.messages.AbstractMessageHandler
-import rs.emulator.entity.actor.player.storage.container.ItemContainer
+import rs.emulator.entity.material.containers.ItemContainer
 import rs.emulator.network.packet.message.outgoing.*
 
 /**

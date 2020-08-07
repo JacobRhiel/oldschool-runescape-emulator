@@ -14,7 +14,7 @@ class UpdateInventoryPartialEncoder : PacketEncoder<UpdateInventoryPartialMessag
     override fun encode(message: UpdateInventoryPartialMessage, builder: GamePacketBuilder) {
         builder.put(DataType.INT, message.componentHash)
         builder.put(DataType.SHORT, message.containerKey)
-        message.container.array.forEachIndexed { index, item ->
+        message.container.elements.forEachIndexed { index, item ->
             if (item !== ItemData.EMPTY) {
                 builder.put(DataType.SHORT, item.id + 1)
                 builder.put(DataType.BYTE, 255.coerceAtMost(item.amount))

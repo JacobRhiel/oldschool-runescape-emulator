@@ -1,5 +1,6 @@
 package rs.emulator.entity.material.containers.impl
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
@@ -14,8 +15,13 @@ import rs.emulator.entity.material.items.Item
  * @author javatar
  */
 
-class Inventory : ItemContainer<Item>(Array(28) { ItemData.EMPTY }) {
+@ExperimentalCoroutinesApi
+class Inventory : ItemContainer<Item>(
+    93,
+    Array(28) { ItemData.EMPTY }
+) {
     override fun add(element: Item): Flow<ItemContainerEvent<Item>> = flow {
+        var dirty = false
         if (isFull()) {
             emit(FullContainerEvent(element))
             return@flow
@@ -30,6 +36,7 @@ class Inventory : ItemContainer<Item>(Array(28) { ItemData.EMPTY }) {
                     emit(event)
                     if (!event.ignored) {
                         elements[slot] = found
+                        dirty = true
                     }
                 } else {
                     slot = nextSlot
@@ -38,6 +45,7 @@ class Inventory : ItemContainer<Item>(Array(28) { ItemData.EMPTY }) {
                     emit(event)
                     if (!event.ignored) {
                         elements[event.slot] = item
+                        dirty = true
                     }
                 }
             }
@@ -47,7 +55,14 @@ class Inventory : ItemContainer<Item>(Array(28) { ItemData.EMPTY }) {
                         emit(FullContainerEvent(element.copy(element.amount - it)))
                         return@repeat
                     }
-                    emitAll(add(element.copy(1)))
+                    emitAll(
+                        add(element.copy(1))/*.ignoreWhile { e ->
+                        return@ignoreWhile if(e is UpdateContainerStateEvent) {
+                            dirty = true
+                            true
+                        } else false
+                    }*/
+                    )
                 }
             }
             else -> {
@@ -57,12 +72,17 @@ class Inventory : ItemContainer<Item>(Array(28) { ItemData.EMPTY }) {
                 emit(event)
                 if (!event.ignored) {
                     elements[event.slot] = item
+                    dirty = true
                 }
             }
+        }
+        if (dirty) {
+            emit(UpdateContainerStateEvent(this@Inventory, ItemData.EMPTY))
         }
     }
 
     override fun remove(element: Item): Flow<ItemContainerEvent<Item>> = flow {
+        var dirty = false
         if (isEmpty()) {
             emit(EmptyContainerEvent(element))
             return@flow
@@ -85,11 +105,19 @@ class Inventory : ItemContainer<Item>(Array(28) { ItemData.EMPTY }) {
                         } else {
                             found
                         }
+                        dirty = true
                     }
                 }
                 element.amount > 1 -> {
                     repeat(element.amount) {
-                        emitAll(remove(element.copy(1)))
+                        emitAll(
+                            remove(element.copy(1))/*.ignoreWhile { e ->
+                            return@ignoreWhile if(e is UpdateContainerStateEvent) {
+                                dirty = true
+                                true
+                            } else false
+                        }*/
+                        )
                     }
                 }
                 else -> {
@@ -98,11 +126,15 @@ class Inventory : ItemContainer<Item>(Array(28) { ItemData.EMPTY }) {
                     emit(event)
                     if (!event.ignored) {
                         elements[event.slot] = ItemData.EMPTY
+                        dirty = true
                     }
                 }
             }
         } else {
             emit(NoSuchItemContainerEvent(element))
+        }
+        if (dirty) {
+            emit(UpdateContainerStateEvent(this@Inventory, ItemData.EMPTY))
         }
     }
 }

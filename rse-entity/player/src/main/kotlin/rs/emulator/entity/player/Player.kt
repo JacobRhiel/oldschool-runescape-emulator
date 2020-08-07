@@ -6,6 +6,11 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.internal.disposables.DisposableContainer
 import io.reactivex.processors.PublishProcessor
 import io.reactivex.rxkotlin.toObservable
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import org.koin.core.KoinComponent
 import org.koin.core.get
 import rs.dusk.engine.path.Finder
@@ -15,25 +20,19 @@ import rs.emulator.entity.actor.attributes.ActorAttributes
 import rs.emulator.entity.actor.player.IPlayer
 import rs.emulator.entity.actor.player.messages.AbstractMessageHandler
 import rs.emulator.entity.actor.player.messages.IMessages
-import rs.emulator.entity.actor.player.storage.IItemContainerManager
-import rs.emulator.entity.actor.player.storage.equipment
-import rs.emulator.entity.actor.player.storage.inventory
 import rs.emulator.entity.actor.player.widgets.WidgetViewport
 import rs.emulator.entity.details.PlayerDetails
-import rs.emulator.entity.material.items.Item
+import rs.emulator.entity.material.containers.ItemContainerManager
+import rs.emulator.entity.material.containers.impl.Equipment
+import rs.emulator.entity.material.containers.impl.Inventory
+import rs.emulator.entity.material.containers.inventory
 import rs.emulator.entity.player.chat.PublicChatText
-import rs.emulator.entity.player.storage.ItemContainerManager
-import rs.emulator.entity.player.storage.containers.Bank
-import rs.emulator.entity.player.storage.containers.Equipment
-import rs.emulator.entity.player.storage.containers.Inventory
 import rs.emulator.entity.player.update.flag.PlayerUpdateFlag
 import rs.emulator.entity.player.update.sync.SyncInformation
 import rs.emulator.entity.player.viewport.Viewport
 import rs.emulator.network.packet.message.outgoing.*
 import rs.emulator.packet.api.IPacketMessage
 import rs.emulator.plugins.RSPluginManager
-import rs.emulator.plugins.extensions.factories.ContainerRegistrationException
-import rs.emulator.plugins.extensions.factories.ItemContainerFactory
 import rs.emulator.plugins.extensions.factories.LoginActionFactory
 import rs.emulator.region.WorldCoordinate
 import rs.emulator.region.coordinate.Coordinate
@@ -71,6 +70,8 @@ class Player(
 
     override val actorAttributes: ActorAttributes = ActorAttributes()
 
+    override val containerManager: ItemContainerManager = ItemContainerManager()
+
     override var energy: Int by actorAttributes.Int(100).markPersistent().apply {
         add(this.changeListener.subscribe {
             outgoingPackets.offer(UpdateRunEnergyMessage(it))
@@ -94,51 +95,6 @@ class Player(
     fun onLogin() {
 
         //TODO - dispose of overlay on logout (on second thought since overlay is const don't do this)
-
-
-        /*this.add(widgetViewport.getContainerComponent(WidgetViewport.Frames.VIEW_PORT).subscribe {
-            outgoingPackets.offer(IfOpenSubMessage(it.parent, it.child, it.widgetId, 0))
-        })
-
-        this.add(widgetViewport.getContainerComponent(WidgetViewport.Frames.COMMUNICATION_HUB)[Widget(162)]
-            .subscribe<ComponentClickEvent>(Component(33)) {
-                println(this.username().toLowerCase())
-                println(this.username().toLowerCase() == "hunter23912")
-                if (this.username().toLowerCase() == "hunter23912") {
-                    widgetViewport.open(WidgetViewport.Frames.VIEW_PORT, Widget(12)) {
-                        messages().sendClientScript(917, -1, -2)
-                        messages().sendAccessMask(12, 12, 0, 815, 1312766)
-                        messages().sendAccessMask(12, 12, 825, 833, 2)
-                        messages().sendAccessMask(12, 12, 834, 843, 1048576)
-                        messages().sendAccessMask(12, 10, 10, 10, 1048706)
-                        messages().sendAccessMask(12, 10, 11, 19, 1179842)
-                        messages().sendAccessMask(15, 3, 0, 27, 1181694)
-                        messages().sendAccessMask(15, 12, 0, 27, 1054)
-                        messages().sendAccessMask(15, 4, 0, 27, 1180674)
-                        messages().sendAccessMask(12, 46, 1, 816, 2)
-                        messages().sendAccessMask(12, 49, 0, 3, 2)
-                        messages().sendClientScript(1495, "Members' capacity: 800<br>+8 for your Authenticator<br>Set a PIN for 8 more.", 786439, 786546)
-                        messages().setWidgetText(12, 3, "")
-                        messages().sendClientScript(68, (12 shl 16 or 3), "Bank of Grinderscape")
-                    }
-                } else {
-                    widgetViewport.open(WidgetViewport.Frames.VIEW_PORT, Widget(553)) {
-                        messages().sendClientScript(1104, 1, 1)
-                    }
-                }
-            })
-
-        this.add(
-            widgetViewport.overlay.subscribeTo<OverlayClickEvent>(Component(37)) {
-                this.add(
-                    widgetViewport.getContainerComponent(WidgetViewport.Frames.TABS)[Widget(182)]
-                        .subscribe<ComponentClickEvent>(Component(8)) {
-                            //TODO - logout player
-                            logout()
-                        }
-                )
-            }
-        )*/
 
         outgoingPackets.offer(
             RebuildRegionMessage(
@@ -294,7 +250,7 @@ class Player(
         }
 
         skillAttributes.forceSync()
-        containerManager().inventory()?.forceSync()
+        //containerManager().inventory()?.forceSync()
         val coords = WorldCoordinate.from30BitHash(details.coordinate)
         coordinate.set(coords.x, coords.z, coords.plane)
         pendingTeleport = coordinate
@@ -312,16 +268,6 @@ class Player(
 
     }
 
-    private val itemContainerManager = ItemContainerManager().apply {
-        RSPluginManager.getExtensions(ItemContainerFactory::class.java).forEach {
-            if (this.containers.containsKey(it.containerKey)) {
-                throw ContainerRegistrationException(it.containerKey)
-            } else {
-                this.containers[it.containerKey] = it.registerItemContainer(this@Player)
-            }
-        }
-    }
-
     override fun dispose() {
         //TODO - logout code
         movement.clear()
@@ -332,11 +278,10 @@ class Player(
 
     override fun save() {
         val serv = get<JDBCPoolingService>()
-        val con = containerManager()
-        containerManager().inventory()?.let { details.inventory = it.toString() }
-        containerManager().equipment()?.let { details.equipment = it.toString() }
+        val con = containerManager
+        con.inventory.let { details.inventory = it.toString() }
+        con.equipment.let { details.equipment = it.toString() }
         details.coordinate = coordinate.as30BitInteger
-        con.container<Item>(95)?.let { details.bank = it.toString() }
         details.attributes.putAll(actorAttributes.attributes)
         serv.withTransaction { s ->
             s.update(details)
@@ -344,17 +289,24 @@ class Player(
         }
     }
 
+    @ExperimentalCoroutinesApi
     fun load() {
         val gson = get<Gson>()
-        containerManager().register(93, gson.fromJson(details.inventory, Inventory::class.java)) {
-            syncBlock {
-                onNext {
-                    messages().sendItemContainerFull(149, 0, 93, this@register)
-                }
-            }
-        }
-        containerManager().register(94, gson.fromJson(details.inventory, Equipment::class.java))
-        containerManager().register(95, gson.fromJson(details.inventory, Bank::class.java))
+
+        val inv: Inventory? = gson.fromJson(details.inventory, Inventory::class.java)
+        val equ: Equipment? = gson.fromJson(details.equipment, Equipment::class.java)
+        //val bak = gson.fromJson(details.bank, Bank::class.java)
+
+        containerManager.registerContainer(93, inv ?: Inventory())
+        containerManager.registerContainer(94, equ ?: Equipment())
+
+        inventory().containerState.onEach {
+            messages().sendItemContainerFull(149, 0, 93, it.container)
+        }.launchIn(CoroutineScope(Dispatchers.Default))
+        /*equipment().containerState.onEach {
+            messages().sendItemContainerFull(387, 0, 94, it.container)
+        }.launchIn(CoroutineScope(Dispatchers.Default))*/
+
         actorAttributes.attributes.putAll(details.attributes)
     }
 
@@ -366,10 +318,6 @@ class Player(
     override fun username(): String = details.username
 
     override fun displayName(): String = details.displayName
-
-    override fun containerManager(): IItemContainerManager {
-        return itemContainerManager
-    }
 
     override fun messages(): AbstractMessageHandler {
         return messageHandler

@@ -4,9 +4,8 @@ import rs.emulator.collections.varbits.VarbitList
 import rs.emulator.database.service.JDBCPoolingService
 import rs.emulator.entity.details.PlayerDetails
 import rs.emulator.entity.details.Privilege
-import rs.emulator.entity.player.storage.containers.Bank
-import rs.emulator.entity.player.storage.containers.Equipment
-import rs.emulator.entity.player.storage.containers.Inventory
+import rs.emulator.entity.material.containers.impl.Equipment
+import rs.emulator.entity.material.containers.impl.Inventory
 import rs.emulator.region.WorldCoordinate
 import rs.emulator.service.login.LoginStatus
 import rs.emulator.service.login.network.message.LoginRequestMessage
@@ -32,7 +31,7 @@ class LoginWorker(val request: LoginRequestMessage) : Runnable {
             isSystemAdmin = false
         ),
         Inventory().toString(),
-        Bank().toString(),
+        "",
         Equipment().toString(),
         VarbitList().toString(),
         false,

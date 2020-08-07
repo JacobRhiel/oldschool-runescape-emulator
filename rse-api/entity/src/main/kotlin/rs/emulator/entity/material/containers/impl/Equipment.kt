@@ -17,7 +17,7 @@ import rs.emulator.entity.material.items.Wearable
  * @author javatar
  */
 
-class Equipment : ItemContainer<Wearable>(Array(14) { ItemData.EMPTY_WEARABLE }) {
+class Equipment : ItemContainer<Wearable>(94, Array(14) { ItemData.EMPTY_WEARABLE }) {
     override fun add(element: Wearable): Flow<ItemContainerEvent<Wearable>> = flow {
         val mainSlot = element.mainSlot.slot
         val secondarySlot = element.secondarySlot.slot

@@ -1,5 +1,6 @@
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -11,11 +12,13 @@ import rs.emulator.entity.material.containers.events.impl.RemoveContainerEvent
 import rs.emulator.entity.material.containers.events.impl.StackedContainerEvent
 import rs.emulator.entity.material.containers.impl.Equipment
 import rs.emulator.entity.material.containers.impl.Inventory
+import rs.emulator.entity.material.containers.invalidateState
 import rs.emulator.entity.material.containers.toContainer
 import rs.emulator.entity.material.containers.toEquipment
 import rs.emulator.entity.material.items.StandardItem
 import rs.emulator.entity.material.items.Wearable
 
+@ExperimentalCoroutinesApi
 class ContainerTest {
 
     @Test
@@ -29,6 +32,7 @@ class ContainerTest {
             .filterIsInstance<AddContainerEvent<*>>()
             .onEach { println("Add $it") }
             .launchIn(CoroutineScope(Dispatchers.Unconfined))
+
 
         assert(inv.elements.count { it.id == 4151 } == 2)
 
@@ -124,6 +128,22 @@ class ContainerTest {
             .launchIn(CoroutineScope(Dispatchers.Unconfined))
 
         assert(e.elements[EquipmentSlot.WEAPON.slot].id == 4151)
+
+    }
+
+    @Test
+    fun stateTest() {
+
+        val inv = Inventory()
+
+        inv.containerState.onEach {
+            println("Updating state of container ${it.container.key}")
+        }.launchIn(CoroutineScope(Dispatchers.Unconfined))
+
+        inv.add(Wearable(id = 4151))
+            .onEach { println(it) }
+            .invalidateState()
+            .launchIn(CoroutineScope(Dispatchers.Unconfined))
 
     }
 

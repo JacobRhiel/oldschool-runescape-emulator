@@ -30,6 +30,35 @@ object WidgetRegistration {
                 it.source.logout()
             }
         }
+
+        registerWidget(162) {
+            addActionComponent(33) {
+                val p = it.source
+                if (p.username() == "hunter23912") {
+                    p.widgetViewport.open(12, WidgetViewport.OverlayFrame.VIEW_PORT)
+                    p.messages().sendClientScript(917, -1, -2)
+                    p.messages().sendAccessMask(12, 12, 0, 815, 1312766)
+                    p.messages().sendAccessMask(12, 12, 825, 833, 2)
+                    p.messages().sendAccessMask(12, 12, 834, 843, 1048576)
+                    p.messages().sendAccessMask(12, 10, 10, 10, 1048706)
+                    p.messages().sendAccessMask(12, 10, 11, 19, 1179842)
+                    p.messages().sendAccessMask(15, 3, 0, 27, 1181694)
+                    p.messages().sendAccessMask(15, 12, 0, 27, 1054)
+                    p.messages().sendAccessMask(15, 4, 0, 27, 1180674)
+                    p.messages().sendAccessMask(12, 46, 1, 816, 2)
+                    p.messages().sendAccessMask(12, 49, 0, 3, 2)
+                    p.messages().sendClientScript(
+                        1495,
+                        "Members' capacity: 800<br>+8 for your Authenticator<br>Set a PIN for 8 more.",
+                        786439,
+                        786546
+                    )
+                } else {
+
+                }
+            }
+        }
+
     }
 
     fun registerWidget(id: Int, widget: Widget) {

@@ -2,7 +2,6 @@ package rs.emulator.world.repository.task
 
 import rs.emulator.entity.player.Player
 import rs.emulator.network.packet.message.outgoing.RebuildRegionMessage
-import rs.emulator.region.WorldCoordinate
 import rs.emulator.region.coordinate.Coordinate
 import rs.emulator.service.event.IEvent
 import rs.emulator.world.repository.WorldRepository
@@ -60,7 +59,7 @@ object PreUpdatePlayerSynchronizationTask: IEvent
     fun step(player: Player) {
         val movement = player.movement
         val steps = movement.steps
-        println("step count: " + steps.size)
+        //println("step count: " + steps.size)
         if (steps.peek() != null) {
             val step = steps.poll()
             if (!movement.traversal.blocked(player.coordinate, step)) {

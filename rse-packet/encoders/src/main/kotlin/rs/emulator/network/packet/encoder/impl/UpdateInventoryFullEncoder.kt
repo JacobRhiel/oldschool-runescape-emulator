@@ -20,9 +20,9 @@ class UpdateInventoryFullEncoder : PacketEncoder<UpdateInventoryFullMessage>()
 
         builder.put(DataType.SHORT, message.containerKey)
 
-        builder.put(DataType.SHORT, message.container.array.size)
+        builder.put(DataType.SHORT, message.container.elements.size)
 
-        message.container.array.forEach { item ->
+        message.container.elements.forEach { item ->
             if (item.id != -1) {
                 builder.put(DataType.BYTE, 255.coerceAtMost(item.amount))
                 builder.put(DataType.SHORT, DataOrder.LITTLE, item.id + 1)
