@@ -37,6 +37,7 @@ import rs.emulator.network.world.service.WorldService
 import rs.emulator.plugins.RSPluginManager
 import rs.emulator.service.login.worker.LoginWorkerSchedule
 import rs.emulator.service.login.worker.LoginWorkerService
+import rs.emulator.utilities.contexts.scopes.ActorScope
 import rs.emulator.world.World
 import rs.emulator.world.WorldAccess
 import rs.emulator.world.WorldActivity
@@ -148,6 +149,8 @@ class Test : KoinComponent {
                     engine.fetchExecutor().asCoroutineDispatcher()
 
                 }
+
+                single { ActorScope() }
 
             }
 

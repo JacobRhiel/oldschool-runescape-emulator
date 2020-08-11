@@ -9,6 +9,7 @@ import io.reactivex.rxkotlin.toObservable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
@@ -97,6 +98,8 @@ class Player(
     var pendingGraphicHeight: Int = 0
 
     var pendingGraphicDelay: Int = 0
+
+    var containerJob : Job? = null
 
     fun onLogin() {
 

@@ -15,6 +15,6 @@ data class Equipment(
     val melee_strength: Int,
     val prayer: Int,
     val ranged_strength: Int,
-    val requirements: Requirements,
+    val requirements: Requirements = Requirements(1, 1, 1, 1, 1),
     val slot: String
 )

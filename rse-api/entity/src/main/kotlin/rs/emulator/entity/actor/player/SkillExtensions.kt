@@ -27,6 +27,8 @@ fun SkillManager.hasRequirementsFor(wearable: Wearable, onFailure : (String) -> 
     val meta = ItemMetaDefinitionFactory.provide(wearable.id)
     val reqs = meta.equipment.requirements
     var canEquip = true
+    if(reqs == null)
+        return true
     if(!hasStaticLevel(Skills.ATTACK, reqs.attack)) {
         onFailure(Skills.ATTACK.wieldRequirementMessage(reqs.attack, meta.wiki_name))
         canEquip = false

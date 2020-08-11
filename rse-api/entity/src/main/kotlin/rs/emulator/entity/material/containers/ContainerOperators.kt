@@ -32,6 +32,15 @@ fun <I : Item> Flow<ItemContainerEvent<I>>.settings(block: (MaterialAttributes) 
         }
     }
 
+inline fun <reified E : ItemContainerEvent<*>> Flow<ItemContainerEvent<*>>.onEachEvent(crossinline onEach : suspend FlowCollector<ItemContainerEvent<*>>.(E) -> Unit) : Flow<ItemContainerEvent<*>> = flow {
+    this@onEachEvent.collect {
+        if(it is E) {
+            this.onEach(it)
+        }
+        emit(it)
+    }
+}
+
 @ExperimentalCoroutinesApi
 fun Flow<ItemContainerEvent<Item>>.invalidateState() = flow {
     this@invalidateState.collect {
