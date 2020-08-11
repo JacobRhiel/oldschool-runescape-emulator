@@ -5,6 +5,8 @@ import kotlin.math.pow
 
 object ExperienceMath {
 
+    val MAX_EXPERIENCE = 200000000
+
     val LEVEL_EXPERIENCES = IntArray(127).apply {
         var points = 0.0
         IntRange(0, 126).forEach {

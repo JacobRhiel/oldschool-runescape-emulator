@@ -14,6 +14,7 @@ interface IPlayerDetails {
     var inventory: String
     var bank: String
     var equipment: String
+    var skills: String
     var varbits: String
     var banned: Boolean
     var muted: Boolean

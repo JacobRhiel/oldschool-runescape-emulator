@@ -37,7 +37,8 @@ class LoginWorker(val request: LoginRequestMessage) : Runnable {
         false,
         false,
         WorldCoordinate(x = 3222, z = 3218).as30BitInteger,
-        mutableMapOf()
+        mutableMapOf(),
+        ""
     )
 
     fun execute(): Pair<LoginStatus, PlayerDetails> {

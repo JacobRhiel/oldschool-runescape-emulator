@@ -9,7 +9,9 @@ import io.reactivex.rxkotlin.toObservable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import org.koin.core.KoinComponent
 import org.koin.core.get
@@ -30,6 +32,8 @@ import rs.emulator.entity.player.chat.PublicChatText
 import rs.emulator.entity.player.update.flag.PlayerUpdateFlag
 import rs.emulator.entity.player.update.sync.SyncInformation
 import rs.emulator.entity.player.viewport.Viewport
+import rs.emulator.entity.skills.Skill
+import rs.emulator.entity.skills.SkillManager
 import rs.emulator.network.packet.message.outgoing.*
 import rs.emulator.packet.api.IPacketMessage
 import rs.emulator.plugins.RSPluginManager
@@ -40,6 +44,7 @@ import rs.emulator.skills.SkillAttributes
 import rs.emulator.world.World
 import java.util.concurrent.atomic.AtomicLong
 
+@ExperimentalCoroutinesApi
 class Player(
     index: Int,
     val outgoingPackets: PublishProcessor<IPacketMessage>,
@@ -64,7 +69,8 @@ class Player(
 
     override val searchPattern: Finder = pathFinder.bfs
 
-    override val skillAttributes: SkillAttributes = SkillAttributes()
+    @ExperimentalCoroutinesApi
+    override val skillManager: SkillManager = SkillManager()
 
     override val widgetViewport = WidgetViewport(this)
 
@@ -239,17 +245,20 @@ class Player(
         outgoingPackets.offer(UnknownMessage(true))
         outgoingPackets.offer(UpdateRunEnergyMessage(energy))
 
-        skillAttributes.attributeChangedProcessor.subscribe {
-            outgoingPackets.offer(
-                UpdateSkillMessage(
-                    it.id,
-                    it.currentLevel,
-                    it.experience
+        skillManager.skillState.onEach { it ->
+            it.forEach {
+                outgoingPackets.offer(
+                    UpdateSkillMessage(
+                        it.id,
+                        it.level,
+                        it.experience
+                    )
                 )
-            )
-        }
+            }
+        }.launchIn(CoroutineScope(Dispatchers.Default))
 
-        skillAttributes.forceSync()
+        skillManager.invalidateSkills()
+
         //containerManager().inventory()?.forceSync()
         val coords = WorldCoordinate.from30BitHash(details.coordinate)
         coordinate.set(coords.x, coords.z, coords.plane)
@@ -261,11 +270,10 @@ class Player(
             }
         })
 
-        RSPluginManager.getExtensions<LoginActionFactory>()
-            .toObservable()
+        flowOf(*RSPluginManager.getExtensions<LoginActionFactory>().toTypedArray())
             .map { it.registerLoginAction(this) }
-            .subscribe { it.onLogin(this) }
-
+            .onEach { it.onLogin(this) }
+            .launchIn(CoroutineScope(Dispatchers.Unconfined))
     }
 
     override fun dispose() {
@@ -281,6 +289,7 @@ class Player(
         val con = containerManager
         con.inventory.let { details.inventory = it.toString() }
         con.equipment.let { details.equipment = it.toString() }
+        details.skills = skillManager.toString()
         details.coordinate = coordinate.as30BitInteger
         details.attributes.putAll(actorAttributes.attributes)
         serv.withTransaction { s ->
@@ -306,6 +315,14 @@ class Player(
         /*equipment().containerState.onEach {
             messages().sendItemContainerFull(387, 0, 94, it.container)
         }.launchIn(CoroutineScope(Dispatchers.Default))*/
+
+        if (details.skills.isNotEmpty()) {
+            val skills = gson.fromJson(details.skills, Array<Skill>::class.java)
+            skills.forEach {
+                skillManager.skills[it.id] = it
+            }
+        }
+
 
         actorAttributes.attributes.putAll(details.attributes)
     }

@@ -4,4 +4,5 @@ tasks.withType<Test> {
 
 dependencies {
     api(project(":rse-api:reactive"))
+    api(project(":rse-utilities"))
 }

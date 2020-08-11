@@ -13,6 +13,7 @@ import rs.emulator.plugin.commands.impl.SpawnItem
 import rs.emulator.plugins.extensions.factories.CommandFactory
 import rs.emulator.skills.ExperienceEvent
 import rs.emulator.skills.LevelEvent
+import rs.emulator.skills.math.ExperienceMath
 
 /**
  *
@@ -45,13 +46,17 @@ class CommandExtension : CommandFactory {
             }
             "set-skill" -> {
                 val skill = ArgParser(args.toTypedArray()).parseInto(::SetSkillAttribute)
-                player.skillAttributes.setAttribute(
-                    if (skill.exp != 0) ExperienceEvent(skill.id, skill.exp, skill.exp)
-                    else null,
-                    if (skill.lvl != 0) LevelEvent(skill.id, skill.lvl, skill.lvl)
-                    else null,
-                    skill.show
-                )
+                if(skill.lvl <= 99) {
+                    player.skillManager.skills[skill.id].staticLevel = skill.lvl
+                    player.skillManager.skills[skill.id].level = skill.lvl
+                    player.skillManager.skills[skill.id].experience = ExperienceMath.xpForLevel(skill.lvl)
+                } else {
+                    val lvl = ExperienceMath.levelForXp(skill.lvl.toDouble())
+                    player.skillManager.skills[skill.id].staticLevel = lvl
+                    player.skillManager.skills[skill.id].level = lvl
+                    player.skillManager.skills[skill.id].experience = skill.lvl
+                }
+                player.skillManager.skillState.value = listOf(player.skillManager.skills[skill.id])
             }
         }
 

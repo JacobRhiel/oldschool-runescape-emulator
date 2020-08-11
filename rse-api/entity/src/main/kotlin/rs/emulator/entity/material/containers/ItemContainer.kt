@@ -23,8 +23,6 @@ import rs.emulator.utilities.koin.get
 @ExperimentalCoroutinesApi
 abstract class ItemContainer<I : Item>(val key: Int, val elements: Array<I>) : Container<I, ItemContainerEvent<I>> {
 
-    private var resetState = false
-
     val nextSlot: Int
         get() = elements.indexOfFirst { it === ItemData.EMPTY }
     val attributes = MaterialAttributes()

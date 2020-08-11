@@ -10,6 +10,7 @@ import rs.emulator.utilities.koin.get
 
 class MaterialAttributes(private val _map: MutableMap<String, Any> = mutableMapOf()) {
 
+    @Transient
     val map: Map<String, Any> = _map
 
     operator fun set(key: String, value: Any) {

@@ -25,7 +25,7 @@ class ObjMetaDataDefinitionGenerator : MetaDataDefinitionGenerator<ObjMetaDataDe
             object : TypeToken<HashMap<Int, ObjMetaDataDefinition>>(){}.type
         )
 
-        return map[id]!!
+        return map[id] ?: throw Error("Meta data not found for item $id")
 
     }
 

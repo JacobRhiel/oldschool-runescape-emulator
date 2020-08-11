@@ -44,5 +44,8 @@ open class PlayerDetails(
     @ElementCollection
     @MapKeyColumn(name = "key")
     @Column(name = "attributes")
-    override var attributes: MutableMap<String, String>
+    override var attributes: MutableMap<String, String>,
+    @Type(type = "text")
+    @Column(name = "skills")
+    override var skills: String
 ) : IPlayerDetails, Entry
