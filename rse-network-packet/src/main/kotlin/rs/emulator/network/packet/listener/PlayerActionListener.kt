@@ -35,7 +35,7 @@ class PlayerActionListener : GamePacketListener<PlayerActionMessage> {
                         it.handlePlayerAction(player, otherPlayer, message.option)
                     }, {
                         player.messages().ofType<IWidgetMessages>()
-                            .sendChatMessage("Nothing interesting happens.", 0)
+                            .sendChatMessage("Nothing interesting happens.")
                     })
                     .dispose()
             }

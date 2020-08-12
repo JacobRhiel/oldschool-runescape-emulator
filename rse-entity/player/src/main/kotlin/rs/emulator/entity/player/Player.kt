@@ -272,6 +272,9 @@ class Player(
             }
         })
 
+        widgetViewport.open(149, WidgetViewport.OverlayFrame.TABS)
+        widgetViewport.open(162, WidgetViewport.OverlayFrame.COMMUNICATION_HUB)
+
         flowOf(*RSPluginManager.getExtensions<LoginActionFactory>().toTypedArray())
             .map { it.registerLoginAction(this) }
             .onEach { it.onLogin(this) }
@@ -315,8 +318,8 @@ class Player(
             messages().sendItemContainerFull(149, 0, 93, it.container)
         }.launchIn(CoroutineScope(Dispatchers.Default))
         equipment().containerState.onEach {
-            //messages().sendItemContainerFull(387, 0, 94, it.container)
-            //TODO - flag appearance update and update interfaces
+            messages().sendItemContainerFull(-1, -1, 94, it.container)
+            syncInfo.addMaskFlag(PlayerUpdateFlag.APPEARANCE)
         }.launchIn(CoroutineScope(Dispatchers.Default))
 
         if (details.skills.isNotEmpty()) {

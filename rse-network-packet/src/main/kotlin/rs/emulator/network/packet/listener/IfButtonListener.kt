@@ -5,6 +5,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import rs.emulator.Repository
 import rs.emulator.cache.definition.widget.enum.EnumDefinition
+import rs.emulator.entity.actor.player.messages.chat.ChatMessageType
 import rs.emulator.entity.player.Player
 import rs.emulator.network.packet.message.incoming.IfButtonMessage
 import rs.emulator.network.packet.message.outgoing.*
@@ -41,7 +42,7 @@ class IfButtonListener : GamePacketListener<IfButtonMessage> {
 
                     wait(5)
 
-                    player.messageHandler.sendChatMessage("second", 0)
+                    player.messageHandler.sendChatMessage("second")
 
                 }
             }
@@ -135,37 +136,17 @@ class IfButtonListener : GamePacketListener<IfButtonMessage> {
                     )
                 )
 
-                player.outgoingPackets.offer(
-                    GameMessageMessage(
-                        0,
-                        username = player.username(),
-                        message = "Welcome to GrinderScape."
-                    )
-                )
+                player.messages().sendChatMessage("Welcome to Grinderscape.", ChatMessageType.WELCOME)
+
             }
 
         } else {
 
             if (player.widgetViewport.isWidgetActive(interfaceId)) {
-                WidgetRegistration.fireActionEvent(player, interfaceId, component, message.slot, message.item)
+                WidgetRegistration.fireActionEvent(player, interfaceId, component, message.slot, message.item, option)
                     .launchIn(CoroutineScope(Dispatchers.Default))
             }
 
-            /*if(player.widgetViewport.rootWidget[interfaceId].component.id == component) {
-
-            }
-
-            player.messagesFromType<IWidgetMessages>()
-                .sendChatMessage("Opening ${comp.id} - ${comp.active}")
-
-            if (comp.active) {
-                comp.onNext(
-                    ComponentClickEvent(
-                        comp,
-                        option
-                    )
-                )
-            }*/
             println("Unhandled button action: [component=[$interfaceId:$component], option=$option, slot=${message.slot}, item=${message.item}]")
         }
     }

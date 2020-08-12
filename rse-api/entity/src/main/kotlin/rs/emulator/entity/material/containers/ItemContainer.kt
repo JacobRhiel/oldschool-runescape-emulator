@@ -10,6 +10,7 @@ import rs.emulator.collections.Container
 import rs.emulator.entity.material.ItemData
 import rs.emulator.entity.material.attributes.MaterialAttributes
 import rs.emulator.entity.material.containers.events.ItemContainerEvent
+import rs.emulator.entity.material.containers.events.impl.SwapSlotsContainerEvent
 import rs.emulator.entity.material.items.Item
 import rs.emulator.utilities.contexts.scopes.ActorScope
 import rs.emulator.utilities.koin.get
@@ -36,6 +37,17 @@ abstract class ItemContainer<I : Item>(val key: Int, val elements: Array<I>) : C
 
     fun updateState() {
         containerState.value = containerState.value.invalidate()
+    }
+
+    fun swapSlots(fromSlot : Int, toSlot : Int) = flow {
+        val fromItem = elements[fromSlot]
+        val toItem = elements[toSlot]
+        val event = SwapSlotsContainerEvent(toItem, fromItem, toSlot, fromSlot)
+        emit(event)
+        if(!event.ignored) {
+            elements[toSlot] = fromItem
+            elements[fromSlot] = toItem
+        }
     }
 
     fun removeAll() = flow {

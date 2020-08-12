@@ -1,8 +1,16 @@
 package rs.emulator.network.packet.listener
 
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import rs.emulator.entity.actor.player.messages.IWidgetMessages
 import rs.emulator.entity.player.Player
 import rs.emulator.network.packet.message.incoming.ReportAbuseMessage
+import rs.emulator.plugins.RSPluginManager
+import rs.emulator.plugins.extensions.factories.ReportAbuseFactory
+import rs.emulator.utilities.contexts.scopes.ActorScope
+import rs.emulator.utilities.koin.get
 
 /**
  *
@@ -15,8 +23,10 @@ class ReportAbuseListener : GamePacketListener<ReportAbuseMessage> {
         message: ReportAbuseMessage
     ) {
 
-        player.messagesFromType<IWidgetMessages>()
-            .sendChatMessage("${message.name} - ${message.abuseType} - ${message.isStaff}")
+        flowOf(*RSPluginManager.getExtensions<ReportAbuseFactory>().toTypedArray())
+            .map { it.registerReportAbuseAction(message.name, message.abuseType, message.isStaff) }
+            .onEach { it.handleReportedAbuse(player, message.name, message.abuseType, message.isStaff) }
+            .launchIn(get<ActorScope>())
 
     }
 }

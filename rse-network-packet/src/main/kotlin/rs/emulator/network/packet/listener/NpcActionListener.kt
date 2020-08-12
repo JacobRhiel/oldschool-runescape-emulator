@@ -39,7 +39,7 @@ class NpcActionListener : GamePacketListener<NpcActionMessage> {
                         )
                     }, {
                         player.messagesFromType<IWidgetMessages>()
-                            .sendChatMessage("Nothing interesting happens.", 0)
+                            .sendChatMessage("Nothing interesting happens.")
                     })
                     .dispose()
             }

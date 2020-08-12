@@ -9,6 +9,6 @@ import rs.emulator.packet.api.PacketType
  */
 class GameMessageMessage(val messageType: Int,
                          val username: String? = "",
-                         val message: String) : GamePacketMessage(81, type = PacketType.VARIABLE_BYTE)
+                         val message: String) : GamePacketMessage(84, type = PacketType.VARIABLE_BYTE)
 {
 }

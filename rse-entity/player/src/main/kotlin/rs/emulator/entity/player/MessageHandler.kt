@@ -1,6 +1,8 @@
 package rs.emulator.entity.player
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import rs.emulator.entity.actor.player.messages.AbstractMessageHandler
+import rs.emulator.entity.actor.player.messages.chat.ChatMessageType
 import rs.emulator.entity.material.containers.ItemContainer
 import rs.emulator.network.packet.message.outgoing.*
 
@@ -8,7 +10,7 @@ import rs.emulator.network.packet.message.outgoing.*
  *
  * @author javatar
  */
-
+@ExperimentalCoroutinesApi
 class MessageHandler(val player: Player) : AbstractMessageHandler() {
 
     override fun sendSmallVarp(id: Int, value: Int) {
@@ -56,10 +58,10 @@ class MessageHandler(val player: Player) : AbstractMessageHandler() {
         player.outgoingPackets.offer(UpdateDisplayWidgetsMessage())
     }
 
-    override fun sendChatMessage(message: String, messageType: Int) {
+    override fun sendChatMessage(message: String, messageType: ChatMessageType) {
         player.outgoingPackets.offer(
             GameMessageMessage(
-                messageType,
+                messageType.type,
                 player.displayName(),
                 message
             )

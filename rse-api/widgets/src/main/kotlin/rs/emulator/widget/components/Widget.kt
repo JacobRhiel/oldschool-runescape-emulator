@@ -19,8 +19,9 @@ class Widget(id: Int) : ContainerComponent<ActionComponent>(id) {
         id: Int,
         player: IPlayer,
         slot: Int = -1,
-        itemId: Int = -1
+        itemId: Int = -1,
+        option : Int = 78
     ): Flow<ComponentEvent<IPlayer, ActionComponent>> =
-        flow { emit(ComponentActionEvent(player, this@Widget[id], slot, itemId)) }.onEach { it.component.action(it) }
+        flow { emit(ComponentActionEvent(player, this@Widget[id], slot, itemId, option)) }.onEach { it.component.action(it) }
 
 }

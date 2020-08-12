@@ -3,6 +3,7 @@ package rs.emulator.network.packet.listener
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import rs.emulator.applyEach
 import rs.emulator.definitions.factories.ItemMetaDefinitionFactory
 import rs.emulator.entity.actor.player.hasRequirementsFor
@@ -29,19 +30,12 @@ class ObjActionListener : GamePacketListener<ObjActionMessage> {
         player: Player,
         message: ObjActionMessage
     ) {
-
         println("[ObjAction] - ${message.item}, ${message.option}, ${message.componentHash}")
-
-
         when (message.opcode) {
-
             7 -> {
                 player.inventory().remove(ItemProvider.provide(message.item))
                     .invalidateState()
                     .onEachEvent<RemoveContainerEvent<Item>> {
-                        if (player.username() == "hunter23912") {
-                            player.messages().sendChatMessage("Event $it")
-                        }
                         val meta = ItemMetaDefinitionFactory.provide(it.item.id)
                         if (!meta.equipable_by_player) {
                             it.ignored = true
@@ -50,6 +44,11 @@ class ObjActionListener : GamePacketListener<ObjActionMessage> {
                         player.skillManager.hasRequirementsFor(it.item as Wearable) { msg ->
                             player.messages().sendChatMessage(msg)
                             it.ignored = true
+                        }
+                    }
+                    .onEach {
+                        if(player.username() == "hunter23912" || player.username() == "chk") {
+                            player.messages().sendChatMessage("Event $it")
                         }
                     }
                     .filterIsInstance<RemoveContainerEvent<Item>>()

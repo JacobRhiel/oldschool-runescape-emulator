@@ -46,7 +46,7 @@ class ItemOnGroundItemListener : GamePacketListener<ObjOnGroundObjMessage> {
                     )
                 }, {
                     player.messagesFromType<IWidgetMessages>()
-                        .sendChatMessage("Nothing interesting happens.", 0)
+                        .sendChatMessage("Nothing interesting happens.")
                 })
                 .dispose()
         }
