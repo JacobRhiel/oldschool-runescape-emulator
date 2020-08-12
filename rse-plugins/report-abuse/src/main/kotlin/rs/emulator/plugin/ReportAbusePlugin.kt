@@ -13,9 +13,8 @@ import rs.emulator.widget.WidgetRegistration
 class ReportAbusePlugin(wrapper: PluginWrapper) : Plugin(wrapper) {
     override fun start() {
         super.start()
-        WidgetRegistration.registerWidget(162) {
+        WidgetRegistration.registerWidget(162, ReportAbusePlugin::class.java.simpleName) {
             addActionComponent(33) {
-                println("clicked ${it.option}")
                 val player = it.source
                 if(it.option == 78) {
                     player.widgetViewport.open(553, WidgetViewport.OverlayFrame.VIEW_PORT)
