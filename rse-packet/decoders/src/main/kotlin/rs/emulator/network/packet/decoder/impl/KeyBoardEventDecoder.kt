@@ -19,13 +19,15 @@ class KeyBoardEventDecoder : PacketDecoder<KeyBoardEventMessage>()
 
         val events = ObjectArrayList<KeyBoardEventMessage.KeyEvent>()
 
+        //reader.getSigned(DataType.SHORT)//always 0
+
         while (reader.readableBytes > 0) {
 
             val key = reader.getSigned(DataType.BYTE, DataTransformation.ADD).toChar()
 
             val lastPress = reader.getUnsigned(DataType.TRI_BYTE)
 
-            println("last press: $lastPress - key: ${KeyStroke.getKeyStroke(key)} - $key")
+            println("last press: $lastPress - key: ${KeyStroke.getKeyStroke(key, 0).keyChar} - $key")
 
             events.add(KeyBoardEventMessage.KeyEvent(key, lastPress))
 

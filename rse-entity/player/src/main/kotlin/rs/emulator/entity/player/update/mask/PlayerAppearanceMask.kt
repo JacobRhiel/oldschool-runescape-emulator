@@ -3,11 +3,23 @@ package rs.emulator.entity.player.update.mask
 import rs.emulator.buffer.manipulation.DataTransformation
 import rs.emulator.buffer.manipulation.DataType
 import rs.emulator.buffer.writer.BufferedWriter
+import rs.emulator.cache.definition.definition
+import rs.emulator.cache.definition.entity.idk.IdentityKitDefinition
+import rs.emulator.cache.definition.widget.enum.EnumDefinition
+import rs.emulator.cache.store.VirtualFileStore
+import rs.emulator.cache.store.index.IndexConfig
+import rs.emulator.cache.store.index.archive.ArchiveConfig
+import rs.emulator.definitions.entity.obj.ObjDefinition
+import rs.emulator.definitions.entity.obj.ObjMetaDataDefinition
+import rs.emulator.entity.material.EquipmentSlot
+import rs.emulator.entity.material.ItemData
+import rs.emulator.entity.material.containers.equipment
 import rs.emulator.entity.player.Player
 import rs.emulator.entity.player.update.flag.PlayerUpdateFlag
 import rs.emulator.entity.update.flag.UpdateFlag
 import rs.emulator.entity.update.mask.UpdateMask
 import rs.emulator.network.packet.GamePacketBuilder
+import rs.emulator.utilities.koin.get
 
 /**
  *
@@ -15,6 +27,12 @@ import rs.emulator.network.packet.GamePacketBuilder
  */
 class PlayerAppearanceMask : UpdateMask<Player>
 {
+
+    private val fileStore: VirtualFileStore = get()
+
+    private val equipmentIndices = intArrayOf(8, 11, 4, 6, 9, 7, 10)
+
+    private val testArr = IntArray(12) { 0 }
 
     override fun generate(entity: Player, builder: GamePacketBuilder)
     {
@@ -25,16 +43,101 @@ class PlayerAppearanceMask : UpdateMask<Player>
         writer.put(DataType.BYTE, entity.skullIcon)//skull icon
         writer.put(DataType.BYTE, entity.prayerIcon)//prayer icon
 
+        val equipmentIndices = intArrayOf(8, 11, 4, 6, 9, 7, 10)
+
         val styles = intArrayOf(0, 0, 0, 0, 21, 0, 26, 38, 3, 33, 42, 14)
 
-        for (index in 0 until 12) {
+        val equipment = entity.equipment()
 
-            if (styles[index] == 0)
-                writer.put(DataType.BYTE, 0)
-            else {
+        for (index in 0 until 12)
+        {
+
+            /*if(index == 6)
+            {
+                val item = equipment.elements[EquipmentSlot.CHEST.slot]
+                if(item.id != -1)// !== ItemData.EMPTY_WEARABLE)
+                {
+                    writer.put(DataType.BYTE, 0)
+                    continue
+                }
+            }
+            else if(index == 8)
+            {
+                val item = equipment.elements[EquipmentSlot.HEAD.slot]
+                if(item.id != -1)// !== ItemData.EMPTY_WEARABLE)
+                {
+
+                    val itemDefinition: ObjMetaDataDefinition = definition().find(item.id)
+
+                    val idkDefinition: IdentityKitDefinition = definition().find(styles[index])
+
+                    //enums:
+                    //886 - male beards
+                    //889 - female hair - index 0 = bald
+                    //882 - male hair - index 0 = bald
+
+                    val enumDef: EnumDefinition = definition().find(if(entity.isFemale) 889 else 882)
+
+                    if(itemDefinition.equipment.slot == "head" && idkDefinition.models.any { it == enumDef.intValues.first() })
+                    {
+                        writer.put(DataType.BYTE, 0)
+                        continue
+                    }
+
+                }
+            }
+            else if(index == 11)
+            {
+
+                if(!entity.isFemale)
+                {
+
+                    val item = equipment.elements[EquipmentSlot.HEAD.slot]
+
+                    val itemDefinition: ObjMetaDataDefinition = definition().find(item.id)
+
+                    val idkDefinition: IdentityKitDefinition = definition().find(styles[index])
+
+                    //enums:
+                    //886 - male beards
+                    //889 - female hair - index 0 = bald
+                    //882 - male hair - index 0 = bald
+
+                    val iDef: ObjDefinition = definition().find(item.id)
+
+                    println("male head: " + iDef.maleHead)
+
+                    val enumDef: EnumDefinition = definition().find(886)
+
+                    if(itemDefinition.equipment.slot == "head" && !idkDefinition.models.any { it == enumDef.intValues.first() })
+                    {
+                        writer.put(DataType.BYTE, 0)
+                        continue
+                    }
+
+                }
+
+            }*/
+
+            val item = equipment.elements[index]
+
+            println("item: $item")
+
+            if(item.id != -1)// != ItemData.EMPTY_WEARABLE)
+            {
+                println("adding id for index: $index")
+                writer.put(DataType.SHORT, 0x200 + item.id)
+            }
+            else
+            {
+                if (styles[index] == 0)
+                    writer.put(DataType.BYTE, 0)
+                else
+                {
                     writer.put(DataType.BYTE, 1)
                     writer.put(DataType.BYTE, styles[index])
                 }
+            }
 
         }
 

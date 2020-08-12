@@ -21,6 +21,10 @@ data class ObjDefinition(
     var noteTemplateId: Int = 0,
     var placeholderLink: Int = 0,
     var placeholderTemplate: Int = 0,
+    var maleModel1: Int = 0,
+    var maleModel2: Int = 0,
+    var maleHead: Int = 0,
+    var femaleHead: Int = 0,
     val params: HashMap<Int, Any> = hashMapOf()
 ) : Definition(identifier)
 {

@@ -6,6 +6,7 @@ import org.koin.core.KoinComponent
 import org.koin.core.get
 import rs.emulator.AbstractDefinitionRepository
 import rs.emulator.buffer.reader.BufferedReader
+import rs.emulator.cache.definition.entity.idk.IdentityKitDefinitionGenerator
 import rs.emulator.cache.definition.entity.loc.LocDefinitionGenerator
 import rs.emulator.cache.definition.entity.npc.NpcDefinitionGenerator
 import rs.emulator.cache.definition.entity.npc.meta.NpcMetaDataDefinitionGenerator
@@ -57,6 +58,7 @@ class DefinitionRepository : KoinComponent, AbstractDefinitionRepository()
         EnumDefinitionGenerator(),
         ScriptDefinitionGenerator(),
         StructDefinitionGenerator(),
+        IdentityKitDefinitionGenerator(),
         ObjMetaDataDefinitionGenerator(),
         NpcMetaDataDefinitionGenerator()
     )
@@ -155,8 +157,6 @@ class DefinitionRepository : KoinComponent, AbstractDefinitionRepository()
 
         //todo? check if reader is null?
         val definition = if(generator is MetaDataDefinitionGenerator) generator.decodeHeader(identifier) else generator.decodeHeader(identifier, reader!!)
-
-        println("here/")
 
         submitEntry(definition)
 

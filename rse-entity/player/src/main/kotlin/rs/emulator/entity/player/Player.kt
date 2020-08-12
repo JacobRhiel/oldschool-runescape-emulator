@@ -26,6 +26,7 @@ import rs.emulator.entity.actor.player.messages.IMessages
 import rs.emulator.entity.actor.player.widgets.WidgetViewport
 import rs.emulator.entity.details.PlayerDetails
 import rs.emulator.entity.material.containers.ItemContainerManager
+import rs.emulator.entity.material.containers.equipment
 import rs.emulator.entity.material.containers.impl.Equipment
 import rs.emulator.entity.material.containers.impl.Inventory
 import rs.emulator.entity.material.containers.inventory
@@ -315,9 +316,11 @@ class Player(
         inventory().containerState.onEach {
             messages().sendItemContainerFull(149, 0, 93, it.container)
         }.launchIn(CoroutineScope(Dispatchers.Default))
-        /*equipment().containerState.onEach {
-            messages().sendItemContainerFull(387, 0, 94, it.container)
-        }.launchIn(CoroutineScope(Dispatchers.Default))*/
+
+        equipment().containerState.onEach {
+            //messages().sendItemContainerFull(387, 0, 94, it.container)
+            syncInfo.addMaskFlag(PlayerUpdateFlag.APPEARANCE)
+        }.launchIn(CoroutineScope(Dispatchers.Default))
 
         if (details.skills.isNotEmpty()) {
             val skills = gson.fromJson(details.skills, Array<Skill>::class.java)
