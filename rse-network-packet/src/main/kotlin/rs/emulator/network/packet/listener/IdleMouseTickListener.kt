@@ -1,6 +1,5 @@
 package rs.emulator.network.packet.listener
 
-import io.netty.channel.Channel
 import io.reactivex.rxkotlin.toObservable
 import rs.emulator.entity.player.Player
 import rs.emulator.network.packet.message.incoming.IdleMouseTickMessage
@@ -13,7 +12,10 @@ import rs.emulator.plugins.extensions.factories.IdleMouseTickActionFactory
  */
 
 class IdleMouseTickListener : GamePacketListener<IdleMouseTickMessage> {
-    override fun handle(channel: Channel, player: Player, message: IdleMouseTickMessage) {
+    override fun handle(
+        player: Player,
+        message: IdleMouseTickMessage
+    ) {
 
         RSPluginManager.getExtensions<IdleMouseTickActionFactory>()
             .toObservable()

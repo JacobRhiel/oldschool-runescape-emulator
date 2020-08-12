@@ -17,6 +17,8 @@ import rs.emulator.entity.material.containers.toContainer
 import rs.emulator.entity.material.containers.toEquipment
 import rs.emulator.entity.material.items.StandardItem
 import rs.emulator.entity.material.items.Wearable
+import rs.emulator.utilities.contexts.scopes.ActorScope
+import rs.emulator.utilities.koin.get
 
 @ExperimentalCoroutinesApi
 class ContainerTest {
@@ -26,7 +28,7 @@ class ContainerTest {
 
         val inv = Inventory()
 
-        inv.addItem(StandardItem(4151))
+        inv.add(StandardItem(4151)).launchIn(CoroutineScope(Dispatchers.Unconfined))
 
         inv.add(StandardItem(4151))
             .filterIsInstance<AddContainerEvent<*>>()
@@ -57,7 +59,7 @@ class ContainerTest {
 
         val inv = Inventory()
 
-        inv.addItem(StandardItem(995, 100, true))
+        inv.add(StandardItem(995, 100, true)).launchIn(CoroutineScope(Dispatchers.Unconfined))
 
         inv.add(StandardItem(995, 100, true))
             .filterIsInstance<StackedContainerEvent<*>>()
@@ -80,7 +82,7 @@ class ContainerTest {
 
         assert(e.elements[EquipmentSlot.WEAPON.slot].id == 4151)
 
-        e.addItem(Wearable(EquipmentSlot.SHIELD, id = 2))
+        e.add(Wearable(EquipmentSlot.SHIELD, id = 2)).launchIn(CoroutineScope(Dispatchers.Unconfined))
         e.add(Wearable(EquipmentSlot.WEAPON, EquipmentSlot.SHIELD, id = 1))
             .onEach {
                 when (it) {
@@ -111,7 +113,7 @@ class ContainerTest {
         val inv = Inventory()
         val e = Equipment()
 
-        e.addItem(Wearable(id = 4151))
+        e.add(Wearable(id = 4151)).launchIn(CoroutineScope(Dispatchers.Unconfined))
 
         e.remove(Wearable(id = 4151))
             .onEach { println("Equipment events $it") }

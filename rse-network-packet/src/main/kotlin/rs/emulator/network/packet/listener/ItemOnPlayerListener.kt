@@ -1,6 +1,5 @@
 package rs.emulator.network.packet.listener
 
-import io.netty.channel.Channel
 import io.reactivex.rxkotlin.toObservable
 import rs.emulator.entity.actor.player.IPlayer
 import rs.emulator.entity.actor.player.messages.IWidgetMessages
@@ -16,7 +15,10 @@ import rs.emulator.world.GameWorld
  */
 
 class ItemOnPlayerListener : GamePacketListener<ObjOnPlayerMessage> {
-    override fun handle(channel: Channel, player: Player, message: ObjOnPlayerMessage) {
+    override fun handle(
+        player: Player,
+        message: ObjOnPlayerMessage
+    ) {
 
         //TODO - validate interface is visible and items exists
 

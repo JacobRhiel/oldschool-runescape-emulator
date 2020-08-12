@@ -13,13 +13,13 @@ object UpdatePlayerSynchronizationEvent : IEvent
 
     override fun execute()
     {
-
         WorldRepository.players.forEach {
             it.outgoingPackets.offer(
                 UpdatePlayerSyncMessage(
                     it
                 )
             )
+
         }
 
     }

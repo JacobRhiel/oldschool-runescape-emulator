@@ -13,5 +13,6 @@ data class ComponentActionEvent(
     override val source: IPlayer,
     override val component: ActionComponent,
     val slot: Int,
-    val itemId: Int
+    val itemId: Int,
+    val option: Int
 ) : ComponentEvent<IPlayer, ActionComponent>

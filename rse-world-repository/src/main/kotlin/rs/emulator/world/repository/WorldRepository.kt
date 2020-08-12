@@ -1,5 +1,6 @@
 package rs.emulator.world.repository
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import rs.emulator.entity.actor.npc.Npc
 import rs.emulator.entity.player.Player
 import rs.emulator.world.GameWorld
@@ -8,9 +9,10 @@ import rs.emulator.world.GameWorld
  *
  * @author Chk
  */
+@ExperimentalCoroutinesApi
 object WorldRepository {
 
-    val players = ArrayList<Player>(2048)//RandomizedIndexMap(2048)
+    val players = ArrayList<Player>(2048)
 
     val npcs = ArrayList<Npc>(2048)
 

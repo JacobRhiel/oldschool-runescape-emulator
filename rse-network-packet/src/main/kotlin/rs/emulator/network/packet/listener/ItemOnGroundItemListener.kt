@@ -1,6 +1,5 @@
 package rs.emulator.network.packet.listener
 
-import io.netty.channel.Channel
 import io.reactivex.rxkotlin.toObservable
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import rs.emulator.entity.actor.player.messages.IWidgetMessages
@@ -17,7 +16,10 @@ import rs.emulator.plugins.extensions.factories.on.ItemOnGroundItemActionFactory
 
 class ItemOnGroundItemListener : GamePacketListener<ObjOnGroundObjMessage> {
     @ExperimentalCoroutinesApi
-    override fun handle(channel: Channel, player: Player, message: ObjOnGroundObjMessage) {
+    override fun handle(
+        player: Player,
+        message: ObjOnGroundObjMessage
+    ) {
 
         //TODO - validate item exists on ground
 
@@ -44,7 +46,7 @@ class ItemOnGroundItemListener : GamePacketListener<ObjOnGroundObjMessage> {
                     )
                 }, {
                     player.messagesFromType<IWidgetMessages>()
-                        .sendChatMessage("Nothing interesting happens.", 0)
+                        .sendChatMessage("Nothing interesting happens.")
                 })
                 .dispose()
         }

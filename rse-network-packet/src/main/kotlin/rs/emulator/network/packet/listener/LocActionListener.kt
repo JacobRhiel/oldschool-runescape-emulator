@@ -1,6 +1,5 @@
 package rs.emulator.network.packet.listener
 
-import io.netty.channel.Channel
 import io.reactivex.rxkotlin.toObservable
 import rs.emulator.entity.actor.npc.Npc
 import rs.emulator.entity.actor.player.messages.IWidgetMessages
@@ -76,7 +75,10 @@ class LocActionListener : GamePacketListener<LocActionMessage>
         }
     }
 
-    override fun handle(channel: Channel, player: Player, message: LocActionMessage)
+    override fun handle(
+        player: Player,
+        message: LocActionMessage
+    )
     {
 
         //TODO - validate if object exists on x and y

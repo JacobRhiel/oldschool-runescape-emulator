@@ -4,10 +4,12 @@ import com.xenomachina.argparser.ArgParser
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.pf4j.Extension
 import rs.emulator.entity.actor.player.IPlayer
+import rs.emulator.entity.actor.player.messages.chat.ChatMessageType
 import rs.emulator.entity.material.containers.inventory
 import rs.emulator.entity.material.items.Item
 import rs.emulator.entity.material.items.StandardItem
 import rs.emulator.entity.material.provider.ItemProvider
+import rs.emulator.plugin.commands.impl.MessageGenerator
 import rs.emulator.plugin.commands.impl.SetSkillAttribute
 import rs.emulator.plugin.commands.impl.SpawnItem
 import rs.emulator.plugins.extensions.factories.CommandFactory
@@ -57,6 +59,10 @@ class CommandExtension : CommandFactory {
                     player.skillManager.skills[skill.id].experience = skill.lvl
                 }
                 player.skillManager.skillState.value = listOf(player.skillManager.skills[skill.id])
+            }
+            "msg" -> {
+                val msg = ArgParser(args.toTypedArray()).parseInto(::MessageGenerator)
+                player.messages().sendChatMessage(msg.msg, ChatMessageType.fromType(msg.type))
             }
         }
 

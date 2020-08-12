@@ -16,22 +16,28 @@ import rs.emulator.widget.components.events.impl.ComponentActionEvent
 
 object WidgetRegistration {
 
-    private val widgets = mutableMapOf<Int, Widget>()
+    private val widgets = mutableMapOf<Int, RegisteredWidget>()
 
     init {
-        registerWidget(548) {
+        registerWidget(548, "system") {
             addActionComponent(37) {
                 it.source.widgetViewport.open(182, WidgetViewport.OverlayFrame.TABS)
             }
+            addActionComponent(54) {
+                it.source.widgetViewport.open(149, WidgetViewport.OverlayFrame.TABS)
+            }
+            addActionComponent(55) {
+                it.source.widgetViewport.open(387, WidgetViewport.OverlayFrame.TABS)
+            }
         }
 
-        registerWidget(182) {
+        registerWidget(182, "system") {
             addActionComponent(8) {
                 it.source.logout()
             }
         }
 
-        registerWidget(162) {
+        /*registerWidget(162) {
             addActionComponent(33) {
                 val p = it.source
                 if (p.username() == "hunter23912") {
@@ -57,18 +63,37 @@ object WidgetRegistration {
 
                 }
             }
+        }*/
+
+    }
+
+    fun registerWidget(id: Int, widget: Widget, pluginName : String) {
+        widgets.putIfAbsent(id, RegisteredWidget(widget, pluginName))
+    }
+
+    fun registerWidget(id: Int, pluginName: String, build: WidgetBuilder.() -> Unit) {
+        if(widgets.containsKey(id)) {
+            val registeredWidget = widgets[id]!!
+            throw Error("Widget $id already registered from plugin ${registeredWidget.plugin}.")
+        } else {
+            val builder = WidgetBuilder(id)
+            builder.build()
+            registerWidget(id, builder.create(), pluginName)
         }
-
     }
 
-    fun registerWidget(id: Int, widget: Widget) {
-        widgets.putIfAbsent(id, widget)
-    }
-
-    fun registerWidget(id: Int, build: WidgetBuilder.() -> Unit) {
+    /**
+     * This function should NOT be used, use at your own risk.
+     * Please favour registeredWidget over this function.
+     */
+    fun overrideWidgetRegistration(id: Int, pluginName: String, build: WidgetBuilder.() -> Unit) {
         val builder = WidgetBuilder(id)
         builder.build()
-        registerWidget(id, builder.create())
+        widgets[id] = RegisteredWidget(builder.create(), pluginName)
+    }
+
+    fun deregisterWidget(id : Int) {
+        widgets.remove(id)
     }
 
     fun fireActionEvent(
@@ -76,15 +101,18 @@ object WidgetRegistration {
         interfaceId: Int,
         childId: Int,
         slot: Int,
-        itemId: Int
+        itemId: Int,
+        option : Int
     ): Flow<ComponentEvent<IPlayer, ActionComponent>> {
         return if (widgets.containsKey(interfaceId)) {
-            widgets[interfaceId]?.fireAction(childId, player, slot, itemId) ?: emptyFlow()
+            widgets[interfaceId]?.widget?.fireAction(childId, player, slot, itemId, option) ?: emptyFlow()
         } else {
             player.messages().sendChatMessage("Unhandled Widget Action $interfaceId - $childId - $slot - $itemId")
             emptyFlow()
         }
     }
+
+    fun assertWidgetIsRegistered(id : Int) : Boolean = widgets.containsKey(id)
 
     class WidgetBuilder(val id: Int) {
 
@@ -97,5 +125,7 @@ object WidgetRegistration {
         fun create() = widget
 
     }
+
+    data class RegisteredWidget(val widget : Widget, val plugin : String)
 
 }

@@ -1,6 +1,7 @@
 package rs.emulator.network.packet.message
 
-import io.netty.channel.Channel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import rs.emulator.entity.actor.player.IPlayer
 import rs.emulator.entity.player.Player
 import rs.emulator.network.packet.GamePacketReader
 import rs.emulator.network.packet.listener.GamePacketListener
@@ -18,14 +19,16 @@ class DecodingGamePacketMessage(
     val action: ActionType = ActionType.NONE,
     val length: Int = 0,
     val ignore: Boolean
-) {
+) : GamePacketHandler {
 
     fun decode(msg: GamePacketMessage) = decoder.decode(
         msg.opcode,
         GamePacketReader(msg.payload)
     )
 
-    fun handle(channel: Channel, player: Player, msg: IPacketMessage) =
-        (handler as GamePacketListener<IPacketMessage>).handle(channel, player, msg)
+    @ExperimentalCoroutinesApi
+    override fun handle(player: IPlayer, message: IPacketMessage) {
+        (handler as GamePacketListener<IPacketMessage>).handle(player as Player, message)
+    }
 
 }

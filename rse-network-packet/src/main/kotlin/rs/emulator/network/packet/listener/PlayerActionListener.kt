@@ -1,6 +1,5 @@
 package rs.emulator.network.packet.listener
 
-import io.netty.channel.Channel
 import io.reactivex.rxkotlin.toObservable
 import rs.emulator.entity.actor.player.IPlayer
 import rs.emulator.entity.actor.player.messages.IWidgetMessages
@@ -16,7 +15,10 @@ import rs.emulator.world.GameWorld
  */
 
 class PlayerActionListener : GamePacketListener<PlayerActionMessage> {
-    override fun handle(channel: Channel, player: Player, message: PlayerActionMessage) {
+    override fun handle(
+        player: Player,
+        message: PlayerActionMessage
+    ) {
         if (message.option != -1 && message.playerIndex != -1) {
             val otherPlayer: IPlayer? = GameWorld.players[message.playerIndex]
             if (otherPlayer != null) {
@@ -33,7 +35,7 @@ class PlayerActionListener : GamePacketListener<PlayerActionMessage> {
                         it.handlePlayerAction(player, otherPlayer, message.option)
                     }, {
                         player.messages().ofType<IWidgetMessages>()
-                            .sendChatMessage("Nothing interesting happens.", 0)
+                            .sendChatMessage("Nothing interesting happens.")
                     })
                     .dispose()
             }

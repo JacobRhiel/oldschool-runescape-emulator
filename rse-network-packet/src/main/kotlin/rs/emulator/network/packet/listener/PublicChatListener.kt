@@ -1,6 +1,5 @@
 package rs.emulator.network.packet.listener
 
-import io.netty.channel.Channel
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.toObservable
 import io.reactivex.rxkotlin.zipWith
@@ -31,7 +30,10 @@ class PublicChatListener : GamePacketListener<PublicChatMessage>, KoinComponent 
 
     private val huffman: HuffmanCodec = get()
 
-    override fun handle(channel: Channel, player: Player, message: PublicChatMessage) {
+    override fun handle(
+        player: Player,
+        message: PublicChatMessage
+    ) {
 
         val decompressedString = ByteArray(256)
 

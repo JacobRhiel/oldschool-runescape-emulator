@@ -13,7 +13,6 @@ import rs.emulator.cache.store.VirtualFileStore
 import rs.emulator.cache.store.data.DataFile
 import rs.emulator.cache.store.reference.ReferenceTable
 import rs.emulator.encryption.xtea.XteaKeyService
-import rs.emulator.entity.material.containers.impl.bank.Bank
 import rs.emulator.entity.material.items.StandardItem
 import rs.emulator.utilities.koin.get
 import java.nio.file.Paths
@@ -48,22 +47,6 @@ class BankTest {
     //@Test
     fun addTest() {
 
-        val bank = Bank()
-
-        bank.add(StandardItem(995, 2147000000, true))
-            .onEach { println("$it") }
-            .launchIn(CoroutineScope(Dispatchers.Unconfined))
-
-        assert(StandardItem(995, 2147000000, true) in bank)
-
-        bank.add(StandardItem(995, 10000000, true))
-            .onEach {
-                println(it)
-                assert(it.item.amount == 483647)
-            }
-            .launchIn(CoroutineScope(Dispatchers.Unconfined))
-
-        assert(StandardItem(995, Integer.MAX_VALUE, true) in bank)
 
     }
 
