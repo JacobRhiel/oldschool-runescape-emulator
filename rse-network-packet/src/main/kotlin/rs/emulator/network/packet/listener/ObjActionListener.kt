@@ -1,16 +1,13 @@
 package rs.emulator.network.packet.listener
 
-import io.netty.channel.Channel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.launchIn
 import rs.emulator.applyEach
 import rs.emulator.definitions.factories.ItemMetaDefinitionFactory
 import rs.emulator.entity.actor.player.hasRequirementsFor
 import rs.emulator.entity.material.containers.*
 import rs.emulator.entity.material.containers.events.impl.AddContainerEvent
-import rs.emulator.entity.material.containers.events.impl.FullContainerEvent
 import rs.emulator.entity.material.containers.events.impl.RemoveContainerEvent
 import rs.emulator.entity.material.items.Item
 import rs.emulator.entity.material.items.Wearable
@@ -28,7 +25,10 @@ import rs.emulator.utilities.koin.get
  */
 @ExperimentalCoroutinesApi
 class ObjActionListener : GamePacketListener<ObjActionMessage> {
-    override fun handle(channel: Channel, player: Player, message: ObjActionMessage) {
+    override fun handle(
+        player: Player,
+        message: ObjActionMessage
+    ) {
 
         println("[ObjAction] - ${message.item}, ${message.option}, ${message.componentHash}")
 
@@ -36,8 +36,7 @@ class ObjActionListener : GamePacketListener<ObjActionMessage> {
         when (message.opcode) {
 
             7 -> {
-                player.containerJob?.cancel()
-                player.containerJob = player.inventory().remove(ItemProvider.provide(message.item))
+                player.inventory().remove(ItemProvider.provide(message.item))
                     .invalidateState()
                     .onEachEvent<RemoveContainerEvent<Item>> {
                         if (player.username() == "hunter23912") {
@@ -53,11 +52,11 @@ class ObjActionListener : GamePacketListener<ObjActionMessage> {
                             it.ignored = true
                         }
                     }
+                    .filterIsInstance<RemoveContainerEvent<Item>>()
                     .toEquipment(player.equipment())
                     .invalidateState()
                     .filterIsInstance<RemoveContainerEvent<Wearable>>()
                     .toContainer(player.inventory())
-                    .onEachEvent<FullContainerEvent<Item>> { player.messages().sendChatMessage("Your inventory is full.") }
                     .launchIn(get<ActorScope>())
             }
 

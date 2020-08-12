@@ -1,5 +1,6 @@
 package rs.emulator.entity.material.containers.impl
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
@@ -17,6 +18,7 @@ import rs.emulator.entity.material.items.Wearable
  * @author javatar
  */
 
+@ExperimentalCoroutinesApi
 class Equipment : ItemContainer<Wearable>(94, Array(14) { ItemData.EMPTY_WEARABLE }) {
     override fun add(element: Wearable): Flow<ItemContainerEvent<Wearable>> = flow {
         val mainSlot = element.mainSlot.slot
@@ -55,7 +57,7 @@ class Equipment : ItemContainer<Wearable>(94, Array(14) { ItemData.EMPTY_WEARABL
     override fun remove(element: Wearable): Flow<ItemContainerEvent<Wearable>> = flow {
         val mainSlot = element.mainSlot.slot
         val inSlot = elements[mainSlot]
-        if (inSlot in elements) {
+        if (inSlot == element) {
             when {
                 element.stackable -> {
                     inSlot -= element

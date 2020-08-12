@@ -1,6 +1,5 @@
 package rs.emulator.network.packet.listener
 
-import io.netty.channel.Channel
 import rs.emulator.entity.player.Player
 import rs.emulator.network.packet.message.incoming.MapBuildCompleteMessage
 
@@ -11,7 +10,10 @@ import rs.emulator.network.packet.message.incoming.MapBuildCompleteMessage
 class MapBuildCompleteHandler : GamePacketListener<MapBuildCompleteMessage>
 {
 
-    override fun handle(channel: Channel, player: Player, message: MapBuildCompleteMessage)
+    override fun handle(
+        player: Player,
+        message: MapBuildCompleteMessage
+    )
     {
 
 

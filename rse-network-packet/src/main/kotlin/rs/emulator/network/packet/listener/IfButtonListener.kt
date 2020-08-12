@@ -1,6 +1,5 @@
 package rs.emulator.network.packet.listener
 
-import io.netty.channel.Channel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
@@ -20,7 +19,10 @@ class IfButtonListener : GamePacketListener<IfButtonMessage> {
     private val enum548 = Repository.getDefinition<EnumDefinition>(1129)
     private val enum161 = Repository.getDefinition<EnumDefinition>(1132)
 
-    override fun handle(channel: Channel, player: Player, message: IfButtonMessage) {
+    override fun handle(
+        player: Player,
+        message: IfButtonMessage
+    ) {
 
         val interfaceId = message.hash shr 16
 

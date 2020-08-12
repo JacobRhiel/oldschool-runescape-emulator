@@ -156,8 +156,6 @@ class DefinitionRepository : KoinComponent, AbstractDefinitionRepository()
         //todo? check if reader is null?
         val definition = if(generator is MetaDataDefinitionGenerator) generator.decodeHeader(identifier) else generator.decodeHeader(identifier, reader!!)
 
-        println("here/")
-
         submitEntry(definition)
 
         val definitions = definitionCache.getIfPresent(clazz)!!

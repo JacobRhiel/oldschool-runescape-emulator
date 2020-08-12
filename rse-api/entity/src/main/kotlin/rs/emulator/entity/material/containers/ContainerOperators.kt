@@ -2,6 +2,9 @@ package rs.emulator.entity.material.containers
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import rs.emulator.entity.actor.player.IPlayer
 import rs.emulator.entity.material.attributes.MaterialAttributes
 import rs.emulator.entity.material.containers.events.ItemContainerEvent
@@ -10,6 +13,8 @@ import rs.emulator.entity.material.containers.events.impl.UpdateContainerStateEv
 import rs.emulator.entity.material.containers.impl.Equipment
 import rs.emulator.entity.material.items.Item
 import rs.emulator.entity.material.items.Wearable
+import rs.emulator.utilities.contexts.scopes.ActorScope
+import rs.emulator.utilities.koin.get
 
 /**
  *
@@ -21,21 +26,26 @@ fun <I : Item> Flow<ItemContainerEvent<I>>.toContainer(container: ItemContainer<
     this@toContainer.filterNot { it.ignored }.collect { this.emitAll(container.add(it.item)) }
 }
 
+@ExperimentalCoroutinesApi
+fun <I : Item> Flow<ItemContainerEvent<I>>.fromContainer(container: ItemContainer<I>) = flow {
+    this@fromContainer.filterNot { it.ignored }.collect { this.emitAll(container.remove(it.item)) }
+}
+
 fun <I : Item> Flow<ItemContainerEvent<I>>.settings(block: (MaterialAttributes) -> Unit): Flow<ItemContainerEvent<I>> =
     flow {
         this@settings.collect {
             if (it is RequestContainerAttributesEvent) {
                 block(it.attributes)
             } else {
-                emit(it)
+                this.emit(it)
             }
         }
     }
 
-inline fun <reified E : ItemContainerEvent<*>> Flow<ItemContainerEvent<*>>.onEachEvent(crossinline onEach : suspend FlowCollector<ItemContainerEvent<*>>.(E) -> Unit) : Flow<ItemContainerEvent<*>> = flow {
+inline fun <reified E : ItemContainerEvent<*>> Flow<ItemContainerEvent<*>>.onEachEvent(crossinline onEach : FlowCollector<ItemContainerEvent<*>>.(E) -> Unit) : Flow<ItemContainerEvent<*>> = flow {
     this@onEachEvent.collect {
         if(it is E) {
-            this.onEach(it)
+            onEach(it)
         }
         emit(it)
     }
@@ -50,10 +60,6 @@ fun Flow<ItemContainerEvent<Item>>.invalidateState() = flow {
             emit(it)
         }
     }
-}
-
-fun Flow<ItemContainerEvent<Item>>.ignoreWhile(predicate: (ItemContainerEvent<Item>) -> Boolean) = flow {
-    this@ignoreWhile.collect { if (!predicate(it)) emit(it) }
 }
 
 fun Flow<ItemContainerEvent<Item>>.toEquipment(container: Equipment) = flow {

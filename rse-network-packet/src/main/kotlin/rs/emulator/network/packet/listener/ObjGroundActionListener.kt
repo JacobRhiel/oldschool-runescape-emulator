@@ -1,6 +1,5 @@
 package rs.emulator.network.packet.listener
 
-import io.netty.channel.Channel
 import io.reactivex.rxkotlin.toObservable
 import rs.emulator.entity.actor.player.messages.IWidgetMessages
 import rs.emulator.entity.player.Player
@@ -14,7 +13,10 @@ import rs.emulator.plugins.extensions.factories.entity.actions.ItemGroundActionF
  */
 
 class ObjGroundActionListener : GamePacketListener<ObjGroundActionMessage> {
-    override fun handle(channel: Channel, player: Player, message: ObjGroundActionMessage) {
+    override fun handle(
+        player: Player,
+        message: ObjGroundActionMessage
+    ) {
 
         //TODO - validate if item actually exists
 

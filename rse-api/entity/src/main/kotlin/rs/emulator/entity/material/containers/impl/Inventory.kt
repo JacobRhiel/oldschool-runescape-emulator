@@ -55,14 +55,7 @@ class Inventory : ItemContainer<Item>(
                         emit(FullContainerEvent(element.copy(element.amount - it)))
                         return@repeat
                     }
-                    emitAll(
-                        add(element.copy(1))/*.ignoreWhile { e ->
-                        return@ignoreWhile if(e is UpdateContainerStateEvent) {
-                            dirty = true
-                            true
-                        } else false
-                    }*/
-                    )
+                    emitAll(add(element.copy(1)))
                 }
             }
             else -> {
@@ -110,14 +103,7 @@ class Inventory : ItemContainer<Item>(
                 }
                 element.amount > 1 -> {
                     repeat(element.amount) {
-                        emitAll(
-                            remove(element.copy(1))/*.ignoreWhile { e ->
-                            return@ignoreWhile if(e is UpdateContainerStateEvent) {
-                                dirty = true
-                                true
-                            } else false
-                        }*/
-                        )
+                        emitAll(remove(element.copy(1)))
                     }
                 }
                 else -> {

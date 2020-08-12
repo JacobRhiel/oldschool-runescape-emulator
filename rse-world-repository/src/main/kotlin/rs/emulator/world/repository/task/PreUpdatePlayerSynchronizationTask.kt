@@ -1,9 +1,17 @@
 package rs.emulator.world.repository.task
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import rs.emulator.engine.service.CyclicEngineService
 import rs.emulator.entity.player.Player
 import rs.emulator.network.packet.message.outgoing.RebuildRegionMessage
 import rs.emulator.region.coordinate.Coordinate
 import rs.emulator.service.event.IEvent
+import rs.emulator.utilities.koin.get
 import rs.emulator.world.repository.WorldRepository
 
 /**
@@ -13,30 +21,35 @@ import rs.emulator.world.repository.WorldRepository
 object PreUpdatePlayerSynchronizationTask: IEvent
 {
 
+    @ExperimentalCoroutinesApi
     override fun execute()
     {
 
-        WorldRepository.players.forEach {
+        WorldRepository.players.forEach { player ->
 
-            val locked = it.movement.frozen/* || !player.viewport.loaded*/
+            val locked = player.movement.frozen/* || !player.viewport.loaded*/
 
             if(!locked) {
-                step(it)
-                move(it)
+                step(player)
+                move(player)
             }
 
-            val lastRegionBase = it.lastRegion
+            val lastRegionBase = player.lastRegion
 
-            val currentCoordinate = it.coordinate
+            val currentCoordinate = player.coordinate
 
             if(lastRegionBase != null && shouldRebuildRegion(lastRegionBase, currentCoordinate))
             {
 
-                it.outgoingPackets.offer(RebuildRegionMessage(false, 1/*it.index*/, it.coordinate.x, it.coordinate.z, it.coordinate.plane, it.coordinate.as30BitInteger))
+                player.outgoingPackets.offer(RebuildRegionMessage(false, 1/*it.index*/, player.coordinate.x, player.coordinate.z, player.coordinate.plane, player.coordinate.as30BitInteger))
 
             }
 
-            it.actions.cycle()
+            player.actions.cycle()
+
+            player.incomingPackets.consumeAsFlow()
+                .onEach { it.handler.handle(player, it.msg) }
+                .launchIn(CoroutineScope(get<CyclicEngineService>().fetchExecutor().asCoroutineDispatcher()))
 
         }
 

@@ -5,11 +5,8 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.internal.disposables.DisposableContainer
 import io.reactivex.processors.PublishProcessor
-import io.reactivex.rxkotlin.toObservable
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
@@ -26,6 +23,7 @@ import rs.emulator.entity.actor.player.messages.IMessages
 import rs.emulator.entity.actor.player.widgets.WidgetViewport
 import rs.emulator.entity.details.PlayerDetails
 import rs.emulator.entity.material.containers.ItemContainerManager
+import rs.emulator.entity.material.containers.equipment
 import rs.emulator.entity.material.containers.impl.Equipment
 import rs.emulator.entity.material.containers.impl.Inventory
 import rs.emulator.entity.material.containers.inventory
@@ -35,13 +33,13 @@ import rs.emulator.entity.player.update.sync.SyncInformation
 import rs.emulator.entity.player.viewport.Viewport
 import rs.emulator.entity.skills.Skill
 import rs.emulator.entity.skills.SkillManager
+import rs.emulator.network.packet.message.IncomingPacket
 import rs.emulator.network.packet.message.outgoing.*
 import rs.emulator.packet.api.IPacketMessage
 import rs.emulator.plugins.RSPluginManager
 import rs.emulator.plugins.extensions.factories.LoginActionFactory
 import rs.emulator.region.WorldCoordinate
 import rs.emulator.region.coordinate.Coordinate
-import rs.emulator.skills.SkillAttributes
 import rs.emulator.world.World
 import java.util.concurrent.atomic.AtomicLong
 
@@ -49,6 +47,7 @@ import java.util.concurrent.atomic.AtomicLong
 class Player(
     index: Int,
     val outgoingPackets: PublishProcessor<IPacketMessage>,
+    val incomingPackets: ReceiveChannel<IncomingPacket>,
     private val disposable: CompositeDisposable,
     override val details: PlayerDetails
 ) : Actor(index), IPlayer,
@@ -99,7 +98,7 @@ class Player(
 
     var pendingGraphicDelay: Int = 0
 
-    var containerJob : Job? = null
+    val containerJobs: Job = SupervisorJob()
 
     fun onLogin() {
 
@@ -315,9 +314,10 @@ class Player(
         inventory().containerState.onEach {
             messages().sendItemContainerFull(149, 0, 93, it.container)
         }.launchIn(CoroutineScope(Dispatchers.Default))
-        /*equipment().containerState.onEach {
-            messages().sendItemContainerFull(387, 0, 94, it.container)
-        }.launchIn(CoroutineScope(Dispatchers.Default))*/
+        equipment().containerState.onEach {
+            //messages().sendItemContainerFull(387, 0, 94, it.container)
+            //TODO - flag appearance update and update interfaces
+        }.launchIn(CoroutineScope(Dispatchers.Default))
 
         if (details.skills.isNotEmpty()) {
             val skills = gson.fromJson(details.skills, Array<Skill>::class.java)

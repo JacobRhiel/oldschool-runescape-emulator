@@ -1,6 +1,5 @@
 package rs.emulator.packet.api
 
-import io.netty.channel.Channel
 import rs.emulator.entity.actor.player.IPlayer
 
 /**
@@ -10,6 +9,6 @@ import rs.emulator.entity.actor.player.IPlayer
 interface IGamePacketListener<T : IPacketMessage, P : IPlayer>
 {
 
-    fun handle(channel: Channel, player: P, message: T)
+    fun handle(player: P, message: T)
 
 }

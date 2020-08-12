@@ -4,6 +4,10 @@ import io.netty.channel.Channel
 import io.netty.channel.ChannelHandlerContext
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.processors.PublishProcessor
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.channels.sendBlocking
 import org.koin.core.KoinComponent
 import org.koin.core.get
 import rs.emulator.encryption.isaac.IsaacRandom
@@ -13,6 +17,7 @@ import rs.emulator.network.packet.decoder.GamePacketDecoder
 import rs.emulator.network.packet.encoder.GamePacketEncoder
 import rs.emulator.network.packet.encoder.GamePacketMessageEncoder
 import rs.emulator.network.packet.message.GamePacketMessage
+import rs.emulator.network.packet.message.IncomingPacket
 import rs.emulator.network.packet.repository.PacketRepository
 import rs.emulator.network.session.NetworkSession
 import rs.emulator.packet.api.IPacketMessage
@@ -21,6 +26,7 @@ import rs.emulator.packet.api.IPacketMessage
  *
  * @author Chk
  */
+@ExperimentalCoroutinesApi
 class PacketSession(
     val channel: Channel,
     val isaacKeys: IntArray,
@@ -33,8 +39,9 @@ class PacketSession(
 
     val encodeRandom = IsaacRandom(IntArray(isaacKeys.size) { isaacKeys[it] + 50 })
 
-    val incomingPackets = PublishProcessor.create<IncomingPacket>()
     val outgoingPackets = PublishProcessor.create<IPacketMessage>()
+
+    val incomingPacketChannel = ConflatedBroadcastChannel<IncomingPacket>()
 
     init {
 
@@ -66,7 +73,12 @@ class PacketSession(
 
             val gamePacket = metaData.decode(msg)
 
-            incomingPackets.offer(IncomingPacket(metaData, gamePacket))
+            incomingPacketChannel.sendBlocking(
+                IncomingPacket(
+                    metaData,
+                    gamePacket
+                )
+            )
 
             msg.release()
 

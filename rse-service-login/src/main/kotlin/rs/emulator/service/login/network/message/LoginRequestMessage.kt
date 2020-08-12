@@ -4,6 +4,7 @@ import io.netty.channel.Channel
 import io.netty.channel.ChannelHandlerContext
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.core.KoinComponent
 import org.koin.core.get
 import rs.emulator.entity.details.PlayerDetails
@@ -32,6 +33,7 @@ data class LoginRequestMessage(
 
     private val loginService: LoginWorkerService = get()
 
+    @ExperimentalCoroutinesApi
     override fun handle(ctx: ChannelHandlerContext) {
         val loginResult: LoginResult
         val playerDetails: PlayerDetails
@@ -61,13 +63,14 @@ data class LoginRequestMessage(
 
         ctx.channel().attr(SESSION_KEY).set(PacketSession(ctx.channel(), isaac, compositeDisposable))
         val session = ctx.channel().attr(SESSION_KEY).get() as PacketSession
-
         val player = Player(
             WorldRepository.nextPlayerIndex,
             session.outgoingPackets,
+            session.incomingPacketChannel.openSubscription(),
             compositeDisposable,
             playerDetails
         )
+
 
         player.add(ChannelCloseDisposable(ctx.channel()))
 
@@ -75,16 +78,7 @@ data class LoginRequestMessage(
 
         player.viewport.globalPlayers[player.index] = player
 
-        player.add(session.outgoingPackets
-            .subscribe { ctx.channel().writeAndFlush(it) })
-        player.add(session.incomingPackets
-            .subscribe({
-                val (metaData, gamePacket) = it
-                metaData.handle(ctx.channel(), player, gamePacket)
-            }, {
-                it.printStackTrace()
-            })
-        )
+        player.add(session.outgoingPackets.subscribe { ctx.channel().writeAndFlush(it) })
 
         player.load()
         player.onLogin()

@@ -1,6 +1,5 @@
 package rs.emulator.network.packet.listener
 
-import io.netty.channel.Channel
 import org.koin.core.KoinComponent
 import org.koin.core.get
 import rs.emulator.entity.player.Player
@@ -21,7 +20,10 @@ class WalkHereListener : GamePacketListener<WalkHereMessage>, KoinComponent {
 
     val world: World = get()
 
-    override fun handle(channel: Channel, player: Player, message: WalkHereMessage) {
+    override fun handle(
+        player: Player,
+        message: WalkHereMessage
+    ) {
 
         println("attempting to walk: [miniMap = ${message.miniMap}, x: ${message.destX}, z: ${message.destZ}, teleport: ${message.teleportClick}.")
 

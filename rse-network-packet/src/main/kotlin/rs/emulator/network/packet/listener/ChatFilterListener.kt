@@ -1,6 +1,5 @@
 package rs.emulator.network.packet.listener
 
-import io.netty.channel.Channel
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.toObservable
 import rs.emulator.entity.player.Player
@@ -14,7 +13,10 @@ import rs.emulator.plugins.extensions.factories.entity.chat.ChatFilterActionFact
  */
 
 class ChatFilterListener : GamePacketListener<ChatFilterMessage> {
-    override fun handle(channel: Channel, player: Player, message: ChatFilterMessage) {
+    override fun handle(
+        player: Player,
+        message: ChatFilterMessage
+    ) {
 
         RSPluginManager.getExtensions<ChatFilterActionFactory>()
             .toObservable()

@@ -1,6 +1,5 @@
 package rs.emulator.network.packet.listener
 
-import io.netty.channel.Channel
 import io.reactivex.rxkotlin.toObservable
 import rs.emulator.entity.player.Player
 import rs.emulator.network.packet.message.incoming.CameraRotationMessage
@@ -13,7 +12,10 @@ import rs.emulator.plugins.extensions.factories.CameraRotationActionFactory
  */
 
 class CameraRotationListener : GamePacketListener<CameraRotationMessage> {
-    override fun handle(channel: Channel, player: Player, message: CameraRotationMessage) {
+    override fun handle(
+        player: Player,
+        message: CameraRotationMessage
+    ) {
 
         RSPluginManager.getExtensions<CameraRotationActionFactory>()
             .toObservable()
