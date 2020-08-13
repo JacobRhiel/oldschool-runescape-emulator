@@ -17,6 +17,12 @@ class IfOpenSubEncoder : PacketEncoder<IfOpenSubMessage>()
     override fun encode(message: IfOpenSubMessage, builder: GamePacketBuilder)
     {
 
+        if((message.parent shl 16) == -1) {
+
+            println("Fuck! ${message.parent}")
+
+        }
+
         builder.put(DataType.BYTE, message.interType)
 
         builder.put(DataType.SHORT, DataTransformation.ADD, message.component)

@@ -1,8 +1,8 @@
-package rs.emulator.cache.definition.widget.enum
+package rs.emulator.definitions.enums
 
 import it.unimi.dsi.fastutil.ints.Int2ReferenceArrayMap
 import rs.emulator.definitions.Definition
-import rs.emulator.cache.definition.widget.script.ScriptVarType
+import rs.emulator.definitions.scripts.ScriptVarType
 
 /**
  *

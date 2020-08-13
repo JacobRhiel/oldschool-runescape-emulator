@@ -21,6 +21,29 @@ class MessageHandler(val player: Player) : AbstractMessageHandler() {
         player.outgoingPackets.offer(VarpLargeMessage(id, value))
     }
 
+    override fun sendSkillUpdate(id: Int, level: Int, experience: Int) {
+        player.outgoingPackets.offer(
+            UpdateSkillMessage(
+                id,
+                level,
+                experience
+            )
+        )
+    }
+
+    override fun sendRebuildRegion(login: Boolean, index: Int, x: Int, z: Int, height: Int, tileHash: Int) {
+        player.outgoingPackets.offer(
+            RebuildRegionMessage(
+                login,
+                index,
+                x,
+                z,
+                height,
+                tileHash
+            )
+        )
+    }
+
     override fun sendClientScript(scriptId: Int, vararg params: Any) {
         player.outgoingPackets.offer(
             RunClientScriptMessage(
@@ -35,6 +58,26 @@ class MessageHandler(val player: Player) : AbstractMessageHandler() {
             IfSetTextMessage(
                 (widgetId shl 16) or defChildId,
                 text
+            )
+        )
+    }
+
+    override fun sendCloseSub(parentId: Int, childId: Int) {
+        player.outgoingPackets.offer(
+            IfCloseSubMessage(
+                parentId,
+                childId
+            )
+        )
+    }
+
+    override fun sendMoveSub(toParentId: Int, toChildId: Int, fromParentId: Int, fromChildId: Int) {
+        player.outgoingPackets.offer(
+            IfMoveSubMessage(
+                toParentId,
+                toChildId,
+                fromParentId,
+                fromChildId
             )
         )
     }

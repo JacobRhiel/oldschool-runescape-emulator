@@ -36,7 +36,9 @@ include(
     "rse-plugins",
     "rse-plugins:commands",
     "rse-plugins:system",
-    "rse-plugins:report-abuse"
+    "rse-plugins:report-abuse",
+    "rse-plugins:gameframe",
+    "rse-plugins:lobby"
 )
 include("rse-network-js5")
 include("rse-network-world")

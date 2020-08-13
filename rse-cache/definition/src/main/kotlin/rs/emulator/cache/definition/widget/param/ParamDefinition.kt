@@ -1,7 +1,7 @@
 package rs.emulator.cache.definition.widget.param
 
 import rs.emulator.definitions.Definition
-import rs.emulator.cache.definition.widget.script.ScriptVarType
+import rs.emulator.definitions.scripts.ScriptVarType
 
 /**
  *

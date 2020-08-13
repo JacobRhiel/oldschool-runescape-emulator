@@ -5,6 +5,7 @@ import rs.emulator.entity.actor.player.messages.AbstractMessageHandler
 import rs.emulator.entity.actor.player.widgets.WidgetViewport
 import rs.emulator.entity.details.IPlayerDetails
 import rs.emulator.entity.material.containers.ItemContainerManager
+import rs.emulator.region.coordinate.Coordinate
 
 interface IPlayer : IActor {
 
@@ -22,6 +23,7 @@ interface IPlayer : IActor {
 
     fun messages(): AbstractMessageHandler
 
+    fun setTeleportCoordinate(coordinate: Coordinate)
     fun save()
     fun logout()
 

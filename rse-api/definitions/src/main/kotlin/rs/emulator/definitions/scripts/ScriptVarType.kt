@@ -1,4 +1,4 @@
-package rs.emulator.cache.definition.widget.script
+package rs.emulator.definitions.scripts
 
 /**
  *
