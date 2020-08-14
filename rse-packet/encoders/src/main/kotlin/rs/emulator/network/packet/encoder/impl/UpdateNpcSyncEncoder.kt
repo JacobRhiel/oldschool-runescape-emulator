@@ -15,10 +15,6 @@ import rs.emulator.world.World
 class UpdateNpcSyncEncoder : PacketEncoder<UpdateNpcSyncMessage<Player>>()
 {
 
-    private val npcs = listOf(
-        Npc(1,8058)//todo npc index
-    )
-
     override fun encode(message: UpdateNpcSyncMessage<Player>, builder: GamePacketBuilder)
     {
 

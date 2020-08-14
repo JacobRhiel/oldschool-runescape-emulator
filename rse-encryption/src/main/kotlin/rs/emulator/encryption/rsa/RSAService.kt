@@ -20,6 +20,8 @@ class RSAService : AbstractIdleService()
 
     private lateinit var keyPath: Path
 
+    private lateinit var publicKeyPath: Path
+
     private var radix = -1
 
     lateinit var exponent: BigInteger
@@ -30,6 +32,8 @@ class RSAService : AbstractIdleService()
     {
 
         keyPath = Paths.get("./key.pem")
+
+        publicKeyPath = Paths.get("./publicKey.pem")
 
         radix = 16
 
@@ -94,6 +98,7 @@ class RSAService : AbstractIdleService()
         try
         {
             PemWriter(Files.newBufferedWriter(keyPath)).use { writer -> writer.writeObject(PemObject("RSA PRIVATE KEY", privateKey.encoded)) }
+            Files.write(publicKeyPath, publicKey.modulus.toString(radix).toByteArray())
         }
         catch (e: Exception)
         {

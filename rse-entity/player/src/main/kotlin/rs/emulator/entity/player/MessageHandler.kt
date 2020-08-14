@@ -1,6 +1,7 @@
 package rs.emulator.entity.player
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.sendBlocking
 import rs.emulator.entity.actor.player.messages.AbstractMessageHandler
 import rs.emulator.entity.actor.player.messages.chat.ChatMessageType
 import rs.emulator.entity.material.containers.ItemContainer
@@ -14,15 +15,38 @@ import rs.emulator.network.packet.message.outgoing.*
 class MessageHandler(val player: Player) : AbstractMessageHandler() {
 
     override fun sendSmallVarp(id: Int, value: Int) {
-        player.outgoingPackets.offer(VarpSmallMessage(id, value))
+        player.outgoingPackets.sendBlocking(VarpSmallMessage(id, value))
     }
 
     override fun sendLargeVarp(id: Int, value: Int) {
-        player.outgoingPackets.offer(VarpLargeMessage(id, value))
+        player.outgoingPackets.sendBlocking(VarpLargeMessage(id, value))
+    }
+
+    override fun sendSkillUpdate(id: Int, level: Int, experience: Int) {
+        player.outgoingPackets.sendBlocking(
+            UpdateSkillMessage(
+                id,
+                level,
+                experience
+            )
+        )
+    }
+
+    override fun sendRebuildRegion(login: Boolean, index: Int, x: Int, z: Int, height: Int, tileHash: Int) {
+        player.outgoingPackets.sendBlocking(
+            RebuildRegionMessage(
+                login,
+                index,
+                x,
+                z,
+                height,
+                tileHash
+            )
+        )
     }
 
     override fun sendClientScript(scriptId: Int, vararg params: Any) {
-        player.outgoingPackets.offer(
+        player.outgoingPackets.sendBlocking(
             RunClientScriptMessage(
                 scriptId,
                 *params
@@ -31,7 +55,7 @@ class MessageHandler(val player: Player) : AbstractMessageHandler() {
     }
 
     override fun setWidgetText(widgetId: Int, defChildId: Int, text: String) {
-        player.outgoingPackets.offer(
+        player.outgoingPackets.sendBlocking(
             IfSetTextMessage(
                 (widgetId shl 16) or defChildId,
                 text
@@ -39,12 +63,32 @@ class MessageHandler(val player: Player) : AbstractMessageHandler() {
         )
     }
 
+    override fun sendCloseSub(parentId: Int, childId: Int) {
+        player.outgoingPackets.sendBlocking(
+            IfCloseSubMessage(
+                parentId,
+                childId
+            )
+        )
+    }
+
+    override fun sendMoveSub(toParentId: Int, toChildId: Int, fromParentId: Int, fromChildId: Int) {
+        player.outgoingPackets.sendBlocking(
+            IfMoveSubMessage(
+                toParentId,
+                toChildId,
+                fromParentId,
+                fromChildId
+            )
+        )
+    }
+
     override fun sendOpenOverlay(id: Int) {
-        player.outgoingPackets.offer(IfOpenOverlayMessage(id))
+        player.outgoingPackets.sendBlocking(IfOpenOverlayMessage(id))
     }
 
     override fun sendOpenSub(parentId: Int, childId: Int, component: Int, interType: Int) {
-        player.outgoingPackets.offer(
+        player.outgoingPackets.sendBlocking(
             IfOpenSubMessage(
                 parentId,
                 childId,
@@ -55,11 +99,11 @@ class MessageHandler(val player: Player) : AbstractMessageHandler() {
     }
 
     override fun sendDisplayWidgetUpdate() {
-        player.outgoingPackets.offer(UpdateDisplayWidgetsMessage())
+        player.outgoingPackets.sendBlocking(UpdateDisplayWidgetsMessage())
     }
 
     override fun sendChatMessage(message: String, messageType: ChatMessageType) {
-        player.outgoingPackets.offer(
+        player.outgoingPackets.sendBlocking(
             GameMessageMessage(
                 messageType.type,
                 player.displayName(),
@@ -69,7 +113,7 @@ class MessageHandler(val player: Player) : AbstractMessageHandler() {
     }
 
     override fun sendAccessMask(widgetId: Int, defChildId: Int, minCs2ChildId: Int, maxCs2ChildId: Int, mask: Int) {
-        player.outgoingPackets.offer(
+        player.outgoingPackets.sendBlocking(
             AccessMaskMessage(
                 widgetId,
                 defChildId,
@@ -86,7 +130,7 @@ class MessageHandler(val player: Player) : AbstractMessageHandler() {
         containerKey: Int,
         container: ItemContainer<*>
     ) {
-        player.outgoingPackets.offer(
+        player.outgoingPackets.sendBlocking(
             UpdateInventoryFullMessage(
                 interfaceId,
                 component,
@@ -102,7 +146,7 @@ class MessageHandler(val player: Player) : AbstractMessageHandler() {
         containerKey: Int,
         container: ItemContainer<*>
     ) {
-        player.outgoingPackets.offer(
+        player.outgoingPackets.sendBlocking(
             UpdateInventoryPartialMessage(
                 container,
                 interfaceId shl 16 and component,

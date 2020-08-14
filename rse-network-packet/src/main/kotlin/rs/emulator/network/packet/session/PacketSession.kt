@@ -41,7 +41,9 @@ class PacketSession(
 
     val outgoingPackets = PublishProcessor.create<IPacketMessage>()
 
-    val incomingPacketChannel = ConflatedBroadcastChannel<IncomingPacket>()
+    val outgoingPacketsChannel = BroadcastChannel<IPacketMessage>(10)
+
+    val incomingPacketChannel = BroadcastChannel<IncomingPacket>(10)
 
     init {
 

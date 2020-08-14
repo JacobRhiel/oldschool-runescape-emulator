@@ -5,7 +5,7 @@ import rs.emulator.buffer.reader.BufferedReader
 import rs.emulator.cache.definition.generator.DefinitionGenerator
 import rs.emulator.cache.store.index.IndexConfig
 import rs.emulator.cache.store.index.archive.ArchiveConfig
-import rs.emulator.cache.definition.widget.script.ScriptVarType
+import rs.emulator.definitions.scripts.ScriptVarType
 
 /**
  *

@@ -1,14 +1,10 @@
 package rs.emulator.network.packet.listener
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.filterIsInstance
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
-import rs.emulator.applyEach
+import kotlinx.coroutines.flow.*
 import rs.emulator.definitions.factories.ItemMetaDefinitionFactory
 import rs.emulator.entity.actor.player.hasRequirementsFor
 import rs.emulator.entity.material.containers.*
-import rs.emulator.entity.material.containers.events.impl.AddContainerEvent
 import rs.emulator.entity.material.containers.events.impl.RemoveContainerEvent
 import rs.emulator.entity.material.items.Item
 import rs.emulator.entity.material.items.Wearable
@@ -17,7 +13,7 @@ import rs.emulator.entity.player.Player
 import rs.emulator.entity.player.update.flag.PlayerUpdateFlag
 import rs.emulator.network.packet.message.incoming.ObjActionMessage
 import rs.emulator.plugins.RSPluginManager
-import rs.emulator.plugins.extensions.ItemActionExtensionPoint
+import rs.emulator.plugins.extensions.factories.ItemActionFactory
 import rs.emulator.utilities.contexts.scopes.ActorScope
 import rs.emulator.utilities.koin.get
 
@@ -63,15 +59,14 @@ class ObjActionListener : GamePacketListener<ObjActionMessage> {
 
         }
 
-
-
-        RSPluginManager.getExtensions(ItemActionExtensionPoint::class.java).applyEach {
-            player.interact(
+        flowOf(*RSPluginManager.getExtensions<ItemActionFactory>().toTypedArray())
+            .map { it.registerItemAction(
                 message.item,
                 message.option,
                 message.componentHash shr 16,
                 message.componentHash and 255
-            )
-        }
+            ) }
+            .onEach { it.handleItemAction(ItemProvider.provide(message.item), message.option) }
+            .launchIn(get<ActorScope>())
     }
 }

@@ -1,7 +1,16 @@
 package rs.emulator.network.packet.listener
 
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import rs.emulator.entity.material.provider.ItemProvider
 import rs.emulator.entity.player.Player
 import rs.emulator.network.packet.message.incoming.DragItemMessage
+import rs.emulator.plugins.RSPluginManager
+import rs.emulator.plugins.extensions.factories.widgets.DraggedItemFactory
+import rs.emulator.utilities.contexts.scopes.ActorScope
+import rs.emulator.utilities.koin.get
 
 /**
  *
@@ -14,12 +23,27 @@ class DragItemListener : GamePacketListener<DragItemMessage> {
         message: DragItemMessage
     ) {
 
-        player.messages().sendChatMessage("Dragged Item ID : ${message.draggedItemId}")
-        player.messages()
-            .sendChatMessage("Dragged Widget ID : ${message.draggedHash shr 16} - index ${message.draggedChildIndex}")
-        player.messages().sendChatMessage("Clicked Item ID : ${message.clickedItemId}")
-        player.messages()
-            .sendChatMessage("Clicked Widget ID : ${message.clickedHash shr 16} - index ${message.clickedChildIndex}")
+        flowOf(*RSPluginManager.getExtensions<DraggedItemFactory>().toTypedArray())
+            .map { it.registerDraggedItemAction(
+                message.draggedItemId,
+                message.draggedHash,
+                message.draggedChildIndex,
+                message.clickedItemId,
+                message.clickedHash,
+                message.clickedChildIndex
+            ) }
+            .onEach { it.handleDraggedItem(
+                player,
+                ItemProvider.provide(message.draggedItemId),
+                message.draggedHash shr 16,
+                message.draggedHash and 255,
+                message.draggedChildIndex,
+                ItemProvider.provide(message.clickedItemId),
+                message.clickedHash shr 16,
+                message.clickedHash and 255,
+                message.clickedChildIndex
+            ) }
+            .launchIn(get<ActorScope>())
 
     }
 }

@@ -16,7 +16,7 @@ class ExamineEntityListener : GamePacketListener<ExamineEntityMessage>
     )
     {
 
-
+        println("Examine entity type: ${message.entityType}")
 
     }
 

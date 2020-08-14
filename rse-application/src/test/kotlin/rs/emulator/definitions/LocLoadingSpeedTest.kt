@@ -36,7 +36,7 @@ class LocLoadingSpeedTest {
 
             single { FileStoreService() }
 
-            single { XteaKeyService() }
+            //single { XteaKeyService() }
         }
 
         startKoin {

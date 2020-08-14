@@ -1,5 +1,13 @@
 version = "1.0-SNAPSHOT"
 
+plugins {
+    id("application")
+}
+
+application {
+    mainClassName = "rs.emulator.application.Test"
+}
+
 dependencies {
 
     implementation(project(":rse-engine"))

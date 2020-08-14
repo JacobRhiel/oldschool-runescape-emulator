@@ -4,13 +4,17 @@ import io.netty.channel.Channel
 import io.netty.channel.ChannelHandlerContext
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.*
 import org.koin.core.KoinComponent
 import org.koin.core.get
 import rs.emulator.entity.details.PlayerDetails
 import rs.emulator.entity.player.Player
 import rs.emulator.network.SESSION_KEY
 import rs.emulator.network.message.NetworkMessage
+import rs.emulator.network.packet.message.outgoing.RebuildRegionMessage
 import rs.emulator.network.packet.session.PacketSession
 import rs.emulator.service.login.LoginCredentials
 import rs.emulator.service.login.LoginResult
@@ -65,29 +69,43 @@ data class LoginRequestMessage(
         val session = ctx.channel().attr(SESSION_KEY).get() as PacketSession
         val player = Player(
             WorldRepository.nextPlayerIndex,
-            session.outgoingPackets,
-            session.incomingPacketChannel.openSubscription(),
-            compositeDisposable,
-            playerDetails
+            session.outgoingPacketsChannel,
+            incomingPackets = session.incomingPacketChannel.openSubscription(),
+            disposable = compositeDisposable,
+            details = playerDetails
         )
-
 
         player.add(ChannelCloseDisposable(ctx.channel()))
 
         player.viewport.localPlayers[player.index] = player
 
         player.viewport.globalPlayers[player.index] = player
-
-        player.add(session.outgoingPackets.subscribe { ctx.channel().writeAndFlush(it) })
-
         player.load()
+        sendBuildRegionForLogin(ctx.channel(), player)
+        val channel = ctx.channel()
+        session.outgoingPacketsChannel.openSubscription().consumeAsFlow()
+            .onEach {
+                if(channel.isActive) {
+                    channel.writeAndFlush(it)
+                }
+            }
+            .launchIn(CoroutineScope(Dispatchers.IO))
         player.onLogin()
-
-        //TODO - add player
         WorldRepository.players.add(player)
-
         if (ctx.channel().isActive)
             ctx.channel().flush()
+    }
+
+    private fun sendBuildRegionForLogin(channel: Channel, player: Player) {
+        channel.writeAndFlush(
+            RebuildRegionMessage(
+                true,
+                player.playerIndex,
+                x = player.coordinate.x,
+                z = player.coordinate.z,
+                tileHash = player.coordinate.as30BitInteger
+            )
+        )
     }
 
     class ChannelCloseDisposable(val channel: Channel) : Disposable {

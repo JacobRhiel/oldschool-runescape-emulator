@@ -4,11 +4,12 @@ import com.google.common.util.concurrent.AbstractIdleService
 import com.google.gson.Gson
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
 import java.io.FileNotFoundException
+import java.net.URL
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 
-class XteaKeyService : AbstractIdleService()
+class XteaKeyService(val path : Path) : AbstractIdleService()
 {
 
     val validRegions: IntArray
@@ -17,7 +18,7 @@ class XteaKeyService : AbstractIdleService()
     private fun loadKeys()
     {
 
-        val path = Paths.get("./data/xteas/")
+        val path = path.resolve("xteas")
 
         if (!Files.exists(path)) {
             throw FileNotFoundException("Path does not exist. $path")

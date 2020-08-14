@@ -68,15 +68,17 @@ class Test : KoinComponent {
         @JvmStatic
         fun main(args: Array<String>) {
 
-            val path = Paths.get("data/cache")
+            val resource = Test::class.java.classLoader.getResource("data")
+
+            val path = Paths.get(resource.path)
 
             val mod = module {
 
-                single { DataFile(path.resolve("main_file_cache.dat2")) }
+                single { DataFile(path.resolve("cache").resolve("main_file_cache.dat2")) }
 
-                single { ReferenceTable(path.resolve("main_file_cache.idx255")) }
+                single { ReferenceTable(path.resolve("cache").resolve("main_file_cache.idx255")) }
 
-                single { VirtualFileStore(path) }
+                single { VirtualFileStore(path.resolve("cache")) }
 
                 single { DefinitionRepository() }
 
@@ -86,7 +88,7 @@ class Test : KoinComponent {
 
                 single { FileStoreService() }
 
-                single { XteaKeyService() }
+                single { XteaKeyService(path) }
 
                 single { RSAService() }
 
@@ -151,6 +153,7 @@ class Test : KoinComponent {
                 }
 
                 single { ActorScope() }
+
 
             }
 
