@@ -1,7 +1,5 @@
 package rs.emulator.plugin
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.pf4j.Extension
@@ -10,6 +8,9 @@ import rs.emulator.entity.actor.player.widgets.WidgetViewport
 import rs.emulator.plugins.extensions.factories.LoginActionFactory
 import rs.emulator.plugins.extensions.factories.actions.LoginAction
 import rs.emulator.region.WorldCoordinate
+import rs.emulator.utilities.contexts.scopes.ActorScope
+import rs.emulator.utilities.koin.get
+import rs.emulator.utilities.logger.info
 
 /**
  *
@@ -22,14 +23,6 @@ class LobbyLogin : LoginActionFactory, LoginAction {
     }
 
     override fun onLogin(player: IPlayer) {
-
-        player.messages().sendRebuildRegion(
-            true,
-            1,
-            x = player.coordinate.x,
-            z = player.coordinate.z,
-            tileHash = player.coordinate.as30BitInteger
-        )
 
         player.messages().sendSmallVarp(18, 1)
         player.messages().sendLargeVarp(20, 59899954)
@@ -169,13 +162,8 @@ class LobbyLogin : LoginActionFactory, LoginAction {
                     it.experience
                 )
             }
-        }.launchIn(CoroutineScope(Dispatchers.Default))
+        }.launchIn(get<ActorScope>())
 
         player.skillManager.invalidateSkills()
-
-        val coords = WorldCoordinate.from30BitHash(player.details.coordinate)
-        player.coordinate.set(coords.x, coords.z, coords.plane)
-        player.setTeleportCoordinate(player.coordinate)
-
     }
 }

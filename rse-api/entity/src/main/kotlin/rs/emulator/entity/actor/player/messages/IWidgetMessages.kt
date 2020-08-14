@@ -19,7 +19,7 @@ interface IWidgetMessages : IMessages {
     fun sendChatMessage(
         message: String,
         messageType: ChatMessageType = ChatMessageType.GAMEMESSAGE
-    ) //TODO - refactor message type to enum
+    )
 
     fun sendAccessMask(widgetId: Int, defChildId: Int, minCs2ChildId: Int, maxCs2ChildId: Int, mask: Int)
 

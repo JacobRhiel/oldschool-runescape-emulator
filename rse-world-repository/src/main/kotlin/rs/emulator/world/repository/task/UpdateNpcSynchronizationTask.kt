@@ -1,5 +1,6 @@
 package rs.emulator.world.repository.task
 
+import kotlinx.coroutines.channels.sendBlocking
 import rs.emulator.network.packet.message.outgoing.UpdateNpcSyncMessage
 import rs.emulator.service.event.IEvent
 import rs.emulator.world.repository.WorldRepository
@@ -15,7 +16,7 @@ object UpdateNpcSynchronizationTask : IEvent
     {
 
         WorldRepository.players.forEach {
-            it.outgoingPackets.offer(
+            it.outgoingPackets.sendBlocking(
                 UpdateNpcSyncMessage(
                     it
                 )

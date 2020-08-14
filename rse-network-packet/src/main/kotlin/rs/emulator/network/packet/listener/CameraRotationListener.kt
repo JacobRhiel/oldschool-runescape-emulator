@@ -1,10 +1,16 @@
 package rs.emulator.network.packet.listener
 
 import io.reactivex.rxkotlin.toObservable
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import rs.emulator.entity.player.Player
 import rs.emulator.network.packet.message.incoming.CameraRotationMessage
 import rs.emulator.plugins.RSPluginManager
 import rs.emulator.plugins.extensions.factories.CameraRotationActionFactory
+import rs.emulator.utilities.contexts.scopes.ActorScope
+import rs.emulator.utilities.koin.get
 
 /**
  *
@@ -17,17 +23,9 @@ class CameraRotationListener : GamePacketListener<CameraRotationMessage> {
         message: CameraRotationMessage
     ) {
 
-        RSPluginManager.getExtensions<CameraRotationActionFactory>()
-            .toObservable()
-            .map {
-                it.registerCameraRotationActions(
-                    message.camAngleX,
-                    message.camAngleY
-                )
-            }.subscribe({
-                it.handleCameraRotation(message.camAngleX, message.camAngleY)
-            }, {
-                it.printStackTrace()
-            }).dispose()
+        flowOf(*RSPluginManager.getExtensions<CameraRotationActionFactory>().toTypedArray())
+            .map { it.registerCameraRotationActions(message.camAngleX, message.camAngleY) }
+            .onEach { it.handleCameraRotation(message.camAngleX, message.camAngleY) }
+            .launchIn(get<ActorScope>())
     }
 }

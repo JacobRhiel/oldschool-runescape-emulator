@@ -22,7 +22,7 @@ import java.nio.file.Path
  */
 class VirtualFileStore(private val path: Path) : KoinComponent, Closeable {
 
-    private val dataFile = DataFile(path.resolve("main_file_cache.dat2"))
+    private val dataFile: DataFile = get()
 
     private val referenceTable: ReferenceTable = get()
 

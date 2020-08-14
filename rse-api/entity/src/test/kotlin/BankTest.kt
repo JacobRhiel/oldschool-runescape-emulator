@@ -31,7 +31,7 @@ class BankTest {
 
                     single { VirtualFileStore(path) }
 
-                    single { XteaKeyService() }
+                    //single { XteaKeyService() }
 
                     single { DefinitionRepository() }
 

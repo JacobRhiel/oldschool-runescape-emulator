@@ -1,15 +1,20 @@
 package rs.emulator.entity.player
 
 import com.google.gson.Gson
+import io.netty.channel.Channel
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.internal.disposables.DisposableContainer
-import io.reactivex.processors.PublishProcessor
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.ReceiveChannel
-import kotlinx.coroutines.flow.*
-import org.koin.core.KoinComponent
-import org.koin.core.get
+import kotlinx.coroutines.channels.sendBlocking
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import rs.dusk.engine.path.Finder
 import rs.emulator.database.service.JDBCPoolingService
 import rs.emulator.entity.actor.Actor
@@ -31,12 +36,13 @@ import rs.emulator.entity.player.viewport.Viewport
 import rs.emulator.entity.skills.Skill
 import rs.emulator.entity.skills.SkillManager
 import rs.emulator.network.packet.message.IncomingPacket
-import rs.emulator.network.packet.message.outgoing.*
+import rs.emulator.network.packet.message.outgoing.LogoutFullMessage
+import rs.emulator.network.packet.message.outgoing.RebuildRegionMessage
+import rs.emulator.network.packet.message.outgoing.UpdateRunEnergyMessage
 import rs.emulator.packet.api.IPacketMessage
 import rs.emulator.plugins.RSPluginManager
 import rs.emulator.plugins.extensions.factories.LoginActionFactory
 import rs.emulator.plugins.extensions.factories.LogoutActionFactory
-import rs.emulator.plugins.extensions.factories.SavePlayerFactory
 import rs.emulator.region.WorldCoordinate
 import rs.emulator.region.coordinate.Coordinate
 import rs.emulator.utilities.contexts.scopes.ActorScope
@@ -47,7 +53,7 @@ import java.util.concurrent.atomic.AtomicLong
 @ExperimentalCoroutinesApi
 class Player(
     index: Int,
-    val outgoingPackets: PublishProcessor<IPacketMessage>,
+    val outgoingPackets: BroadcastChannel<IPacketMessage>,
     val incomingPackets: ReceiveChannel<IncomingPacket>,
     private val disposable: CompositeDisposable,
     override val details: PlayerDetails
@@ -69,6 +75,8 @@ class Player(
 
     override val searchPattern: Finder = pathFinder.bfs
 
+    override val playerIndex get() = super.index
+
     @ExperimentalCoroutinesApi
     override val skillManager: SkillManager = SkillManager()
 
@@ -80,7 +88,7 @@ class Player(
 
     override var energy: Int by actorAttributes.Int(100).markPersistent().apply {
         add(this.changeListener.subscribe {
-            outgoingPackets.offer(UpdateRunEnergyMessage(it))
+            outgoingPackets.sendBlocking(UpdateRunEnergyMessage(it))
         })
     }
 
@@ -108,9 +116,8 @@ class Player(
     override fun dispose() {
         //TODO - logout code
         movement.clear()
-        if (outgoingPackets.offer(LogoutFullMessage())) {
-            disposable.dispose()
-        }
+        outgoingPackets.sendBlocking(LogoutFullMessage())
+        disposable.dispose()
     }
 
     override fun save() {
@@ -125,10 +132,10 @@ class Player(
             s.update(details)
             this.commit()
         }
-        flowOf(*RSPluginManager.getExtensions<SavePlayerFactory>().toTypedArray())
+        /*flowOf(*RSPluginManager.getExtensions<SavePlayerFactory>().toTypedArray())
             .map { it.registerSaveAction(this) }
             .onEach { it.onSave(this) }
-            .launchIn(CoroutineScope(Dispatchers.IO))
+            .launchIn(CoroutineScope(Dispatchers.IO))*/
     }
 
     @ExperimentalCoroutinesApi
@@ -157,11 +164,15 @@ class Player(
             }
         }
         actorAttributes.attributes.putAll(details.attributes)
+        val coord = WorldCoordinate.from30BitHash(details.coordinate)
+        coordinate.set(coord.x, coord.z, coord.plane)
 
-        flowOf(*RSPluginManager.getExtensions<SavePlayerFactory>().toTypedArray())
+        println("$coord")
+
+        /*flowOf(*RSPluginManager.getExtensions<SavePlayerFactory>().toTypedArray())
             .map { it.registerSaveAction(this) }
             .onEach { it.onLoad(this) }
-            .launchIn(CoroutineScope(Dispatchers.IO))
+            .launchIn(CoroutineScope(Dispatchers.IO))*/
     }
 
     override fun logout() {
