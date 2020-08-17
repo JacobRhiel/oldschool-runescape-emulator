@@ -41,12 +41,12 @@ class DirectSearch : Finder {
         var x = tile.x
 
         if (dx > 0) {
-            while (!traversal.blocked(x, tile.z, tile.plane, Direction.WEST) && dx-- > 0) {
+            while (!traversal.blocked(x, tile.y, tile.plane, Direction.WEST) && dx-- > 0) {
                 steps.add(Direction.WEST)
                 x--
             }
         } else if (dx < 0) {
-            while (!traversal.blocked(x, tile.z, tile.plane, Direction.EAST) && dx++ < 0) {
+            while (!traversal.blocked(x, tile.y, tile.plane, Direction.EAST) && dx++ < 0) {
                 steps.add(Direction.EAST)
                 x++
             }
@@ -55,7 +55,7 @@ class DirectSearch : Finder {
         val last = tile.copy(offsetX = x)
         return if (strategy.reached(last, size)) {
             PathResult.Success.Complete(last)
-        } else if (delta.z != 0 && !traversal.blocked(last, if (delta.z > 0) Direction.SOUTH else Direction.NORTH)) {
+        } else if (delta.y != 0 && !traversal.blocked(last, if (delta.y > 0) Direction.SOUTH else Direction.NORTH)) {
             addVertical(steps, last, size, strategy, traversal)
         } else {
             PathResult.Success.Partial(last)
@@ -70,8 +70,8 @@ class DirectSearch : Finder {
         traversal: TraversalStrategy
     ): PathResult {
         val delta = tile.delta(strategy.tile)
-        var dy = delta.z
-        var z = tile.z
+        var dy = delta.y
+        var z = tile.y
 
         if (dy > 0) {
             while (!traversal.blocked(tile.x, z, tile.plane, Direction.SOUTH) && dy-- > 0) {

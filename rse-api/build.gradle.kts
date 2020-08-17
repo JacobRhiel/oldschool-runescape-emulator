@@ -16,7 +16,6 @@ tasks.withType<ShadowJar> {
         include(project(":rse-api:entity"))
         include(project(":rse-api:reactive"))
         include(project(":rse-api:region"))
-        include(project(":rse-api:region-zones"))
         include(project(":rse-api:skills"))
         include(project(":rse-api:widgets"))
     }
@@ -29,7 +28,6 @@ dependencies {
     api(project(":rse-api:entity"))
     api(project(":rse-api:reactive"))
     api(project(":rse-api:region"))
-    api(project(":rse-api:region-zones"))
     api(project(":rse-api:skills"))
     api(project(":rse-api:widgets"))
 }

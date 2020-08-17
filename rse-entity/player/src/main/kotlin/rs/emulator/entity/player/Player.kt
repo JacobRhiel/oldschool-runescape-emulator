@@ -1,23 +1,21 @@
 package rs.emulator.entity.player
 
 import com.google.gson.Gson
-import io.netty.channel.Channel
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.internal.disposables.DisposableContainer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.sendBlocking
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
 import rs.dusk.engine.path.Finder
 import rs.emulator.database.service.JDBCPoolingService
 import rs.emulator.entity.actor.Actor
+import rs.emulator.entity.actor.affects.AffectHandler
 import rs.emulator.entity.actor.attributes.ActorAttributes
 import rs.emulator.entity.actor.player.IPlayer
 import rs.emulator.entity.actor.player.messages.AbstractMessageHandler
@@ -37,7 +35,6 @@ import rs.emulator.entity.skills.Skill
 import rs.emulator.entity.skills.SkillManager
 import rs.emulator.network.packet.message.IncomingPacket
 import rs.emulator.network.packet.message.outgoing.LogoutFullMessage
-import rs.emulator.network.packet.message.outgoing.RebuildRegionMessage
 import rs.emulator.network.packet.message.outgoing.UpdateRunEnergyMessage
 import rs.emulator.packet.api.IPacketMessage
 import rs.emulator.plugins.RSPluginManager
@@ -45,9 +42,12 @@ import rs.emulator.plugins.extensions.factories.LoginActionFactory
 import rs.emulator.plugins.extensions.factories.LogoutActionFactory
 import rs.emulator.region.WorldCoordinate
 import rs.emulator.region.coordinate.Coordinate
+import rs.emulator.regions.zones.RegionZone
+import rs.emulator.regions.zones.events.MessageBroadcastZoneEvent
 import rs.emulator.utilities.contexts.scopes.ActorScope
 import rs.emulator.utilities.koin.get
 import rs.emulator.world.World
+import rs.emulator.world.regions.RegionZoneManager
 import java.util.concurrent.atomic.AtomicLong
 
 @ExperimentalCoroutinesApi
@@ -77,6 +77,8 @@ class Player(
 
     override val playerIndex get() = super.index
 
+    override val currentZone: MutableStateFlow<RegionZone> = MutableStateFlow(RegionZone.WORLD)
+
     @ExperimentalCoroutinesApi
     override val skillManager: SkillManager = SkillManager()
 
@@ -85,6 +87,8 @@ class Player(
     override val actorAttributes: ActorAttributes = ActorAttributes()
 
     override val containerManager: ItemContainerManager = ItemContainerManager()
+
+    override val affectHandler: AffectHandler<IPlayer> = AffectHandler()
 
     override var energy: Int by actorAttributes.Int(100).markPersistent().apply {
         add(this.changeListener.subscribe {
@@ -165,9 +169,7 @@ class Player(
         }
         actorAttributes.attributes.putAll(details.attributes)
         val coord = WorldCoordinate.from30BitHash(details.coordinate)
-        coordinate.set(coord.x, coord.z, coord.plane)
-
-        println("$coord")
+        coordinate.set(coord.x, coord.y, coord.plane)
 
         /*flowOf(*RSPluginManager.getExtensions<SavePlayerFactory>().toTypedArray())
             .map { it.registerSaveAction(this) }

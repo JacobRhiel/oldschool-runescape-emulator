@@ -19,7 +19,7 @@ class MediumTraversal(override val type: TraversalType, collidesWithEntities: Bo
         val delta = direction.delta
         val inverse = direction.inverse()
         var offsetX = if (delta.x == 1) size.width else delta.x
-        var offsetY = if (delta.z == 1) size.height else delta.z
+        var offsetY = if (delta.y == 1) size.height else delta.y
         if (inverse.isCardinal()) {
             // Start
             if (collisions.check(x + offsetX, y + offsetY, plane, getNorthCorner(inverse).block())) {
@@ -27,7 +27,7 @@ class MediumTraversal(override val type: TraversalType, collidesWithEntities: Bo
             }
             // End
             offsetX = if (delta.x == 0) 1 else if (delta.x == 1) size.width else -1
-            offsetY = if (delta.z == 0) 1 else if (delta.z == 1) size.height else -1
+            offsetY = if (delta.y == 0) 1 else if (delta.y == 1) size.height else -1
             if (collisions.check(x + offsetX, y + offsetY, plane, getSouthCorner(inverse).block())) {
                 return true
             }
@@ -42,7 +42,7 @@ class MediumTraversal(override val type: TraversalType, collidesWithEntities: Bo
                 return true
             }
             // Horizontal
-            val dy = if (delta.z == -1) 0 else delta.z
+            val dy = if (delta.y == -1) 0 else delta.y
             if (collisions.check(x + offsetX, y + dy, plane, direction.horizontal().not())) {
                 return true
             }

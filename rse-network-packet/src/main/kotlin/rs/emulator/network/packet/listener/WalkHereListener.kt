@@ -1,21 +1,20 @@
 package rs.emulator.network.packet.listener
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.core.KoinComponent
 import org.koin.core.get
 import rs.emulator.entity.player.Player
 import rs.emulator.entity.player.update.flag.PlayerUpdateFlag
 import rs.emulator.network.packet.message.WalkHereMessage
-import rs.emulator.reactive.ReactiveZone
 import rs.emulator.region.WorldCoordinate
-import rs.emulator.region.zones.ZoneEvent
-import rs.emulator.region.zones.events.EnterZoneEvent
-import rs.emulator.region.zones.events.LeaveZoneEvent
 import rs.emulator.world.World
+import rs.emulator.world.regions.RegionZoneManager
 
 /**
  *
  * @author Chk
  */
+@ExperimentalCoroutinesApi
 class WalkHereListener : GamePacketListener<WalkHereMessage>, KoinComponent {
 
     val world: World = get()
@@ -25,7 +24,7 @@ class WalkHereListener : GamePacketListener<WalkHereMessage>, KoinComponent {
         message: WalkHereMessage
     ) {
 
-        println("attempting to walk: [miniMap = ${message.miniMap}, x: ${message.destX}, z: ${message.destZ}, teleport: ${message.teleportClick}.")
+        //println("attempting to walk: [miniMap = ${message.miniMap}, x: ${message.destX}, z: ${message.destZ}, teleport: ${message.teleportClick}.")
 
         if (message.teleportClick) {
 
@@ -39,53 +38,17 @@ class WalkHereListener : GamePacketListener<WalkHereMessage>, KoinComponent {
 
         } else {
 
-            player.world.mapGrid.fetchRegion(player.coordinate.x, player.coordinate.z)
+            player.world.mapGrid.fetchRegion(player.coordinate.x, player.coordinate.y)
 
             val path = player.find(WorldCoordinate(message.destX, message.destZ, player.coordinate.plane))
 
             player.targetCoordinate = WorldCoordinate(message.destX, message.destZ, player.coordinate.plane)
 
-            println("Path dest $path")
-
+            //println("Path dest $path")
         }
 
-        val region = world.mapGrid.fetchRegion(player.coordinate.toRegion().regionId)
+        RegionZoneManager.updateActorZone(player)
 
-        region.zones.forEach {
-            handleZone(it.reactiveZone, player)
-        }
-
-        /*fireZoneEvents(
-            region.zones.flatMap { it.reactiveZone }.toList(),
-            player
-        )*/
-
-    }
-
-    private fun fireZoneEvents(zone: List<ReactiveZone<ZoneEvent<*>>>, player: Player) {
-        zone.forEach {
-            fireZoneEvents(it.children, player)
-            handleZone(it, player)
-        }
-    }
-
-    private fun handleZone(
-        zone: ReactiveZone<ZoneEvent<*>>,
-        player: Player
-    ) {
-        if (zone.isWithin(player.lastCoordinate.x, player.lastCoordinate.z) && !zone.isWithin(
-                player.coordinate.x,
-                player.coordinate.z
-            )
-        ) {
-            zone.onNext(LeaveZoneEvent(player))
-        } else if (zone.isWithin(player.coordinate.x, player.coordinate.z) && !zone.isWithin(
-                player.lastCoordinate.x,
-                player.lastCoordinate.z
-            )
-        ) {
-            zone.onNext(EnterZoneEvent(player))
-        }
     }
 
 

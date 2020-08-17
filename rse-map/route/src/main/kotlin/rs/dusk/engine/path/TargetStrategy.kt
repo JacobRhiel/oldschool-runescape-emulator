@@ -16,6 +16,6 @@ interface TargetStrategy
 
     fun reached(currentX: Int, currentY: Int, plane: Int, size: Size): Boolean
 
-    fun reached(tile: Coordinate, size: Size) = reached(tile.x, tile.z, tile.plane, size)
+    fun reached(tile: Coordinate, size: Size) = reached(tile.x, tile.y, tile.plane, size)
 
 }

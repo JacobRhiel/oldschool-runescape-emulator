@@ -27,15 +27,15 @@ data class RectangleTargetStrategy(
         val srcEndX = currentX + size.width
         val srcEndY = currentY + size.height
         val destEndX = tile.x + this.size.width
-        val destEndY = tile.z + this.size.height
+        val destEndY = tile.y + this.size.height
         if (currentX == destEndX && blockFlag and EAST == 0) {
-            for (y in max(currentY, tile.z) until min(destEndY, srcEndY)) {
+            for (y in max(currentY, tile.y) until min(destEndY, srcEndY)) {
                 if (!collisions.check(destEndX - 1, y, plane, Direction.EAST.flag())) {
                     return true
                 }
             }
         } else if (tile.x == srcEndX && blockFlag and WEST == 0) {
-            for (y in max(currentY, tile.z) until min(destEndY, srcEndY)) {
+            for (y in max(currentY, tile.y) until min(destEndY, srcEndY)) {
                 if (!collisions.check(tile.x, y, plane, Direction.WEST.flag())) {
                     return true
                 }
@@ -46,9 +46,9 @@ data class RectangleTargetStrategy(
                     return true
                 }
             }
-        } else if (tile.z == srcEndY && blockFlag and SOUTH == 0) {
+        } else if (tile.y == srcEndY && blockFlag and SOUTH == 0) {
             for (x in max(currentX, tile.x) until min(destEndX, srcEndX)) {
-                if (!collisions.check(x, tile.z, plane, Direction.SOUTH.flag())) {
+                if (!collisions.check(x, tile.y, plane, Direction.SOUTH.flag())) {
                     return true
                 }
             }

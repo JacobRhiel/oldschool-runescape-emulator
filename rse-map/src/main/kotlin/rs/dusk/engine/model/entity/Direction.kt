@@ -1,8 +1,6 @@
 package rs.dusk.engine.model.entity
 
 import rs.emulator.region.RegionCoordinate
-import rs.emulator.region.WorldCoordinate
-import rs.emulator.region.chunk.ChunkCoordinate
 
 /**
  * @author Greg Hibberd <greg@greghibberd.com>
@@ -25,15 +23,15 @@ enum class Direction(deltaX: Int, deltaY: Int)
 
     fun isDiagonal() = isHorizontal() && isVertical()
 
-    fun isCardinal(): Boolean = delta.x == 0 || delta.z == 0
+    fun isCardinal(): Boolean = delta.x == 0 || delta.y == 0
 
     fun isHorizontal() = delta.x != 0
 
-    fun isVertical() = delta.z != 0
+    fun isVertical() = delta.y != 0
 
     fun vertical(): Direction
     {
-        return when (delta.z)
+        return when (delta.y)
         {
             1 -> NORTH
             -1 -> SOUTH
@@ -72,7 +70,7 @@ enum class Direction(deltaX: Int, deltaY: Int)
 
         val size = values().size
 
-        val cardinal = values().filter { it.isCardinal() && it.delta.x != it.delta.z }
+        val cardinal = values().filter { it.isCardinal() && it.delta.x != it.delta.y }
 
         val ordinal = values().filter { it.isDiagonal() }
 

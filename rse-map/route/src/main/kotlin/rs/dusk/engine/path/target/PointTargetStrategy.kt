@@ -20,6 +20,6 @@ data class PointTargetStrategy(
         if (tile.x + size.width <= currentX || tile.x >= currentX + size.width) {
             return false
         }
-        return currentY < tile.z + size.height && size.height + currentY > tile.z
+        return currentY < tile.y + size.height && size.height + currentY > tile.y
     }
 }

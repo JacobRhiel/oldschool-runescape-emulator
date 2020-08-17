@@ -115,7 +115,7 @@ class UpdatePlayerSyncEncoder : PacketEncoder<UpdatePlayerSyncMessage<Player>>()
 
                 val diffX = player.coordinate.x - player.lastCoordinate.x
 
-                val diffZ = player.coordinate.z - player.lastCoordinate.z
+                val diffZ = player.coordinate.y - player.lastCoordinate.y
 
                 val diffH = player.coordinate.plane - player.lastCoordinate.plane
 
@@ -161,8 +161,6 @@ class UpdatePlayerSyncEncoder : PacketEncoder<UpdatePlayerSyncMessage<Player>>()
                 builder.putBits(1, if(updateRequired) 1 else 0)//0 = no other flags in queue?
 
                 builder.putBits(2, 1)//1 - walk, 2 - run
-
-                println("direction: ${direction.ordinal}")
 
                 builder.putBits(3, direction.ordinal)//4 - run, 3 - walk
 

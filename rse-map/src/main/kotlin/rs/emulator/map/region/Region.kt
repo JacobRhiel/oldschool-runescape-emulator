@@ -4,7 +4,6 @@ import rs.emulator.entity.`object`.IObject
 import rs.emulator.entity.actor.npc.INpc
 import rs.emulator.entity.actor.player.IPlayer
 import rs.emulator.entity.material.items.Item
-import rs.emulator.region.zones.RegionZone
 
 /**
  *
@@ -22,8 +21,6 @@ class Region(val grid: RegionGrid)
 
     //tile hash as key
     private val locList = mutableMapOf<Int, IObject>()
-
-    val zones = mutableListOf<RegionZone>()
 
     fun addPlayer(index: Int, player: IPlayer) = playerList.computeIfAbsent(index) { player }
 

@@ -15,7 +15,6 @@ import rs.emulator.map.grid.AreaGrid
 import rs.emulator.map.grid.tile.GridTile
 import rs.emulator.map.region.chunk.ChunkGrid
 import rs.emulator.region.WorldCoordinate
-import rs.emulator.region.zones.RegionZone
 import rs.emulator.utilities.koin.get
 
 /**
@@ -51,8 +50,6 @@ class RegionGrid(val id: Int)
 
         val plottedZ = ArrayListMultimap.create<Int, Int>()
 
-        val coords = RegionZone(3222, 3222, 0, 5, 5)
-
         for(plane in 0 until levels)
         {
 
@@ -87,7 +84,7 @@ class RegionGrid(val id: Int)
                         val bridge = isTile(mapScapeDefinition.tiles[1][rx][ry]!!, BRIDGE_TILE)
 
                         if (blocked && !bridge)
-                            collisions.add(worldCoordinate.x, worldCoordinate.z, plane, FLOOR)
+                            collisions.add(worldCoordinate.x, worldCoordinate.y, plane, FLOOR)
 
                     }
 
@@ -136,7 +133,7 @@ class RegionGrid(val id: Int)
             in 9..21 -> modifyObject(location, loc, changeType)
             22 -> {
                 if (definition.interactive && definition.solid) {
-                    modifyMask(location.x, location.z, location.plane, CollisionFlag.FLOOR_DECO, changeType)
+                    modifyMask(location.x, location.y, location.plane, CollisionFlag.FLOOR_DECO, changeType)
                 }
             }
         }
@@ -170,7 +167,7 @@ class RegionGrid(val id: Int)
 
         for (offsetX in 0 until width)
             for (offsetY in 0 until height)
-                modifyMask(location.x + offsetX, location.z + offsetY, location.plane, mask, changeType)
+                modifyMask(location.x + offsetX, location.y + offsetY, location.plane, mask, changeType)
 
     }
 
@@ -201,7 +198,7 @@ class RegionGrid(val id: Int)
 
         val rotation = loc.orientation
         val type = loc.type
-        var tile = WorldCoordinate(location.x, location.z)
+        var tile = WorldCoordinate(location.x, location.y)
 
         // Internal corners
         if (type == 2)
@@ -215,7 +212,7 @@ class RegionGrid(val id: Int)
                 Direction.SOUTH_WEST -> CollisionFlag.SOUTH_OR_WEST
                 else                 -> 0
             }
-            modifyMask(location.x, location.z, location.plane, applyMotion(or, motion), changeType)
+            modifyMask(location.x, location.y, location.plane, applyMotion(or, motion), changeType)
             tile = tile.add(Direction.cardinal[(rotation + 3) and 0x3].delta) as WorldCoordinate
             println("new tile: $tile")
         }
@@ -228,7 +225,7 @@ class RegionGrid(val id: Int)
             else -> Direction.ordinal[rotation and 0x3]
         }
 
-        modifyMask(tile.x, tile.z, tile.plane, direction.flag(motion), changeType)
+        modifyMask(tile.x, tile.y, tile.plane, direction.flag(motion), changeType)
 
         // Mask other wall side
         tile = if (type == 2)
@@ -244,7 +241,7 @@ class RegionGrid(val id: Int)
             else -> direction.inverse()
         }
 
-        modifyMask(tile.x, tile.z, tile.plane, direction.flag(motion), changeType)
+        modifyMask(tile.x, tile.y, tile.plane, direction.flag(motion), changeType)
 
     }
 

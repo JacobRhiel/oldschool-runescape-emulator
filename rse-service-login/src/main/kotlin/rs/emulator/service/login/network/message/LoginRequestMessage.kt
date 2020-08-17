@@ -102,7 +102,7 @@ data class LoginRequestMessage(
                 true,
                 player.playerIndex,
                 x = player.coordinate.x,
-                z = player.coordinate.z,
+                z = player.coordinate.y,
                 tileHash = player.coordinate.as30BitInteger
             )
         )

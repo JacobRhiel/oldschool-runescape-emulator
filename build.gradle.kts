@@ -1,8 +1,8 @@
 plugins {
     java
-    kotlin("jvm") version "1.3.72" apply false
+    kotlin("jvm") version "1.4.0" apply false
     `maven-publish`
-    id("org.jetbrains.kotlin.plugin.noarg") version "1.3.72"
+    id("org.jetbrains.kotlin.plugin.noarg") version "1.4.0"
 }
 
 version = "1.0-SNAPSHOT"
@@ -57,9 +57,9 @@ subprojects {
 
         implementation("io.github.classgraph:classgraph:4.8.86")
 
-        implementation("org.jetbrains.kotlin:kotlin-reflect:1.3.72")
+        implementation("org.jetbrains.kotlin:kotlin-reflect:1.4.0")
 
-        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7")
+        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9")
 
         testImplementation("org.junit.jupiter:junit-jupiter-api:5.4.2")
 

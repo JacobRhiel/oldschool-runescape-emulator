@@ -8,6 +8,6 @@ abstract class Entity(override val coordinate: WorldCoordinate = WorldCoordinate
 
     open val size: Size = Size(1, 1)
 
-    override val lastCoordinate: WorldCoordinate = WorldCoordinate(coordinate.x, coordinate.z, coordinate.plane)
+    override val lastCoordinate: WorldCoordinate = WorldCoordinate(coordinate.x, coordinate.y, coordinate.plane)
 
 }

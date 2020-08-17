@@ -1,27 +1,25 @@
 package rs.emulator.world.repository.task
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.channels.sendBlocking
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
-import rs.emulator.engine.service.CyclicEngineService
 import rs.emulator.entity.player.Player
 import rs.emulator.network.packet.message.outgoing.RebuildRegionMessage
 import rs.emulator.region.coordinate.Coordinate
+import rs.emulator.regions.zones.RegionZone
 import rs.emulator.service.event.IEvent
 import rs.emulator.utilities.contexts.scopes.ActorScope
 import rs.emulator.utilities.koin.get
+import rs.emulator.world.regions.RegionZoneManager
 import rs.emulator.world.repository.WorldRepository
 
 /**
  *
  * @author Chk
  */
+@ExperimentalCoroutinesApi
 object PreUpdatePlayerSynchronizationTask : IEvent {
 
     @ExperimentalCoroutinesApi
@@ -34,6 +32,7 @@ object PreUpdatePlayerSynchronizationTask : IEvent {
             if (!locked) {
                 step(player)
                 move(player)
+                RegionZoneManager.updateActorZone(player)
             }
 
             val lastRegionBase = player.lastRegion
@@ -47,7 +46,7 @@ object PreUpdatePlayerSynchronizationTask : IEvent {
                         false,
                         player.index,
                         player.coordinate.x,
-                        player.coordinate.z,
+                        player.coordinate.y,
                         player.coordinate.plane,
                         player.coordinate.as30BitInteger
                     )
@@ -62,7 +61,6 @@ object PreUpdatePlayerSynchronizationTask : IEvent {
                 .launchIn(get<ActorScope>())
 
 
-
         }
 
     }
@@ -71,7 +69,7 @@ object PreUpdatePlayerSynchronizationTask : IEvent {
 
         val dx = new.x - old.x
 
-        val dz = new.z - old.z
+        val dz = new.y - old.y
 
         return dx <= 15 || dx >= 104 - 15 - 1 || dz <= 15 || dz >= 104 - 15 - 1
 
@@ -115,18 +113,15 @@ object PreUpdatePlayerSynchronizationTask : IEvent {
      * Moves the player tile and emits Moved event
      */
     fun move(player: Player) {
-
         val movement = player.movement
-
         if (player.coordinate == player.targetCoordinate) {
             player.targetCoordinate = null
             movement.clear()
         } else if (movement.delta != Coordinate.EMPTY) {
             val from = player.coordinate
             val to = player.coordinate.add(movement.delta)
-            println("from: $from, to: $to")
             player.lastCoordinate.set(player.coordinate)
-            player.coordinate.set(to.x, to.z, to.plane)
+            player.coordinate.set(to.x, to.y, to.plane)
         }
     }
 

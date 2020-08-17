@@ -21,7 +21,7 @@ class LargeTraversal(override val type: TraversalType, collidesWithEntities: Boo
         val delta = direction.delta
         val inverse = direction.inverse()
         var offsetX = if (delta.x == 1) size.width else delta.x
-        var offsetY = if (delta.z == 1) size.height else delta.z
+        var offsetY = if (delta.y == 1) size.height else delta.y
         if (inverse.isCardinal()) {
             // Start
             if (collisions.check(x + offsetX, y + offsetY, plane, getNorthCorner(inverse).block())) {
@@ -29,15 +29,15 @@ class LargeTraversal(override val type: TraversalType, collidesWithEntities: Boo
             }
             // End
             offsetX = if (delta.x == -1) -1 else size.width + (delta.x - 1)
-            offsetY = if (delta.z == -1) -1 else size.height + (delta.z - 1)
+            offsetY = if (delta.y == -1) -1 else size.height + (delta.y - 1)
             if (collisions.check(x + offsetX, y + offsetY, plane, getSouthCorner(inverse).block())) {
                 return true
             }
             // In between
-            val s = if (delta.z == 0) size.height else size.width
+            val s = if (delta.y == 0) size.height else size.width
             for (offset in 1 until s - 1) {
                 offsetX = if (delta.x == 1) size.width else if (delta.x == -1) -1 else offset
-                offsetY = if (delta.z == 1) size.height else if (delta.z == -1) -1 else offset
+                offsetY = if (delta.y == 1) size.height else if (delta.y == -1) -1 else offset
                 if (collisions.check(x + offsetX, y + offsetY, plane, direction.not())) {
                     return true
                 }
@@ -56,7 +56,7 @@ class LargeTraversal(override val type: TraversalType, collidesWithEntities: Boo
             }
             // Horizontal
             for (offset in 1 until size.height) {
-                val dy = offset - if (delta.z == 1) 0 else 1
+                val dy = offset - if (delta.y == 1) 0 else 1
                 if (collisions.check(x + offsetX, y + dy, plane, direction.horizontal().not())) {
                     return true
                 }

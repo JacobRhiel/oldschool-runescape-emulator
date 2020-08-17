@@ -67,9 +67,8 @@ class LocActionListener : GamePacketListener<LocActionMessage>
         {
             val from = npc.coordinate
             val to = npc.coordinate.add(movement.delta)
-            println("from: $from, to: $to")
             npc.lastCoordinate.set(npc.coordinate)
-            npc.coordinate.set(to.x, to.z, to.plane)
+            npc.coordinate.set(to.x, to.y, to.plane)
             //player.syncInfo.addMaskFlag(PlayerUpdateFlag.MOVEMENT)
             //bus.emit(Moved(player, from, player.tile))
         }
@@ -83,7 +82,7 @@ class LocActionListener : GamePacketListener<LocActionMessage>
 
         //TODO - validate if object exists on x and y
 
-        player.world.mapGrid.fetchRegion(player.coordinate.x, player.coordinate.z)
+        player.world.mapGrid.fetchRegion(player.coordinate.x, player.coordinate.y)
 
         player.targetCoordinate = WorldCoordinate(message.x, message.y, player.coordinate.plane)
 

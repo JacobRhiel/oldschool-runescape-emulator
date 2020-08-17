@@ -1,5 +1,6 @@
 package rs.emulator.entity.actor
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import rs.dusk.engine.model.entity.Direction
 import rs.dusk.engine.model.entity.index.Movement
 import rs.dusk.engine.path.*
@@ -14,6 +15,7 @@ import rs.emulator.region.WorldCoordinate
 import rs.emulator.region.coordinate.Coordinate
 import rs.emulator.utilities.koin.get
 
+@ExperimentalCoroutinesApi
 abstract class Actor(var index: Int) : Entity(), IActor
 {
 
@@ -72,4 +74,7 @@ abstract class Actor(var index: Int) : Entity(), IActor
         else -> PathResult.Failure
     }
 
+    override fun resetMovement() {
+        movement.clear()
+    }
 }

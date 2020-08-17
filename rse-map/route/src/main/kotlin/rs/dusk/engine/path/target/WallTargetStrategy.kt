@@ -26,20 +26,20 @@ data class WallTargetStrategy(
     override fun reached(currentX: Int, currentY: Int, plane: Int, size: Size): Boolean {
         val sizeXY = size.width
         // Check if under
-        if (sizeXY == 1 && currentX == tile.x && currentY == tile.z) {
+        if (sizeXY == 1 && currentX == tile.x && currentY == tile.y) {
             return true
-        } else if (sizeXY != 1 && tile.x >= currentX && tile.x <= currentX + sizeXY - 1 && tile.z <= tile.z + sizeXY - 1) {
+        } else if (sizeXY != 1 && tile.x >= currentX && tile.x <= currentX + sizeXY - 1 && tile.y <= tile.y + sizeXY - 1) {
             return true
         }
 
         if (sizeXY == 1) {
             if (type == 0) {
                 var direction = Direction.cardinal[rotation + 3 and 0x3]
-                if (currentX == tile.x + direction.delta.x && currentY == tile.z + direction.delta.z) {
+                if (currentX == tile.x + direction.delta.x && currentY == tile.y + direction.delta.y) {
                     return true
                 }
                 direction = Direction.cardinal[rotation and 0x3]
-                if (currentX == tile.x - direction.delta.x && currentY == tile.z - direction.delta.z && !collisions.check(
+                if (currentX == tile.x - direction.delta.x && currentY == tile.y - direction.delta.y && !collisions.check(
                         currentX,
                         currentY,
                         plane,
@@ -49,7 +49,7 @@ data class WallTargetStrategy(
                     return true
                 }
                 val inverse = direction.inverse()
-                if (currentX == tile.x - inverse.delta.x && currentY == tile.z - inverse.delta.z && !collisions.check(
+                if (currentX == tile.x - inverse.delta.x && currentY == tile.y - inverse.delta.y && !collisions.check(
                         currentX,
                         currentY,
                         plane,
@@ -62,14 +62,14 @@ data class WallTargetStrategy(
             if (type == 2) {
                 val direction = Direction.ordinal[rotation and 0x3]
                 val horizontal = direction.horizontal()
-                if (currentX == tile.x + horizontal.delta.x && currentY == tile.z) {
+                if (currentX == tile.x + horizontal.delta.x && currentY == tile.y) {
                     return true
                 }
                 val vertical = direction.vertical()
-                if (currentX == tile.x && currentY == tile.z + vertical.delta.z) {
+                if (currentX == tile.x && currentY == tile.y + vertical.delta.y) {
                     return true
                 }
-                if (currentX == tile.x - horizontal.delta.x && currentY == tile.z && !collisions.check(
+                if (currentX == tile.x - horizontal.delta.x && currentY == tile.y && !collisions.check(
                         currentX,
                         currentY,
                         plane,
@@ -78,7 +78,7 @@ data class WallTargetStrategy(
                 ) {
                     return true
                 }
-                if (currentX == tile.x && currentY == tile.z - vertical.delta.z && !collisions.check(
+                if (currentX == tile.x && currentY == tile.y - vertical.delta.y && !collisions.check(
                         currentX,
                         currentY,
                         plane,
@@ -90,7 +90,7 @@ data class WallTargetStrategy(
             }
             if (type == 9) {
                 Direction.ordinal.forEach { direction ->
-                    if (currentX == tile.x - direction.delta.x && currentY == tile.z - direction.delta.z && !collisions.check(
+                    if (currentX == tile.x - direction.delta.x && currentY == tile.y - direction.delta.y && !collisions.check(
                             currentX,
                             currentY,
                             plane,
@@ -107,10 +107,10 @@ data class WallTargetStrategy(
             val sizeY = sizeXY + currentY - 1
             if (type == 0) {
                 if (rotation == 0) {
-                    if (currentX == tile.x - sizeXY && tile.z >= currentY && tile.z <= sizeY) {
+                    if (currentX == tile.x - sizeXY && tile.y >= currentY && tile.y <= sizeY) {
                         return true
                     }
-                    if (currentY == tile.z + 1 && tile.x in currentX..sizeX && !collisions.check(
+                    if (currentY == tile.y + 1 && tile.x in currentX..sizeX && !collisions.check(
                             tile.x,
                             currentY,
                             plane,
@@ -119,7 +119,7 @@ data class WallTargetStrategy(
                     ) {
                         return true
                     }
-                    if (currentY == tile.z - sizeXY && tile.x in currentX..sizeX && !collisions.check(
+                    if (currentY == tile.y - sizeXY && tile.x in currentX..sizeX && !collisions.check(
                             tile.x,
                             sizeY,
                             plane,
@@ -129,21 +129,21 @@ data class WallTargetStrategy(
                         return true
                     }
                 } else if (rotation == 1) {
-                    if (currentY == tile.z + 1 && tile.x >= currentX && tile.x <= sizeX) {
+                    if (currentY == tile.y + 1 && tile.x >= currentX && tile.x <= sizeX) {
                         return true
                     }
-                    if (currentX == tile.x - sizeXY && tile.z >= currentY && tile.z <= sizeY && !collisions.check(
+                    if (currentX == tile.x - sizeXY && tile.y >= currentY && tile.y <= sizeY && !collisions.check(
                             sizeX,
-                            tile.z,
+                            tile.y,
                             plane,
                             Direction.EAST.wall()
                         )
                     ) {
                         return true
                     }
-                    if (currentX == tile.x + 1 && tile.z >= currentY && tile.z <= sizeY && !collisions.check(
+                    if (currentX == tile.x + 1 && tile.y >= currentY && tile.y <= sizeY && !collisions.check(
                             currentX,
-                            tile.z,
+                            tile.y,
                             plane,
                             Direction.WEST.wall()
                         )
@@ -151,10 +151,10 @@ data class WallTargetStrategy(
                         return true
                     }
                 } else if (rotation == 2) {
-                    if (currentX == tile.x + 1 && tile.z >= currentY && tile.z <= sizeY) {
+                    if (currentX == tile.x + 1 && tile.y >= currentY && tile.y <= sizeY) {
                         return true
                     }
-                    if (currentY == tile.z + 1 && tile.x in currentX..sizeX && !collisions.check(
+                    if (currentY == tile.y + 1 && tile.x in currentX..sizeX && !collisions.check(
                             tile.x,
                             currentY,
                             plane,
@@ -163,7 +163,7 @@ data class WallTargetStrategy(
                     ) {
                         return true
                     }
-                    if (currentY == tile.z - sizeXY && tile.x in currentX..sizeX && !collisions.check(
+                    if (currentY == tile.y - sizeXY && tile.x in currentX..sizeX && !collisions.check(
                             tile.x,
                             sizeY,
                             plane,
@@ -173,21 +173,21 @@ data class WallTargetStrategy(
                         return true
                     }
                 } else if (rotation == 3) {
-                    if (currentY == tile.z - sizeXY && currentX <= tile.x && sizeX >= tile.x) {
+                    if (currentY == tile.y - sizeXY && currentX <= tile.x && sizeX >= tile.x) {
                         return true
                     }
-                    if (currentX == tile.x - sizeXY && tile.z >= currentY && sizeY >= tile.z && !collisions.check(
+                    if (currentX == tile.x - sizeXY && tile.y >= currentY && sizeY >= tile.y && !collisions.check(
                             sizeX,
-                            tile.z,
+                            tile.y,
                             plane,
                             Direction.EAST.wall()
                         )
                     ) {
                         return true
                     }
-                    if (currentX == tile.x + 1 && currentY <= tile.z && sizeY >= tile.z && !collisions.check(
+                    if (currentX == tile.x + 1 && currentY <= tile.y && sizeY >= tile.y && !collisions.check(
                             currentX,
-                            tile.z,
+                            tile.y,
                             plane,
                             Direction.WEST.wall()
                         )
@@ -198,22 +198,22 @@ data class WallTargetStrategy(
             }
             if (type == 2) {
                 if (rotation == 0) {
-                    if (currentX == tile.x - sizeXY && tile.z >= currentY && sizeY >= tile.z) {
+                    if (currentX == tile.x - sizeXY && tile.y >= currentY && sizeY >= tile.y) {
                         return true
                     }
-                    if (currentY == tile.z + 1 && tile.x in currentX..sizeX) {
+                    if (currentY == tile.y + 1 && tile.x in currentX..sizeX) {
                         return true
                     }
-                    if (currentX == tile.x + 1 && currentY <= tile.z && sizeY >= tile.z && !collisions.check(
+                    if (currentX == tile.x + 1 && currentY <= tile.y && sizeY >= tile.y && !collisions.check(
                             currentX,
-                            tile.z,
+                            tile.y,
                             plane,
                             Direction.WEST.wall()
                         )
                     ) {
                         return true
                     }
-                    if (tile.z - sizeXY == currentY && tile.x in currentX..sizeX && !collisions.check(
+                    if (tile.y - sizeXY == currentY && tile.x in currentX..sizeX && !collisions.check(
                             tile.x,
                             sizeY,
                             plane,
@@ -223,22 +223,22 @@ data class WallTargetStrategy(
                         return true
                     }
                 } else if (rotation == 1) {
-                    if (currentX == tile.x - sizeXY && currentY <= tile.z && sizeY >= tile.z && !collisions.check(
+                    if (currentX == tile.x - sizeXY && currentY <= tile.y && sizeY >= tile.y && !collisions.check(
                             sizeX,
-                            tile.z,
+                            tile.y,
                             plane,
                             Direction.EAST.wall()
                         )
                     ) {
                         return true
                     }
-                    if (currentY == tile.z + 1 && tile.x in currentX..sizeX) {
+                    if (currentY == tile.y + 1 && tile.x in currentX..sizeX) {
                         return true
                     }
-                    if (currentX == tile.x + 1 && currentY <= tile.z && sizeY >= tile.z) {
+                    if (currentX == tile.x + 1 && currentY <= tile.y && sizeY >= tile.y) {
                         return true
                     }
-                    if (currentY == tile.z - sizeXY && tile.x in currentX..sizeX && !collisions.check(
+                    if (currentY == tile.y - sizeXY && tile.x in currentX..sizeX && !collisions.check(
                             tile.x,
                             sizeY,
                             plane,
@@ -248,16 +248,16 @@ data class WallTargetStrategy(
                         return true
                     }
                 } else if (rotation == 2) {
-                    if (currentX == tile.x - sizeXY && tile.z >= currentY && tile.z <= sizeY && !collisions.check(
+                    if (currentX == tile.x - sizeXY && tile.y >= currentY && tile.y <= sizeY && !collisions.check(
                             sizeX,
-                            tile.z,
+                            tile.y,
                             plane,
                             Direction.EAST.wall()
                         )
                     ) {
                         return true
                     }
-                    if (currentY == tile.z + 1 && tile.x in currentX..sizeX && !collisions.check(
+                    if (currentY == tile.y + 1 && tile.x in currentX..sizeX && !collisions.check(
                             tile.x,
                             currentY,
                             plane,
@@ -266,17 +266,17 @@ data class WallTargetStrategy(
                     ) {
                         return true
                     }
-                    if (currentX == tile.x + 1 && currentY <= tile.z && sizeY >= tile.z) {
+                    if (currentX == tile.x + 1 && currentY <= tile.y && sizeY >= tile.y) {
                         return true
                     }
-                    if (currentY == tile.z - sizeXY && tile.x in currentX..sizeX) {
+                    if (currentY == tile.y - sizeXY && tile.x in currentX..sizeX) {
                         return true
                     }
                 } else if (rotation == 3) {
-                    if (currentX == tile.x - sizeXY && currentY <= tile.z && sizeY >= tile.z) {
+                    if (currentX == tile.x - sizeXY && currentY <= tile.y && sizeY >= tile.y) {
                         return true
                     }
-                    if (currentY == tile.z + 1 && tile.x in currentX..sizeX && !collisions.check(
+                    if (currentY == tile.y + 1 && tile.x in currentX..sizeX && !collisions.check(
                             tile.x,
                             currentY,
                             plane,
@@ -285,22 +285,22 @@ data class WallTargetStrategy(
                     ) {
                         return true
                     }
-                    if (currentX == tile.x + 1 && currentY <= tile.z && tile.z <= sizeY && !collisions.check(
+                    if (currentX == tile.x + 1 && currentY <= tile.y && tile.y <= sizeY && !collisions.check(
                             currentX,
-                            tile.z,
+                            tile.y,
                             plane,
                             Direction.WEST.wall()
                         )
                     ) {
                         return true
                     }
-                    if (currentY == tile.z - sizeXY && tile.x in currentX..sizeX) {
+                    if (currentY == tile.y - sizeXY && tile.x in currentX..sizeX) {
                         return true
                     }
                 }
             }
             if (type == 9) {
-                if (tile.x in currentX..sizeX && currentY == tile.z + 1 && !collisions.check(
+                if (tile.x in currentX..sizeX && currentY == tile.y + 1 && !collisions.check(
                         tile.x,
                         currentY,
                         plane,
@@ -309,7 +309,7 @@ data class WallTargetStrategy(
                 ) {
                     return true
                 }
-                if (tile.x in currentX..sizeX && currentY == tile.z - sizeXY && !collisions.check(
+                if (tile.x in currentX..sizeX && currentY == tile.y - sizeXY && !collisions.check(
                         tile.x,
                         sizeY,
                         plane,
@@ -318,17 +318,17 @@ data class WallTargetStrategy(
                 ) {
                     return true
                 }
-                return if (currentX == tile.x - sizeXY && currentY <= tile.z && sizeY >= tile.z && !collisions.check(
+                return if (currentX == tile.x - sizeXY && currentY <= tile.y && sizeY >= tile.y && !collisions.check(
                         sizeX,
-                        tile.z,
+                        tile.y,
                         plane,
                         Direction.EAST.wall()
                     )
                 ) {
                     true
-                } else currentX == tile.x + 1 && currentY <= tile.z && sizeY >= tile.z && !collisions.check(
+                } else currentX == tile.x + 1 && currentY <= tile.y && sizeY >= tile.y && !collisions.check(
                     currentX,
-                    tile.z,
+                    tile.y,
                     plane,
                     Direction.WEST.wall()
                 )

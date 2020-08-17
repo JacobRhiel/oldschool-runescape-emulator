@@ -6,7 +6,6 @@ import rs.emulator.entity.player.Player
 import rs.emulator.network.packet.GamePacketBuilder
 import rs.emulator.network.packet.encoder.PacketEncoder
 import rs.emulator.network.packet.message.outgoing.UpdateNpcSyncMessage
-import rs.emulator.world.World
 
 /**
  *
@@ -49,7 +48,7 @@ class UpdateNpcSyncEncoder : PacketEncoder<UpdateNpcSyncMessage<Player>>()
 
             var dx = npc.coordinate.x - player.coordinate.x
 
-            var dz = npc.coordinate.z - player.coordinate.z
+            var dz = npc.coordinate.y - player.coordinate.y
 
             if (dx < 15)
                 dx += 32

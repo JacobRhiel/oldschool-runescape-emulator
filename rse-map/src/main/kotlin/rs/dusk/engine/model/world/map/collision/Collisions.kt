@@ -32,7 +32,7 @@ operator fun Collisions.get(x: Int, y: Int, plane: Int): Int
 fun Collisions.check(x: Int, y: Int, plane: Int, flag: Int): Boolean
 {
 
-    println(this[x, y, plane] and flag)
+    //println(this[x, y, plane] and flag)
 
     return this[x, y, plane] and flag != 0
 }

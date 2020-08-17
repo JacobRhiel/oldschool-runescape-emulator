@@ -24,26 +24,26 @@ class SmallTraversal(override val type: TraversalType, collidesWithEntities: Boo
 
         if (collisions.check(
                 x + direction.delta.x,
-                y + direction.delta.z,
+                y + direction.delta.y,
                 plane,
                 inverse.block()
             )
         ) {
-            println("naw playa")
+            //println("naw playa")
             return true
         }
         if (!direction.isDiagonal()) {
             return false
         }
         // Horizontal
-        println("x: " + (x + direction.delta.x) + ", y: $y - plane: $plane")
+        //println("x: " + (x + direction.delta.x) + ", y: $y - plane: $plane")
         if (collisions.check(x + direction.delta.x, y, plane, inverse.horizontal().block())) {
-            println("check is true 1")
+            //println("check is true 1")
             return true
         }
         // Vertical
-        if (collisions.check(x, y + direction.delta.z, plane, inverse.vertical().block())) {
-            println("check is true 2")
+        if (collisions.check(x, y + direction.delta.y, plane, inverse.vertical().block())) {
+            //println("check is true 2")
             return true
         }
         return false

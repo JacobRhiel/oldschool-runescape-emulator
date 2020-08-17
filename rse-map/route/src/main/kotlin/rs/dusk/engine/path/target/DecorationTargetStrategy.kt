@@ -25,10 +25,10 @@ data class DecorationTargetStrategy(
         val sizeXY = size.width
         var rotation = rotation
         if (sizeXY == 1) {
-            if (tile.x == currentX && currentY == tile.z) {
+            if (tile.x == currentX && currentY == tile.y) {
                 return true
             }
-        } else if (currentX <= tile.x && sizeXY + currentX - 1 >= tile.x && tile.z <= sizeXY + tile.z - 1) {
+        } else if (currentX <= tile.x && sizeXY + currentX - 1 >= tile.x && tile.y <= sizeXY + tile.y - 1) {
             return true
         }
         if (sizeXY == 1) {
@@ -37,7 +37,7 @@ data class DecorationTargetStrategy(
                     rotation = rotation + 2 and 0x3
                 }
                 if (rotation == 0) {
-                    if (currentX == tile.x + 1 && currentY == tile.z && !collisions.check(
+                    if (currentX == tile.x + 1 && currentY == tile.y && !collisions.check(
                             currentX,
                             currentY,
                             plane,
@@ -46,7 +46,7 @@ data class DecorationTargetStrategy(
                     ) {
                         return true
                     }
-                    if (tile.x == currentX && currentY == tile.z - 1 && !collisions.check(
+                    if (tile.x == currentX && currentY == tile.y - 1 && !collisions.check(
                             currentX,
                             currentY,
                             plane,
@@ -56,7 +56,7 @@ data class DecorationTargetStrategy(
                         return true
                     }
                 } else if (rotation == 1) {
-                    if (currentX == tile.x - 1 && currentY == tile.z && !collisions.check(
+                    if (currentX == tile.x - 1 && currentY == tile.y && !collisions.check(
                             currentX,
                             currentY,
                             plane,
@@ -65,7 +65,7 @@ data class DecorationTargetStrategy(
                     ) {
                         return true
                     }
-                    if (tile.x == currentX && currentY == tile.z - 1 && !collisions.check(
+                    if (tile.x == currentX && currentY == tile.y - 1 && !collisions.check(
                             currentX,
                             currentY,
                             plane,
@@ -75,7 +75,7 @@ data class DecorationTargetStrategy(
                         return true
                     }
                 } else if (rotation == 2) {
-                    if (currentX == tile.x - 1 && tile.z == currentY && !collisions.check(
+                    if (currentX == tile.x - 1 && tile.y == currentY && !collisions.check(
                             currentX,
                             currentY,
                             plane,
@@ -84,7 +84,7 @@ data class DecorationTargetStrategy(
                     ) {
                         return true
                     }
-                    if (tile.x == currentX && currentY == tile.z + 1 && !collisions.check(
+                    if (tile.x == currentX && currentY == tile.y + 1 && !collisions.check(
                             currentX,
                             currentY,
                             plane,
@@ -94,7 +94,7 @@ data class DecorationTargetStrategy(
                         return true
                     }
                 } else if (rotation == 3) {
-                    if (tile.x + 1 == currentX && currentY == tile.z && !collisions.check(
+                    if (tile.x + 1 == currentX && currentY == tile.y && !collisions.check(
                             currentX,
                             currentY,
                             plane,
@@ -103,7 +103,7 @@ data class DecorationTargetStrategy(
                     ) {
                         return true
                     }
-                    if (tile.x == currentX && currentY == tile.z + 1 && !collisions.check(
+                    if (tile.x == currentX && currentY == tile.y + 1 && !collisions.check(
                             currentX,
                             currentY,
                             plane,
@@ -115,7 +115,7 @@ data class DecorationTargetStrategy(
                 }
             }
             if (type == 8) {
-                if (tile.x == currentX && currentY == tile.z + 1 && !collisions.check(
+                if (tile.x == currentX && currentY == tile.y + 1 && !collisions.check(
                         currentX,
                         currentY,
                         plane,
@@ -124,7 +124,7 @@ data class DecorationTargetStrategy(
                 ) {
                     return true
                 }
-                if (currentX == tile.x && tile.z - 1 == currentY && !collisions.check(
+                if (currentX == tile.x && tile.y - 1 == currentY && !collisions.check(
                         currentX,
                         currentY,
                         plane,
@@ -133,7 +133,7 @@ data class DecorationTargetStrategy(
                 ) {
                     return true
                 }
-                return if (currentX == tile.x - 1 && tile.z == currentY && !collisions.check(
+                return if (currentX == tile.x - 1 && tile.y == currentY && !collisions.check(
                         currentX,
                         currentY,
                         plane,
@@ -141,7 +141,7 @@ data class DecorationTargetStrategy(
                     )
                 ) {
                     true
-                } else tile.x + 1 == currentX && tile.z == currentY && !collisions.check(
+                } else tile.x + 1 == currentX && tile.y == currentY && !collisions.check(
                     currentX,
                     currentY,
                     plane,
@@ -156,16 +156,16 @@ data class DecorationTargetStrategy(
                     rotation = rotation + 2 and 0x3
                 }
                 if (rotation == 0) {
-                    if (currentX == tile.x + 1 && currentY <= tile.z && tile.z <= sizeY && !collisions.check(
+                    if (currentX == tile.x + 1 && currentY <= tile.y && tile.y <= sizeY && !collisions.check(
                             currentX,
-                            tile.z,
+                            tile.y,
                             plane,
                             Direction.WEST.flag()
                         )
                     ) {
                         return true
                     }
-                    if (tile.x in currentX..sizeX && currentY == tile.z - sizeXY && !collisions.check(
+                    if (tile.x in currentX..sizeX && currentY == tile.y - sizeXY && !collisions.check(
                             tile.x,
                             sizeY,
                             plane,
@@ -175,16 +175,16 @@ data class DecorationTargetStrategy(
                         return true
                     }
                 } else if (rotation == 1) {
-                    if (currentX == tile.x - sizeXY && tile.z >= currentY && tile.z <= sizeY && !collisions.check(
+                    if (currentX == tile.x - sizeXY && tile.y >= currentY && tile.y <= sizeY && !collisions.check(
                             sizeX,
-                            tile.z,
+                            tile.y,
                             plane,
                             Direction.EAST.flag()
                         )
                     ) {
                         return true
                     }
-                    if (tile.x in currentX..sizeX && currentY == tile.z - sizeXY && !collisions.check(
+                    if (tile.x in currentX..sizeX && currentY == tile.y - sizeXY && !collisions.check(
                             tile.x,
                             sizeY,
                             plane,
@@ -194,16 +194,16 @@ data class DecorationTargetStrategy(
                         return true
                     }
                 } else if (rotation == 2) {
-                    if (tile.x - sizeXY == currentX && tile.z >= currentY && tile.z <= sizeY && !collisions.check(
+                    if (tile.x - sizeXY == currentX && tile.y >= currentY && tile.y <= sizeY && !collisions.check(
                             sizeX,
-                            tile.z,
+                            tile.y,
                             plane,
                             Direction.EAST.flag()
                         )
                     ) {
                         return true
                     }
-                    if (tile.x in currentX..sizeX && tile.z + 1 == currentY && !collisions.check(
+                    if (tile.x in currentX..sizeX && tile.y + 1 == currentY && !collisions.check(
                             tile.x,
                             currentY,
                             plane,
@@ -213,16 +213,16 @@ data class DecorationTargetStrategy(
                         return true
                     }
                 } else if (rotation == 3) {
-                    if (currentX == tile.x + 1 && currentY <= tile.z && tile.z <= sizeY && !collisions.check(
+                    if (currentX == tile.x + 1 && currentY <= tile.y && tile.y <= sizeY && !collisions.check(
                             currentX,
-                            tile.z,
+                            tile.y,
                             plane,
                             Direction.WEST.flag()
                         )
                     ) {
                         return true
                     }
-                    if (tile.x in currentX..sizeX && currentY == tile.z + 1 && !collisions.check(
+                    if (tile.x in currentX..sizeX && currentY == tile.y + 1 && !collisions.check(
                             tile.x,
                             currentY,
                             plane,
@@ -234,7 +234,7 @@ data class DecorationTargetStrategy(
                 }
             }
             if (type == 8) {
-                if (tile.x in currentX..sizeX && currentY == tile.z + 1 && !collisions.check(
+                if (tile.x in currentX..sizeX && currentY == tile.y + 1 && !collisions.check(
                         tile.x,
                         currentY,
                         plane,
@@ -243,7 +243,7 @@ data class DecorationTargetStrategy(
                 ) {
                     return true
                 }
-                if (tile.x in currentX..sizeX && currentY == tile.z - sizeXY && !collisions.check(
+                if (tile.x in currentX..sizeX && currentY == tile.y - sizeXY && !collisions.check(
                         tile.x,
                         sizeY,
                         plane,
@@ -252,17 +252,17 @@ data class DecorationTargetStrategy(
                 ) {
                     return true
                 }
-                return if (currentX == tile.x - sizeXY && currentY <= tile.z && tile.z <= sizeY && !collisions.check(
+                return if (currentX == tile.x - sizeXY && currentY <= tile.y && tile.y <= sizeY && !collisions.check(
                         sizeX,
-                        tile.z,
+                        tile.y,
                         plane,
                         Direction.EAST.flag()
                     )
                 ) {
                     true
-                } else currentX == tile.x + 1 && currentY <= tile.z && tile.z <= sizeY && !collisions.check(
+                } else currentX == tile.x + 1 && currentY <= tile.y && tile.y <= sizeY && !collisions.check(
                     currentX,
-                    tile.z,
+                    tile.y,
                     plane,
                     Direction.WEST.flag()
                 )

@@ -14,7 +14,7 @@ interface TraversalStrategy
 
     fun blocked(x: Int, y: Int, plane: Int, direction: Direction): Boolean
 
-    fun blocked(tile: Coordinate, direction: Direction): Boolean = blocked(tile.x, tile.z, tile.plane, direction)
+    fun blocked(tile: Coordinate, direction: Direction): Boolean = blocked(tile.x, tile.y, tile.plane, direction)
 
     val type: TraversalType
     val extra: Int// Collides with entities

@@ -61,18 +61,18 @@ class AxisAlignment : Finder {
 
     fun toDirection(delta: Coordinate) = when {
         delta.x > 0 -> when {
-            delta.z > 0 -> Direction.NORTH_EAST
-            delta.z < 0 -> Direction.SOUTH_EAST
+            delta.y > 0 -> Direction.NORTH_EAST
+            delta.y < 0 -> Direction.SOUTH_EAST
             else -> Direction.EAST
         }
         delta.x < 0 -> when {
-            delta.z > 0 -> Direction.NORTH_WEST
-            delta.z < 0 -> Direction.SOUTH_WEST
+            delta.y > 0 -> Direction.NORTH_WEST
+            delta.y < 0 -> Direction.SOUTH_WEST
             else -> Direction.WEST
         }
         else -> when {
-            delta.z > 0 -> Direction.NORTH
-            delta.z < 0 -> Direction.SOUTH
+            delta.y > 0 -> Direction.NORTH
+            delta.y < 0 -> Direction.SOUTH
             else -> Direction.NONE
         }
     }

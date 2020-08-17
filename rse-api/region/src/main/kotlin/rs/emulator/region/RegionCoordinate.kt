@@ -11,23 +11,23 @@ class RegionCoordinate(x: Int, z: Int, plane: Int = 0) : Coordinate(x, z, plane)
 {
 
     val regionId: Int
-        get() = (x shl 8) + z
+        get() = (x shl 8) + y
 
     val xInRegion: Int
         get() = x and 0x3F
 
     val zInRegion: Int
-        get() = z and 0x3F
+        get() = y and 0x3F
 
     val bottomLeftRegionX: Int get() = (x shr 3) - 6
 
-    val bottomLeftRegionZ: Int get() = (z shr 3) - 6
+    val bottomLeftRegionZ: Int get() = (y shr 3) - 6
 
-    val basePosition: WorldCoordinate get() = WorldCoordinate(x shl 6, z shl 6, plane)
+    val basePosition: WorldCoordinate get() = WorldCoordinate(x shl 6, y shl 6, plane)
 
     override fun toWorld(): WorldCoordinate = basePosition
 
-    override fun copy(offsetX: Int, offsetZ: Int, offsetPlane: Int): Coordinate = RegionCoordinate(this.x + offsetX, this.z + offsetZ, this.plane + plane)
+    override fun copy(offsetX: Int, offsetZ: Int, offsetPlane: Int): Coordinate = RegionCoordinate(this.x + offsetX, this.y + offsetZ, this.plane + plane)
 
     /**
      * Return bottomLeftRegionX and bottomLeftRegionZ because region x and z always directs

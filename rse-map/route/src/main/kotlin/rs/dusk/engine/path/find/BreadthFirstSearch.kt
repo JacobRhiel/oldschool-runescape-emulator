@@ -38,7 +38,7 @@ class BreadthFirstSearch : Finder
         }
         val graph = GRAPH_SIZE / 2
         val graphBaseX = tile.x - graph
-        val graphBaseY = tile.z - graph
+        val graphBaseY = tile.y - graph
 
         var result = calculate(graphBaseX, graphBaseY, tile.plane, size, movement, strategy, traversal)
 
@@ -71,8 +71,8 @@ class BreadthFirstSearch : Finder
 
         // Set starting tile as visited
         queue.add(start)
-        distances[start.x][start.z] = 0
-        directions[start.x][start.z] = Direction.NONE
+        distances[start.x][start.y] = 0
+        directions[start.x][start.y] = Direction.NONE
 
         var parent: Coordinate
         while (queue.isNotEmpty())
@@ -80,7 +80,7 @@ class BreadthFirstSearch : Finder
 
             parent = queue.poll()
 
-            if (target.reached(parent.x + graphBaseX, parent.z + graphBaseY, plane, size))
+            if (target.reached(parent.x + graphBaseX, parent.y + graphBaseY, plane, size))
                 return PathResult.Success.Complete(parent)
 
             for (dir in all)
@@ -91,20 +91,20 @@ class BreadthFirstSearch : Finder
                 if (moved.x !in 0 until GRAPH_SIZE)
                     continue
 
-                if (moved.z !in 0 until GRAPH_SIZE)
+                if (moved.y !in 0 until GRAPH_SIZE)
                     continue
 
                 // Skip already calculated steps
-                if (directions[moved.x][moved.z] != null)
+                if (directions[moved.x][moved.y] != null)
                     continue
 
                 // Skip blocked tiles
-                if (traversal.blocked(parent.x + graphBaseX, parent.z + graphBaseY, plane, dir))
+                if (traversal.blocked(parent.x + graphBaseX, parent.y + graphBaseY, plane, dir))
                     continue
 
                 queue.add(moved)
-                directions[moved.x][moved.z] = dir
-                distances[moved.x][moved.z] = distances[parent.x][parent.z] + 1
+                directions[moved.x][moved.y] = dir
+                distances[moved.x][moved.y] = distances[parent.x][parent.y] + 1
             }
         }
         return PathResult.Failure
@@ -119,7 +119,7 @@ class BreadthFirstSearch : Finder
         val distances = movement.distances
 
         val destX = target.tile.x - graphBaseX
-        val destY = target.tile.z - graphBaseY
+        val destY = target.tile.y - graphBaseY
         var endX = 0
         var endY = 0
         val width = target.size.width
@@ -168,12 +168,12 @@ class BreadthFirstSearch : Finder
      */
     fun backtrace(movement: Movement, result: PathResult.Success, graphBaseX: Int, graphBaseY: Int): PathResult {
         var trace = result.last
-        var direction = movement.directions[trace.x][trace.z]
+        var direction = movement.directions[trace.x][trace.y]
         val current = movement.steps.count()
         while (direction != null && direction != Direction.NONE && !trace.equals(graphBaseX, graphBaseY)) {
             movement.steps.add(current, direction)
             trace = trace.minus(direction.delta)
-            direction = movement.directions[trace.x][trace.z]
+            direction = movement.directions[trace.x][trace.y]
         }
         return if(movement.steps.count() == current) {
             PathResult.Failure

@@ -29,7 +29,6 @@ include(
     "rse-api:widgets",
     "rse-api:skills",
     "rse-api:reactive",
-    "rse-api:region-zones",
     "rse-api:persistent-details"
 )
 include(

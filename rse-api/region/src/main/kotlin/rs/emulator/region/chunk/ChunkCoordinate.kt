@@ -15,9 +15,9 @@ class ChunkCoordinate(private val region: Int, x: Int, z: Int, plane: Int = 0) :
         RegionCoordinate((region shr 8) * 64, (region and 0xff) * 64, plane)
 
     //(x shr 6) shl 8 and z shr 6, x and 63, z and 63
-    override fun toWorld() = WorldCoordinate(x + ((region shr 8) shl 6), z + ((region and 0xFF) shl 6), plane)
+    override fun toWorld() = WorldCoordinate(x + ((region shr 8) shl 6), y + ((region and 0xFF) shl 6), plane)
 
-    override fun copy(offsetX: Int, offsetZ: Int, offsetPlane: Int): Coordinate = ChunkCoordinate(this.x + offsetX, this.z + offsetZ, this.plane + plane)
+    override fun copy(offsetX: Int, offsetZ: Int, offsetPlane: Int): Coordinate = ChunkCoordinate(this.x + offsetX, this.y + offsetZ, this.plane + plane)
 
     override fun equals(other: Any?): Boolean
     {
@@ -26,6 +26,6 @@ class ChunkCoordinate(private val region: Int, x: Int, z: Int, plane: Int = 0) :
         return true
     }
 
-    override fun hashCode(): Int = (x shl 16) or z
+    override fun hashCode(): Int = (x shl 16) or y
 
 }
