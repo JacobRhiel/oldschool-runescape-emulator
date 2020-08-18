@@ -17,9 +17,11 @@ enum class PrayerType
 
     RANGED,
 
-    MELEE,
+    MELEE_COMBAT,
 
-    COMBAT,
+    NON_MELEE_COMBAT,
+
+    ALL_COMBAT,
 
     RESTORATION,
 

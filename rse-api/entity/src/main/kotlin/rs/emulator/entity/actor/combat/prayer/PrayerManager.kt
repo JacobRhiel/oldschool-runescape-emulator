@@ -2,32 +2,31 @@ package rs.emulator.entity.actor.combat.prayer
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
-import rs.emulator.entity.actor.combat.prayer.event.PrayerEvent
 import rs.emulator.entity.actor.combat.prayer.event.impl.ActivatePrayerEvent
 import rs.emulator.entity.actor.combat.prayer.event.impl.DeActivatePrayerEvent
 import rs.emulator.entity.actor.combat.prayer.event.impl.TogglePrayerEvent
+import rs.emulator.entity.actor.player.IPlayer
 import java.util.*
 
 /**
  *
  * @author Chk
  */
-class PrayerManager
+class PrayerManager(private val player: IPlayer)
 {
 
-    private var activePrayers = EnumSet.noneOf(PlayerPrayer::class.java)
+    private var activePrayers = EnumSet.noneOf(Prayers::class.java)
 
-    fun hasRequirements(prayer: IPrayer) : Boolean
+    fun hasRequirements(prayer: Prayers) : Boolean
     {
 
         return true
 
     }
 
-    fun togglePrayer(prayer: PlayerPrayer) = flow {
+    fun togglePrayer(prayer: Prayers) = flow {
 
         val togglePrayerEvent = TogglePrayerEvent(prayer)
 
@@ -37,16 +36,13 @@ class PrayerManager
             return@flow
 
         if(isPrayerActive(prayer))
-        {
-            println("is active")
             deActivatePrayer(prayer)
-        }
         else
             activatePrayer(prayer)
 
     }.launchIn(CoroutineScope(Dispatchers.Unconfined))
 
-    private fun activatePrayer(prayer: PlayerPrayer)= flow {
+    private fun activatePrayer(prayer: Prayers)= flow {
 
         val activationEvent = ActivatePrayerEvent(prayer)
 
@@ -58,21 +54,20 @@ class PrayerManager
         val invalidatedPrayers = prayer.fetchInvalidationPrayers()
 
         if (invalidatedPrayers.isNotEmpty())
-        {
-
-            println("invalidation prayers: " + invalidatedPrayers.toTypedArray().contentDeepToString())
-
             invalidatedPrayers.filter { isPrayerActive(it) }.forEach { deActivatePrayerNonFlow(it) }
-
-        }
 
         activePrayers.add(prayer)
 
-        println("enabling prayer: $prayer")
+        if(prayer.overheadIcon != PrayerIcon.NONE)
+        {
+            player.prayerIcon = prayer.overheadIcon.id
+            //todo: listener for var change?
+            player.update()
+        }
 
     }.launchIn(CoroutineScope(Dispatchers.Unconfined))
 
-    private fun deActivatePrayer(prayer: PlayerPrayer) = flow {
+    private fun deActivatePrayer(prayer: Prayers) = flow {
 
         val deActivateEvent = DeActivatePrayerEvent(prayer)
 
@@ -83,16 +78,10 @@ class PrayerManager
 
         activePrayers.remove(prayer)
 
-        println("deactivating: $prayer")
-
     }.launchIn(CoroutineScope(Dispatchers.Unconfined))
 
-    private fun deActivatePrayerNonFlow(prayer: PlayerPrayer)
-    {
-        activePrayers.remove(prayer)
-        println("deactivating: $prayer")
-    }
+    private fun deActivatePrayerNonFlow(prayer: Prayers) = activePrayers.remove(prayer)
 
-    fun isPrayerActive(prayer: IPrayer)= activePrayers.contains(prayer)
+    fun isPrayerActive(prayer: Prayers)= activePrayers.contains(prayer)
 
 }

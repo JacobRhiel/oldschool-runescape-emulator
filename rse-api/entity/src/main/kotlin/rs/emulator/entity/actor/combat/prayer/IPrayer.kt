@@ -9,13 +9,15 @@ interface IPrayer
 
     val ordinal: Int
 
+    val overhead: PrayerIcon
+
     val child: Int
 
     val type: PrayerType
 
     val drainPerMinute: Double
 
-    val invalidationPrayers: Array<out PrayerType>
+    val invalidPrayerTypes: Array<out PrayerType>
 
     fun fetchInvalidationPrayers() : List<IPrayer>
 

@@ -3,16 +3,7 @@ package rs.emulator.entity.player.update.mask
 import rs.emulator.buffer.manipulation.DataTransformation
 import rs.emulator.buffer.manipulation.DataType
 import rs.emulator.buffer.writer.BufferedWriter
-import rs.emulator.cache.definition.definition
-import rs.emulator.cache.definition.entity.idk.IdentityKitDefinition
-import rs.emulator.cache.definition.widget.enum.EnumDefinition
 import rs.emulator.cache.store.VirtualFileStore
-import rs.emulator.cache.store.index.IndexConfig
-import rs.emulator.cache.store.index.archive.ArchiveConfig
-import rs.emulator.definitions.entity.obj.ObjDefinition
-import rs.emulator.definitions.entity.obj.ObjMetaDataDefinition
-import rs.emulator.entity.material.EquipmentSlot
-import rs.emulator.entity.material.ItemData
 import rs.emulator.entity.material.containers.equipment
 import rs.emulator.entity.player.Player
 import rs.emulator.entity.player.update.flag.PlayerUpdateFlag

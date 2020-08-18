@@ -19,6 +19,8 @@ import rs.dusk.engine.path.Finder
 import rs.emulator.database.service.JDBCPoolingService
 import rs.emulator.entity.actor.Actor
 import rs.emulator.entity.actor.attributes.ActorAttributes
+import rs.emulator.entity.actor.combat.CombatFactory
+import rs.emulator.entity.actor.combat.prayer.PrayerManager
 import rs.emulator.entity.actor.player.IPlayer
 import rs.emulator.entity.actor.player.messages.AbstractMessageHandler
 import rs.emulator.entity.actor.player.messages.IMessages
@@ -85,6 +87,8 @@ class Player(
     override val actorAttributes: ActorAttributes = ActorAttributes()
 
     override val containerManager: ItemContainerManager = ItemContainerManager()
+
+    override val combatFactory: CombatFactory = CombatFactory(this)
 
     override var energy: Int by actorAttributes.Int(100).markPersistent().apply {
         add(this.changeListener.subscribe {
@@ -173,6 +177,13 @@ class Player(
             .map { it.registerSaveAction(this) }
             .onEach { it.onLoad(this) }
             .launchIn(CoroutineScope(Dispatchers.IO))*/
+    }
+
+    override fun update()
+    {
+
+        syncInfo.addMaskFlag(PlayerUpdateFlag.APPEARANCE)
+
     }
 
     override fun logout() {

@@ -93,7 +93,7 @@ class LocActionListener : GamePacketListener<LocActionMessage>
 
         player.movement.steps.iterator().forEach {
             val index = player.viewport.nextNpcIndex
-            player.viewport.unsyncedNpcs[index] = Npc(index, 1, coordinate = start.add(player.movement.delta) as WorldCoordinate)
+            player.viewport.unsuncNpcs[index] = Npc(index, 1, coordinate = start.add(player.movement.delta) as WorldCoordinate)
         }
 
         println("Path result for loc: ${message.locId}, $path")

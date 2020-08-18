@@ -70,7 +70,13 @@ class Test : KoinComponent {
 
             val resource = Test::class.java.classLoader.getResource("data")
 
-            val path = Paths.get(resource.path)
+            println(System.getProperty("os.name"))
+
+            val path = Paths.get(
+                if (System.getProperty("os.name") == "Windows 10")
+                    resource.path.replace("%20", " ").replaceFirst("/", "")
+                else resource.path
+            )
 
             val mod = module {
 

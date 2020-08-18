@@ -8,6 +8,8 @@ import rs.emulator.skills.SkillAttributes
 interface IActor : IEntity
 {
 
+    val index: Int
+
     val actorAttributes: ActorAttributes
     val skillManager: SkillManager
 

@@ -54,9 +54,9 @@ class LocLoadingSpeedTest {
 
         val repo: DefinitionRepository = get()
 
-        val locs = repo.cacheConfigDefinitions<LocDefinition>()
+        /*val locs = repo.cacheConfigDefinitions<LocDefinition>()
 
-        println(locs.size)
+        println(locs.size)*/
 
     }
 

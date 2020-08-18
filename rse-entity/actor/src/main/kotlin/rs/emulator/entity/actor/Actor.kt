@@ -14,7 +14,7 @@ import rs.emulator.region.WorldCoordinate
 import rs.emulator.region.coordinate.Coordinate
 import rs.emulator.utilities.koin.get
 
-abstract class Actor(var index: Int) : Entity(), IActor
+abstract class Actor(override var index: Int) : Entity(), IActor
 {
 
     constructor(index: Int, coordinate: WorldCoordinate) : this(index)

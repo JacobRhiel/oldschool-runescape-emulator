@@ -51,3 +51,5 @@ include("rse-packet", "rse-packet:message", "rse-packet:encoders", "rse-packet:d
 include("rse-map")
 include("rse-world-repository")
 include("rse-map:route")
+include("rse-client")
+include("rse-entity:combat")
