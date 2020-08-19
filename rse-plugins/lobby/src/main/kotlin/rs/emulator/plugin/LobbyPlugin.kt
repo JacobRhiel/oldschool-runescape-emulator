@@ -44,6 +44,7 @@ class LobbyPlugin(wrapper: PluginWrapper) : Plugin(wrapper) {
                     )
                     player.widgetViewport.open(149, WidgetViewport.OverlayFrame.TABS)
                     player.widgetViewport.open(162, WidgetViewport.OverlayFrame.COMMUNICATION_HUB)
+                    player.widgetViewport.open(160, WidgetViewport.OverlayFrame.MINIMAP)
                     msgs.sendChatMessage("Welcome to Grinderscape.", ChatMessageType.WELCOME)
                 }
             }
@@ -53,7 +54,6 @@ class LobbyPlugin(wrapper: PluginWrapper) : Plugin(wrapper) {
 
     override fun stop() {
         super.stop()
-
     }
 
     private fun moveSubsToFixedGameFrame(player: IPlayer, enum: EnumDefinition, other: EnumDefinition) {

@@ -7,7 +7,6 @@ import io.reactivex.internal.disposables.DisposableContainer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.sendBlocking
@@ -18,7 +17,6 @@ import rs.emulator.entity.actor.Actor
 import rs.emulator.entity.actor.affects.AffectHandler
 import rs.emulator.entity.actor.attributes.ActorAttributes
 import rs.emulator.entity.actor.combat.CombatFactory
-import rs.emulator.entity.actor.combat.prayer.PrayerManager
 import rs.emulator.entity.actor.player.IPlayer
 import rs.emulator.entity.actor.player.messages.AbstractMessageHandler
 import rs.emulator.entity.actor.player.messages.IMessages
@@ -42,14 +40,13 @@ import rs.emulator.packet.api.IPacketMessage
 import rs.emulator.plugins.RSPluginManager
 import rs.emulator.plugins.extensions.factories.LoginActionFactory
 import rs.emulator.plugins.extensions.factories.LogoutActionFactory
+import rs.emulator.reactive.launch
 import rs.emulator.region.WorldCoordinate
 import rs.emulator.region.coordinate.Coordinate
 import rs.emulator.regions.zones.RegionZone
-import rs.emulator.regions.zones.events.MessageBroadcastZoneEvent
 import rs.emulator.utilities.contexts.scopes.ActorScope
 import rs.emulator.utilities.koin.get
 import rs.emulator.world.World
-import rs.emulator.world.regions.RegionZoneManager
 import java.util.concurrent.atomic.AtomicLong
 
 @ExperimentalCoroutinesApi
@@ -119,6 +116,10 @@ class Player(
             .map { it.registerLoginAction(this) }
             .onEach { it.onLogin(this) }
             .launchIn(get<ActorScope>())
+
+        coordinateState
+            .onEach { messages().sendChatMessage("Changed coord to $it") }
+            .launch()
     }
 
     override fun dispose() {

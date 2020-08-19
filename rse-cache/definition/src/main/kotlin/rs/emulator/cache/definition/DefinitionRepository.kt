@@ -91,7 +91,7 @@ class DefinitionRepository : KoinComponent, AbstractDefinitionRepository()
 
             println("Size : $size")
 
-            (0 until (size - 1)).forEach { findActual(it, -1, null, generator.definitionClass) }
+            (0 until (size - 1)).forEach { `access$findActual`(it, -1, null, generator.definitionClass) }
 
         }
     }
@@ -209,5 +209,9 @@ class DefinitionRepository : KoinComponent, AbstractDefinitionRepository()
         definitionCache.invalidateAll()
 
     }
+
+    @PublishedApi
+    internal fun `access$findActual`(identifier: Int, child: Int, keys: IntArray?, clazz: Class<*>) =
+        findActual(identifier, child, keys, clazz)
 
 }

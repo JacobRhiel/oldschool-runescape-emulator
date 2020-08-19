@@ -1,6 +1,8 @@
 package rs.emulator.region
 
+import kotlinx.coroutines.flow.MutableStateFlow
 import rs.emulator.region.coordinate.Coordinate
+import kotlin.reflect.KProperty
 
 /**
  *
@@ -44,4 +46,17 @@ class WorldCoordinate : Coordinate
 
     }
 
+}
+
+val MutableStateFlow<WorldCoordinate>.x: Int get() = value.x
+val MutableStateFlow<WorldCoordinate>.y: Int get() = value.y
+val MutableStateFlow<WorldCoordinate>.plane: Int get() = value.plane
+fun MutableStateFlow<WorldCoordinate>.set(coordinate: WorldCoordinate) {
+    value = coordinate
+}
+fun MutableStateFlow<WorldCoordinate>.set(x: Int, y: Int) {
+    value = WorldCoordinate(x, y)
+}
+operator fun MutableStateFlow<WorldCoordinate>.getValue(instance: Any?, property: KProperty<*>): WorldCoordinate {
+    return value
 }

@@ -1,17 +1,22 @@
 package rs.emulator.entity.material.items
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import rs.emulator.entity.IEntity
 import rs.emulator.entity.material.attributes.MaterialAttributes
 import rs.emulator.region.WorldCoordinate
+import rs.emulator.region.getValue
 
 /**
  *
  * @author javatar
  */
 
+@ExperimentalCoroutinesApi
 abstract class Item(var id: Int, var amount: Int = 1, var stackable: Boolean = false) : IEntity {
 
-    override val coordinate: WorldCoordinate = WorldCoordinate(-1, -1)
+    final override val coordinateState: MutableStateFlow<WorldCoordinate> = MutableStateFlow(WorldCoordinate(-1, -1))
+    final override val coordinate: WorldCoordinate by coordinateState
 
     @Transient
     override val lastCoordinate: WorldCoordinate = coordinate

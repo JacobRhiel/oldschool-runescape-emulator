@@ -19,24 +19,6 @@ object WidgetRegistration {
     private val widgets = mutableMapOf<Int, RegisteredWidget>()
 
     init {
-        registerWidget(548, "system") {
-            addActionComponent(37) {
-                it.source.widgetViewport.open(182, WidgetViewport.OverlayFrame.TABS)
-            }
-            addActionComponent(54) {
-                it.source.widgetViewport.open(149, WidgetViewport.OverlayFrame.TABS)
-            }
-            addActionComponent(55) {
-                it.source.widgetViewport.open(387, WidgetViewport.OverlayFrame.TABS)
-            }
-        }
-
-        registerWidget(182, "system") {
-            addActionComponent(8) {
-                it.source.logout()
-            }
-        }
-
         /*registerWidget(162) {
             addActionComponent(33) {
                 val p = it.source

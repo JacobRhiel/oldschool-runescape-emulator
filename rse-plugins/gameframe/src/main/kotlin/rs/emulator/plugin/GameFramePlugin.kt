@@ -14,7 +14,7 @@ class GameFramePlugin(wrapper: PluginWrapper) : Plugin(wrapper) {
 
     override fun start() {
         super.start()
-        /*WidgetRegistration.registerWidget(548, "fixed-gameframe") {
+        WidgetRegistration.registerWidget(548, "fixed-gameframe") {
             addActionComponent(37) {
                 it.source.widgetViewport.open(182, WidgetViewport.OverlayFrame.TABS)
             }
@@ -24,11 +24,23 @@ class GameFramePlugin(wrapper: PluginWrapper) : Plugin(wrapper) {
             addActionComponent(55) {
                 it.source.widgetViewport.open(387, WidgetViewport.OverlayFrame.TABS)
             }
-        }*/
+        }
+        WidgetRegistration.registerWidget(182, "fixed-gameframe") {
+            addActionComponent(8) {
+                it.source.logout()
+            }
+        }
+        WidgetRegistration.registerWidget(160, "fixed-gameframe") {
+            addActionComponent(46) {
+                it.source.messages().sendChatMessage("Worked!")
+            }
+        }
     }
 
     override fun stop() {
         super.stop()
         WidgetRegistration.deregisterWidget(548)
+        WidgetRegistration.deregisterWidget(182)
+        WidgetRegistration.deregisterWidget(160)
     }
 }
