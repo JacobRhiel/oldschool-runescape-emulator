@@ -19,11 +19,17 @@ object WorldRepository {
     val nextPlayerIndex: Int
         get() = players.size + 1
 
+    val nextNpcIndex: Int
+        get() = npcs.size
+
     init {
 
         GameWorld.players = players
 
         GameWorld.npcs = npcs
+
+        npcs.add(Npc(nextNpcIndex, 1))
+        npcs.add(Npc(nextNpcIndex, 3105))
 
     }
 

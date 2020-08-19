@@ -40,7 +40,7 @@ class ObjDefinitionGenerator : DefinitionGenerator<ObjDefinition>()
             16               -> definition.members = true
             23               ->
             {
-                reader.getUnsigned(DataType.SHORT).toInt()
+                definition.maleModel1 = reader.getUnsigned(DataType.SHORT).toInt()
                 reader.getUnsigned(DataType.BYTE).toInt()
             }
             24               -> reader.getUnsigned(DataType.SHORT).toInt()
@@ -81,10 +81,10 @@ class ObjDefinitionGenerator : DefinitionGenerator<ObjDefinition>()
             }
             42               -> reader.getSigned(DataType.BYTE).toInt()
             65               -> definition.grandExchange = true
-            78               -> reader.getUnsigned(DataType.SHORT).toInt()
+            78               -> definition.maleModel2 = reader.getUnsigned(DataType.SHORT).toInt()
             79               -> reader.getUnsigned(DataType.SHORT).toInt()
-            90               -> reader.getUnsigned(DataType.SHORT).toInt()
-            91               -> reader.getUnsigned(DataType.SHORT).toInt()
+            90               -> definition.maleHead = reader.getUnsigned(DataType.SHORT).toInt()
+            91               -> definition.femaleHead = reader.getUnsigned(DataType.SHORT).toInt()
             92               -> reader.getUnsigned(DataType.SHORT).toInt()
             93               -> reader.getUnsigned(DataType.SHORT).toInt()
             95               -> reader.getUnsigned(DataType.SHORT).toInt()

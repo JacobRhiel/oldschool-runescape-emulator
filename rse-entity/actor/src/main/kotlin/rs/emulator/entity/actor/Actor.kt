@@ -1,6 +1,5 @@
 package rs.emulator.entity.actor
 
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import rs.dusk.engine.model.entity.Direction
 import rs.dusk.engine.model.entity.index.Movement
 import rs.dusk.engine.path.*

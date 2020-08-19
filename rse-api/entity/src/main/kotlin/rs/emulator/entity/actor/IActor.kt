@@ -12,6 +12,8 @@ import rs.emulator.regions.zones.RegionZone
 interface IActor : IEntity
 {
 
+    val index: Int
+
     val actorAttributes: ActorAttributes
     val skillManager: SkillManager
     val currentZone: MutableStateFlow<RegionZone>

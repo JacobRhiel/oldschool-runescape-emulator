@@ -6,6 +6,7 @@ import org.koin.core.KoinComponent
 import org.koin.core.get
 import rs.emulator.AbstractDefinitionRepository
 import rs.emulator.buffer.reader.BufferedReader
+import rs.emulator.cache.definition.entity.idk.IdentityKitDefinitionGenerator
 import rs.emulator.cache.definition.entity.loc.LocDefinitionGenerator
 import rs.emulator.cache.definition.entity.npc.NpcDefinitionGenerator
 import rs.emulator.cache.definition.entity.npc.meta.NpcMetaDataDefinitionGenerator
@@ -57,6 +58,7 @@ class DefinitionRepository : KoinComponent, AbstractDefinitionRepository()
         EnumDefinitionGenerator(),
         ScriptDefinitionGenerator(),
         StructDefinitionGenerator(),
+        IdentityKitDefinitionGenerator(),
         ObjMetaDataDefinitionGenerator(),
         NpcMetaDataDefinitionGenerator()
     )
@@ -64,20 +66,21 @@ class DefinitionRepository : KoinComponent, AbstractDefinitionRepository()
     @PublishedApi
     internal val definitionCache: Cache<Class<Definition>, HashMap<Int, Definition>> = Caffeine.newBuilder()
         .maximumSize(255) //65535 default maximum size of any entry.
-        .expireAfterAccess(2, TimeUnit.MINUTES)
+        //.expireAfterAccess(2, TimeUnit.MINUTES)
         .recordStats()
         .build()
 
     @PublishedApi
     internal val widgetCache: Cache<Int, Array<WidgetDefinition>> = Caffeine.newBuilder()
         .maximumSize(255)
-        .expireAfterAccess(2, TimeUnit.MINUTES)
+        //.expireAfterAccess(2, TimeUnit.MINUTES)
         .recordStats()
         .build()
 
     private fun submitType(clazz: Class<Definition>) = definitionCache.put(clazz, hashMapOf())
 
-    inline fun <reified D : Definition> cacheConfigDefinitions(): List<D> {
+    inline fun <reified D : Definition> cacheConfigDefinitions()
+    {
         val generator = generators.firstOrNull { it.definitionClass == D::class.java }
         if (generator != null) {
 
@@ -88,15 +91,9 @@ class DefinitionRepository : KoinComponent, AbstractDefinitionRepository()
 
             println("Size : $size")
 
-            return IntRange(0, size - 1).toList().stream()
-                .map {
-                    generator.decodeHeader(
-                        it,
-                        archive.fetchEntry(it).fetchBuffer(true)
-                    ) as D
-                }.collect(Collectors.toList())
+            (0 until (size - 1)).forEach { findActual(it, -1, null, generator.definitionClass) }
+
         }
-        return listOf()
     }
 
     override fun findActual(identifier: Int, child: Int, keys: IntArray?, clazz: Class<*>): Definition? {

@@ -23,7 +23,7 @@ class NpcActionListener : GamePacketListener<NpcActionMessage> {
         message: NpcActionMessage
     ) {
         if (message.option != -1 && message.npcIndex != -1) {
-            val npc: INpc? = GameWorld.npcs[message.npcIndex]
+            val npc: INpc? = player.viewport.localNpcs[message.npcIndex]
             if (npc != null) {
                 flowOf(*RSPluginManager.getExtensions<NpcActionFactory>().toTypedArray())
                     .onEmpty { player.messages().sendChatMessage("Nothing interesting happens.") }

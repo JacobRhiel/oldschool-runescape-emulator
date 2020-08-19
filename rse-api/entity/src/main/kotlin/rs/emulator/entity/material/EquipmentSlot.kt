@@ -5,7 +5,7 @@ enum class EquipmentSlot(val slot: Int) {
     HEAD(0),
     CAPE(1),
     WEAPON(3),
-    CHEST(4),
+    BODY(4),
     SHIELD(5),
     LEGS(7),
     HANDS(9),

@@ -4,6 +4,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import rs.emulator.entity.actor.IActor
 import rs.emulator.entity.actor.affects.AffectHandler
+import rs.emulator.entity.actor.combat.CombatFactory
+import rs.emulator.entity.actor.combat.prayer.PrayerManager
 import rs.emulator.entity.actor.player.messages.AbstractMessageHandler
 import rs.emulator.entity.actor.player.widgets.WidgetViewport
 import rs.emulator.entity.details.IPlayerDetails
@@ -17,6 +19,7 @@ interface IPlayer : IActor {
     val widgetViewport: WidgetViewport
     val details: IPlayerDetails
     val containerManager: ItemContainerManager
+    val combatFactory: CombatFactory
     override val affectHandler: AffectHandler<IPlayer>
     val playerIndex: Int
 
@@ -31,6 +34,9 @@ interface IPlayer : IActor {
     fun messages(): AbstractMessageHandler
 
     fun setTeleportCoordinate(coordinate: Coordinate)
+
+    fun update()
+
     fun save()
     fun logout()
 

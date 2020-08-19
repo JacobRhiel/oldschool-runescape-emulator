@@ -1,5 +1,6 @@
 package rs.emulator.network.packet.encoder.impl
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import rs.emulator.buffer.manipulation.DataType
 import rs.emulator.entity.actor.npc.Npc
 import rs.emulator.entity.player.Player
@@ -11,6 +12,7 @@ import rs.emulator.network.packet.message.outgoing.UpdateNpcSyncMessage
  *
  * @author Chk
  */
+@ExperimentalCoroutinesApi
 class UpdateNpcSyncEncoder : PacketEncoder<UpdateNpcSyncMessage<Player>>()
 {
 
@@ -39,10 +41,7 @@ class UpdateNpcSyncEncoder : PacketEncoder<UpdateNpcSyncMessage<Player>>()
 
         }
 
-        viewport.unsyncedNpcs.values.iterator().forEachRemaining {
-
-            if(player.viewport.localNpcs.containsValue(it))
-                return@forEachRemaining
+        viewport.unsuncNpcs.values.filter { !viewport.localNpcs.containsValue(it) }.iterator().forEachRemaining {
 
             val npc = it as Npc
 
@@ -55,8 +54,6 @@ class UpdateNpcSyncEncoder : PacketEncoder<UpdateNpcSyncMessage<Player>>()
 
             if (dz < 15)
                 dz += 32
-
-            println("index: ${it.index}")
 
             builder.putBits(15, it.index)
 
@@ -76,7 +73,7 @@ class UpdateNpcSyncEncoder : PacketEncoder<UpdateNpcSyncMessage<Player>>()
 
             player.viewport.localNpcs[npc.index] = npc
 
-            player.viewport.unsyncedNpcs.remove(npc.index)
+            player.viewport.unsuncNpcs.remove(npc.index)
 
         }
 

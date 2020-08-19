@@ -36,6 +36,7 @@ class VirtualFileStore(private val path: Path) : KoinComponent, Closeable {
             fetchIndex(IndexConfig.BINARY.identifier).fetchNamedArchive("huffman")!!.fetchEntry(0).fetchBuffer(true)
                 .toArray()
         )
+
     }
 
     fun fetchIndex(identifier: Int): Index = referenceTable.fetchIndex(identifier)

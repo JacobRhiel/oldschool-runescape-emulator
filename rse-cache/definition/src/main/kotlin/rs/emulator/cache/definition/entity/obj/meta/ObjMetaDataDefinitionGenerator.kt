@@ -20,12 +20,13 @@ class ObjMetaDataDefinitionGenerator : MetaDataDefinitionGenerator<ObjMetaDataDe
     override fun generate(id: Int): ObjMetaDataDefinition
     {
 
-        val map : MutableMap<Int, ObjMetaDataDefinition> = gson.fromJson(
-            FileReader(File("./data/osrsbox/item/items-complete.json")),
-            object : TypeToken<HashMap<Int, ObjMetaDataDefinition>>(){}.type
-        )
+        if(cached.isEmpty())
+            cached = gson.fromJson(
+                FileReader(File("./data/osrsbox/item/items-complete.json")),
+                object : TypeToken<HashMap<Int, ObjMetaDataDefinition>>(){}.type
+            )
 
-        return map[id] ?: throw Error("Meta data not found for item $id")
+        return cached[id] ?: throw Error("Meta data not found for item $id")
 
     }
 

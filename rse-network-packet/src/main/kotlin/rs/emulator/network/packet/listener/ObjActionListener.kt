@@ -10,6 +10,7 @@ import rs.emulator.entity.material.items.Item
 import rs.emulator.entity.material.items.Wearable
 import rs.emulator.entity.material.provider.ItemProvider
 import rs.emulator.entity.player.Player
+import rs.emulator.entity.player.update.flag.PlayerUpdateFlag
 import rs.emulator.network.packet.message.incoming.ObjActionMessage
 import rs.emulator.plugins.RSPluginManager
 import rs.emulator.plugins.extensions.factories.ItemActionFactory
@@ -41,6 +42,7 @@ class ObjActionListener : GamePacketListener<ObjActionMessage> {
                             player.messages().sendChatMessage(msg)
                             it.ignored = true
                         }
+                        player.syncInfo.addMaskFlag(PlayerUpdateFlag.APPEARANCE)
                     }
                     .onEach {
                         if(player.username() == "hunter23912" || player.username() == "chk") {
