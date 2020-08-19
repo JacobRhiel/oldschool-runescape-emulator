@@ -30,3 +30,5 @@ gradle
 
 # project specific
 /data/cache/
+
+rse-application/src/main/resources/data/cache/
