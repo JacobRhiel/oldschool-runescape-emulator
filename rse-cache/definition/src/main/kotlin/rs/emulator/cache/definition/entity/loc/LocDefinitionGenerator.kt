@@ -22,6 +22,15 @@ class LocDefinitionGenerator : DefinitionGenerator<LocDefinition>()
 
     override fun generate(id: Int, reader: BufferedReader): LocDefinition = LocDefinition(id)
 
+    override fun decodeHeader(id: Int, reader: BufferedReader): LocDefinition {
+        val d = super.decodeHeader(id, reader)
+        if (d.ignoreClipOnAlternativeRoute) {
+            d.solidType = 0
+            d.projectileClipped = false
+        }
+        return d
+    }
+
     override fun decode(definition: LocDefinition, opcode: Int, reader: BufferedReader)
     {
         when (opcode) {
@@ -41,16 +50,21 @@ class LocDefinitionGenerator : DefinitionGenerator<LocDefinition>()
             }
             14 -> definition.width = reader.getUnsigned(DataType.BYTE).toInt().toInt()
             15 -> definition.length = reader.getUnsigned(DataType.BYTE).toInt().toInt()
-            17 -> definition.solid = false
-            18 -> definition.impenetrable = false
-            19 -> definition.interactive = reader.getUnsigned(DataType.BYTE).toInt().toInt() == 1
+            17 -> {
+                definition.solidType = 0
+                definition.projectileClipped = false
+            }
+            18 -> definition.projectileClipped = false
+            19 -> definition.isWallOrDoor = reader.getUnsigned(DataType.BYTE).toInt().toInt() == 1
             24 -> {
                 definition.animation = reader.getUnsigned(DataType.SHORT).toInt()
                 if (definition.animation == 65535) {
                     definition.animation = -1
                 }
             }
-            27 -> {}
+            27 -> {
+                definition.solidType = 1
+            }
             28 -> reader.getUnsigned(DataType.BYTE).toInt()
             29 -> reader.getSigned(DataType.BYTE).toInt()
             in 30 until 35 -> {
@@ -85,6 +99,9 @@ class LocDefinitionGenerator : DefinitionGenerator<LocDefinition>()
             71 -> reader.getSigned(DataType.SHORT).toInt()
             72 -> reader.getSigned(DataType.SHORT).toInt()
             73 -> definition.obstructive = true
+            74 -> {
+                definition.ignoreClipOnAlternativeRoute = true
+            }
             75 -> reader.getUnsigned(DataType.BYTE).toInt()
             77, 92 -> {
                 definition.varbit = reader.getUnsigned(DataType.SHORT).toInt()

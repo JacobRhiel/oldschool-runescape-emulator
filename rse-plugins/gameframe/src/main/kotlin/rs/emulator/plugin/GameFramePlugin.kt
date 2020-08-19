@@ -2,10 +2,8 @@ package rs.emulator.plugin
 
 import org.pf4j.Plugin
 import org.pf4j.PluginWrapper
-import rs.emulator.entity.actor.player.widgets.WidgetEvent
 import rs.emulator.entity.actor.player.widgets.WidgetViewport
 import rs.emulator.widget.WidgetRegistration
-import java.util.*
 
 /**
  *
@@ -47,6 +45,7 @@ class GameFramePlugin(wrapper: PluginWrapper) : Plugin(wrapper) {
     override fun stop() {
         super.stop()
         WidgetRegistration.deregisterWidget(548)
+        WidgetRegistration.deregisterWidget(182)
+        WidgetRegistration.deregisterWidget(160)
     }
-
 }

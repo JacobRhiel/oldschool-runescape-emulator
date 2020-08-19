@@ -5,12 +5,10 @@ import rs.dusk.engine.model.entity.Direction
 import rs.dusk.engine.model.entity.index.Movement
 import rs.dusk.engine.path.*
 import rs.dusk.engine.path.target.PointTargetStrategy
-import rs.dusk.engine.path.target.RectangleTargetStrategy
 import rs.dusk.engine.path.target.TileTargetStrategy
 import rs.dusk.engine.path.traverse.SmallTraversal
 import rs.emulator.entity.Entity
 import rs.emulator.entity.action.queue.ActionQueue
-import rs.emulator.map.region.Region
 import rs.emulator.region.WorldCoordinate
 import rs.emulator.region.coordinate.Coordinate
 import rs.emulator.utilities.koin.get
@@ -18,11 +16,6 @@ import rs.emulator.utilities.koin.get
 @ExperimentalCoroutinesApi
 abstract class Actor(override var index: Int) : Entity(), IActor
 {
-
-    constructor(index: Int, coordinate: WorldCoordinate) : this(index)
-    {
-        this.coordinate.set(coordinate)
-    }
 
     protected val pathFinder: PathFinder = get()
 

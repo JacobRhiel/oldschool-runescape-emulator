@@ -56,7 +56,7 @@ class WidgetViewport(val player: IPlayer) {
         VIEW_PORT,
         COMMUNICATION_HUB,
         TABS,
-        MINI_MAP_AREA
+        MINIMAP
 
     }
 

@@ -19,61 +19,6 @@ import rs.emulator.world.GameWorld
 class LocActionListener : GamePacketListener<LocActionMessage>
 {
 
-    /**
-     * Sets up walk and run changes based on [Steps] queue.
-     */
-    fun step(player: Player) {
-        val movement = player.movement
-        val steps = movement.steps
-        if (steps.peek() != null) {
-            var step = steps.poll()
-            if (!movement.traversal.blocked(player.coordinate, step)) {
-                movement.walkStep = step
-                movement.delta = step.delta
-                //player.movementType = PlayerMoveType.Walk
-                //player.temporaryMoveType = PlayerMoveType.Walk
-                if (movement.running) {
-                    if (steps.peek() != null) {
-                        val tile = player.coordinate.add(step.delta)
-                        step = steps.poll()
-                        if (!movement.traversal.blocked(tile, step)) {
-                            movement.runStep = step
-                            movement.delta = movement.delta.add(step.delta)
-                            // player.movementType = PlayerMoveType.Run
-                            // player.temporaryMoveType = PlayerMoveType.Run
-                        }
-                    } else {
-                        // player.movementType = PlayerMoveType.Walk
-                        //player.temporaryMoveType = PlayerMoveType.Run
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Moves the player tile and emits Moved event
-     */
-    fun move(player: Player, npc: Npc)
-    {
-
-        val movement = player.movement
-
-        movement.lastCoordinate = npc.coordinate
-
-        //if(player.coordinate == player.targetCoordinate)
-        //    movement.clear()
-        if (movement.delta != Coordinate.EMPTY)
-        {
-            val from = npc.coordinate
-            val to = npc.coordinate.add(movement.delta)
-            npc.lastCoordinate.set(npc.coordinate)
-            npc.coordinate.set(to.x, to.y, to.plane)
-            //player.syncInfo.addMaskFlag(PlayerUpdateFlag.MOVEMENT)
-            //bus.emit(Moved(player, from, player.tile))
-        }
-    }
-
     override fun handle(
         player: Player,
         message: LocActionMessage
@@ -89,11 +34,6 @@ class LocActionListener : GamePacketListener<LocActionMessage>
         val path = player.find(player.targetCoordinate!!)
 
         val start = player.coordinate
-
-        player.movement.steps.iterator().forEach {
-            val index = player.viewport.nextNpcIndex
-            player.viewport.unsuncNpcs[index] = Npc(index, 1, coordinate = start.add(player.movement.delta) as WorldCoordinate)
-        }
 
         println("Path result for loc: ${message.locId}, $path")
 

@@ -124,15 +124,20 @@ class RegionGrid(val id: Int)
 
         val definition: LocDefinition = definition().find(loc.id)
 
-        if(!unwalkable(definition, loc.type))
+        /*if(!unwalkable(definition, loc.type))
+            return*/
+
+        if(definition.solidType == 0)
             return
 
         when (loc.type)
         {
-            //in 0..3 -> modifyWall(location, loc, changeType)
-            in 9..21 -> modifyObject(location, loc, changeType)
+            in 0..3 -> modifyWall(location, loc, changeType)
+            in 9..21 -> {
+                modifyObject(location, loc, changeType)
+            }
             22 -> {
-                if (definition.interactive && definition.solid) {
+                if (definition.solidType == 1) {
                     modifyMask(location.x, location.y, location.plane, CollisionFlag.FLOOR_DECO, changeType)
                 }
             }
@@ -146,12 +151,12 @@ class RegionGrid(val id: Int)
 
         var mask = CollisionFlag.LAND
 
-        if (definition.impenetrable) //solid
+        if (definition.projectileClipped) //solid
         {
             mask = mask or CollisionFlag.SKY
         }
 
-        if (!definition.solid) //not alt
+        if (!definition.ignoreClipOnAlternativeRoute) //not alt
         {
             mask = mask or CollisionFlag.IGNORED
         }
@@ -176,10 +181,10 @@ class RegionGrid(val id: Int)
         modifyWall(location, loc, 0, changeType)
         println("modifying wall")
         val definition: LocDefinition = definition().find(loc.id)
-        if (definition.impenetrable)
+        if (definition.projectileClipped)
             modifyWall(location, loc, 1, changeType)
 
-        if (!definition.solid)
+        if (!definition.ignoreClipOnAlternativeRoute)
             modifyWall(location, loc, 2, changeType)
 
     }
@@ -272,17 +277,6 @@ class RegionGrid(val id: Int)
     fun Direction.flag(motion: Int) = applyMotion(flag(), motion)
 
     fun isTile(loc: MapScapeTile, flag: Int) = loc.settings.toInt() and flag == flag
-
-    fun unwalkable(def: LocDefinition, type: Int): Boolean
-    {
-
-        val isSolidFloorDecoration = type == 22 && def.interactive
-        val isRoof = type in 12..21 && def.solid
-        val isWall = (type in 0..1 || type == 9) && def.solid
-        val isSolidInteractable = (type == 11 || type == 10) && def.solid
-        return isWall || isRoof || isSolidInteractable || isSolidFloorDecoration
-
-    }
 
     val BLOCKED_TILE = 0x1
     val BRIDGE_TILE = 0x2
