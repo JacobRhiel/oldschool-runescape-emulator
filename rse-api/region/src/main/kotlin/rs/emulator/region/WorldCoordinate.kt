@@ -20,8 +20,6 @@ class WorldCoordinate : Coordinate
         this.pointHash = hash
     }
 
-    val as30BitInteger: Int get() = (y and 0x3FFF) or ((x and 0x3FFF) shl 14) or ((plane and 0x3) shl 28)
-
     val asTileHashMultiplier: Int get() = (y shr 13) or ((x shr 13) shl 8) or ((plane and 0x3) shl 16)
 
     override fun copy(offsetX: Int, offsetZ: Int, offsetPlane: Int): Coordinate = WorldCoordinate(this.x + offsetX, this.y + offsetZ, this.plane + plane)
@@ -48,6 +46,8 @@ class WorldCoordinate : Coordinate
 
 }
 
+val Coordinate.as30BitInteger: Int get() = (y and 0x3FFF) or ((x and 0x3FFF) shl 14) or ((plane and 0x3) shl 28)
+
 val MutableStateFlow<WorldCoordinate>.x: Int get() = value.x
 val MutableStateFlow<WorldCoordinate>.y: Int get() = value.y
 val MutableStateFlow<WorldCoordinate>.plane: Int get() = value.plane
@@ -59,4 +59,8 @@ fun MutableStateFlow<WorldCoordinate>.set(x: Int, y: Int) {
 }
 operator fun MutableStateFlow<WorldCoordinate>.getValue(instance: Any?, property: KProperty<*>): WorldCoordinate {
     return value
+}
+
+operator fun WorldCoordinate.plus(event: CoordinateEvent<*, *>) : Pair<WorldCoordinate, CoordinateEvent<*, *>> {
+    return this to event
 }

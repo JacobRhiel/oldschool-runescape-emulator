@@ -4,6 +4,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import rs.emulator.entity.IEntity
 import rs.emulator.entity.material.attributes.MaterialAttributes
+import rs.emulator.region.EntityCoordinateState
 import rs.emulator.region.WorldCoordinate
 import rs.emulator.region.getValue
 
@@ -15,7 +16,7 @@ import rs.emulator.region.getValue
 @ExperimentalCoroutinesApi
 abstract class Item(var id: Int, var amount: Int = 1, var stackable: Boolean = false) : IEntity {
 
-    final override val coordinateState: MutableStateFlow<WorldCoordinate> = MutableStateFlow(WorldCoordinate(-1, -1))
+    final override val coordinateState: EntityCoordinateState = EntityCoordinateState(WorldCoordinate(-1, -1))
     final override val coordinate: WorldCoordinate by coordinateState
 
     @Transient

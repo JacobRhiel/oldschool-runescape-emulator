@@ -7,6 +7,7 @@ import io.reactivex.internal.disposables.DisposableContainer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.sendBlocking
@@ -40,11 +41,13 @@ import rs.emulator.packet.api.IPacketMessage
 import rs.emulator.plugins.RSPluginManager
 import rs.emulator.plugins.extensions.factories.LoginActionFactory
 import rs.emulator.plugins.extensions.factories.LogoutActionFactory
+import rs.emulator.plugins.extensions.factories.SavePlayerFactory
 import rs.emulator.reactive.launch
 import rs.emulator.region.WorldCoordinate
+import rs.emulator.region.as30BitInteger
 import rs.emulator.region.coordinate.Coordinate
+import rs.emulator.region.events.TeleportCoordinateEvent
 import rs.emulator.regions.zones.RegionZone
-import rs.emulator.utilities.contexts.scopes.ActorScope
 import rs.emulator.utilities.koin.get
 import rs.emulator.world.World
 import java.util.concurrent.atomic.AtomicLong
@@ -67,8 +70,6 @@ class Player(
     val messageHandler = MessageHandler(this)
 
     val idleMouseTicks = AtomicLong(0L)
-
-    var pendingTeleport: Coordinate? = null
 
     var pendingPublicChatMessage: PublicChatText? = null
 
@@ -115,10 +116,6 @@ class Player(
         flowOf(*RSPluginManager.getExtensions<LoginActionFactory>().toTypedArray())
             .map { it.registerLoginAction(this) }
             .onEach { it.onLogin(this) }
-            .launchIn(get<ActorScope>())
-
-        coordinateState
-            .onEach { messages().sendChatMessage("Changed coord to $it") }
             .launch()
     }
 
@@ -141,10 +138,10 @@ class Player(
             s.update(details)
             this.commit()
         }
-        /*flowOf(*RSPluginManager.getExtensions<SavePlayerFactory>().toTypedArray())
+        flowOf(*RSPluginManager.getExtensions<SavePlayerFactory>().toTypedArray())
             .map { it.registerSaveAction(this) }
             .onEach { it.onSave(this) }
-            .launchIn(CoroutineScope(Dispatchers.IO))*/
+            .launchIn(CoroutineScope(Dispatchers.IO))
     }
 
     @ExperimentalCoroutinesApi
@@ -174,12 +171,14 @@ class Player(
         }
         actorAttributes.attributes.putAll(details.attributes)
         val coord = WorldCoordinate.from30BitHash(details.coordinate)
-        coordinate.set(coord.x, coord.y, coord.plane)
+        coordinateState[coord] = TeleportCoordinateEvent(this, coord)
 
-        /*flowOf(*RSPluginManager.getExtensions<SavePlayerFactory>().toTypedArray())
+        CoroutineScope(Dispatchers.IO + SupervisorJob())
+
+        flowOf(*RSPluginManager.getExtensions<SavePlayerFactory>().toTypedArray())
             .map { it.registerSaveAction(this) }
             .onEach { it.onLoad(this) }
-            .launchIn(CoroutineScope(Dispatchers.IO))*/
+            .launchIn(CoroutineScope(Dispatchers.IO))
     }
 
     override fun update()
@@ -195,7 +194,7 @@ class Player(
         flowOf(*RSPluginManager.getExtensions<LogoutActionFactory>().toTypedArray())
             .map { it.registerLogoutAction(this) }
             .onEach { it.onLogout(this) }
-            .launchIn(get<ActorScope>())
+            .launch()
     }
 
     override fun username(): String = details.username
@@ -206,8 +205,8 @@ class Player(
         return messageHandler
     }
 
-    override fun setTeleportCoordinate(coordinate: Coordinate) {
-        pendingTeleport = coordinate
+    override fun setTeleportCoordinate(coordinate: WorldCoordinate) {
+        coordinateState[coordinate] = TeleportCoordinateEvent(this, this.coordinate, coordinate)
     }
 
     inline fun <reified M : IMessages> messagesFromType(): M {

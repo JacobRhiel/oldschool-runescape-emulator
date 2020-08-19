@@ -6,6 +6,7 @@ import rs.emulator.entity.player.update.flag.PlayerUpdateFlag
 import rs.emulator.entity.update.flag.UpdateFlag
 import rs.emulator.entity.update.mask.UpdateMask
 import rs.emulator.network.packet.GamePacketBuilder
+import rs.emulator.region.as30BitInteger
 
 /**
  *

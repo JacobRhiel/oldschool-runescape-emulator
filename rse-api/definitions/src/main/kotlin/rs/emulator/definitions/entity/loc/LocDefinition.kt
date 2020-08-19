@@ -8,8 +8,8 @@ import rs.emulator.definitions.Definition
  */
 data class LocDefinition(val identifier: Int,
                          var name: String = "",
-                         var width: Int = 1,
-                         var length: Int = 1,
+                         var sizeX: Int = 1,
+                         var sizeY: Int = 1,
                          var projectileClipped: Boolean = true,
                          var solidType: Int = 2,
                          var isWallOrDoor: Boolean = false,
@@ -22,5 +22,5 @@ data class LocDefinition(val identifier: Int,
                          val options: Array<String?> = Array(5) { "" },
                          var transforms: Array<Int>? = null,
                          var examine: String? = null,
-                         var ignoreClipOnAlternativeRoute: Boolean = false
+                         var isSolid: Boolean = false
 ) : Definition(identifier)

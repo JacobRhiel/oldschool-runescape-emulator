@@ -15,15 +15,14 @@ import rs.emulator.map.grid.AreaGrid
 import rs.emulator.map.grid.tile.GridTile
 import rs.emulator.map.region.chunk.ChunkGrid
 import rs.emulator.region.WorldCoordinate
+import rs.emulator.region.as30BitInteger
 import rs.emulator.utilities.koin.get
 
 /**
  *
  * @author Chk
  */
-class RegionGrid(val id: Int)
-    : AreaGrid(width = 64, height = 64)
-{
+class RegionGrid(val id: Int) : AreaGrid(width = 64, height = 64) {
 
     private val mapScapeDefinition: MapScapeDefinition = definition().find(id)
 
@@ -43,32 +42,32 @@ class RegionGrid(val id: Int)
 
     fun fetchChunks() = chunks.toMap()
 
-    override fun constructGrid()
-    {
+    override fun constructGrid() {
 
         val plottedX = ArrayListMultimap.create<Int, Int>()
 
         val plottedZ = ArrayListMultimap.create<Int, Int>()
 
-        for(plane in 0 until levels)
-        {
+        for (plane in 0 until levels) {
 
-            for(rx in 0 until width)
-            {
+            for (rx in 0 until width) {
 
-                for(ry in 0 until height)
-                {
+                for (ry in 0 until height) {
 
                     val worldCoordinate = regionStartTile.add(rx, ry) as WorldCoordinate
 
                     val landscapeTile = landscapeDefinition.tiles[plane][rx][ry]
 
-                    if(landscapeTile != null)
-                    {
+                    if (landscapeTile != null) {
 
                         tiles.computeIfAbsent(worldCoordinate.as30BitInteger) {
 
-                            GridTile(landscapeTile.localX, landscapeTile.localZ, landscapeTile.plane, landscapeTile.locs)
+                            GridTile(
+                                landscapeTile.localX,
+                                landscapeTile.localZ,
+                                landscapeTile.plane,
+                                landscapeTile.locs
+                            )
 
                         }
 
@@ -76,8 +75,7 @@ class RegionGrid(val id: Int)
 
                     val mapScapeTile = mapScapeDefinition.tiles[plane][rx][ry]
 
-                    if(mapScapeTile != null)
-                    {
+                    if (mapScapeTile != null) {
 
                         val blocked = isTile(mapScapeTile, BLOCKED_TILE)
 
@@ -119,22 +117,20 @@ class RegionGrid(val id: Int)
 
     }
 
-    fun modifyCollision(location: WorldCoordinate, loc: LandscapeLoc, changeType: Int)
-    {
+    fun modifyCollision(location: WorldCoordinate, loc: LandscapeLoc, changeType: Int) {
 
         val definition: LocDefinition = definition().find(loc.id)
 
-        /*if(!unwalkable(definition, loc.type))
-            return*/
-
-        if(definition.solidType == 0)
-            return
-
-        when (loc.type)
-        {
-            in 0..3 -> modifyWall(location, loc, changeType)
+        when (loc.type) {
+            in 0..3 -> {
+                if (definition.solidType != 0) {
+                    modifyWall(location, loc, changeType)
+                }
+            }
             in 9..21 -> {
-                modifyObject(location, loc, changeType)
+                if (definition.solidType != 0) {
+                    modifyObject(location, loc, changeType)
+                }
             }
             22 -> {
                 if (definition.solidType == 1) {
@@ -144,109 +140,287 @@ class RegionGrid(val id: Int)
         }
     }
 
-    fun modifyObject(location: WorldCoordinate, loc: LandscapeLoc, changeType: Int)
-    {
+    fun modifyObject(location: WorldCoordinate, loc: LandscapeLoc, changeType: Int) {
 
         val definition: LocDefinition = definition().find(loc.id)
 
-        var mask = CollisionFlag.LAND
-
-        if (definition.projectileClipped) //solid
-        {
-            mask = mask or CollisionFlag.SKY
+        var mask = 0x100
+        if (definition.projectileClipped) {
+            mask += 0x20000
         }
 
-        if (!definition.ignoreClipOnAlternativeRoute) //not alt
-        {
-            mask = mask or CollisionFlag.IGNORED
+        var sizeX = definition.sizeX
+        var sizeY = definition.sizeY
+
+        if (loc.orientation == 1 || loc.orientation == 3) {
+            sizeX = definition.sizeY
+            sizeY = definition.sizeX
         }
 
-        var width = definition.width
-        var height = definition.length
-
-        if (loc.orientation == 1 || loc.orientation == 3)
-        {
-            width = definition.length
-            height = definition.width
+        for (var7 in location.x until location.x + sizeX) {
+            if (var7 in 0..103) {
+                for (var8 in location.y until location.y + sizeY) {
+                    if (var8 in 0..103) {
+                        modifyMask(var7, var8, location.plane, mask, changeType)
+                    }
+                }
+            }
         }
-
+        /*
         for (offsetX in 0 until width)
             for (offsetY in 0 until height)
-                modifyMask(location.x + offsetX, location.y + offsetY, location.plane, mask, changeType)
+                modifyMask(location.x + offsetX, location.y + offsetY, location.plane, mask, changeType)*/
 
     }
 
-    fun modifyWall(location: WorldCoordinate, loc: LandscapeLoc, changeType: Int)
-    {
-        modifyWall(location, loc, 0, changeType)
-        println("modifying wall")
-        val definition: LocDefinition = definition().find(loc.id)
-        if (definition.projectileClipped)
-            modifyWall(location, loc, 1, changeType)
-
-        if (!definition.ignoreClipOnAlternativeRoute)
-            modifyWall(location, loc, 2, changeType)
-
-    }
-
-    /**
-     * Wall types:
-     * 0 - ║ External wall (vertical or horizontal)
-     * 1 - ╔ External corner (flat/missing)
-     * 2 - ╝ Internal corner
-     * 3 - ╔ External corner (regular)
-     */
-    fun modifyWall(location: WorldCoordinate, loc: LandscapeLoc, motion: Int, changeType: Int)
-    {
-
-        println("also wall")
-
-        val rotation = loc.orientation
+    fun modifyWall(location: WorldCoordinate, loc: LandscapeLoc, changeType: Int) {
+        val rotation = loc.orientation and 3
         val type = loc.type
-        var tile = WorldCoordinate(location.x, location.y)
+        val def: LocDefinition = definition().find(loc.id)
+        handleWallFlags(type, rotation, location, changeType)
+        if (def.projectileClipped) {
+            handleProjectileClippedWalls(type, rotation, location, changeType)
+        }
+        /*val definition: LocDefinition = definition().find(loc.id)
+               if (definition.projectileClipped)
+                   modifyWall(location, loc, 1, changeType)
 
-        // Internal corners
-        if (type == 2)
-        {
-            // Mask both cardinal directions
-            val or = when (Direction.ordinal[rotation and 0x3])
-            {
-                Direction.NORTH_WEST -> CollisionFlag.NORTH_OR_WEST
-                Direction.NORTH_EAST -> CollisionFlag.NORTH_OR_EAST
-                Direction.SOUTH_EAST -> CollisionFlag.SOUTH_OR_EAST
-                Direction.SOUTH_WEST -> CollisionFlag.SOUTH_OR_WEST
-                else                 -> 0
+               if (!definition.isSolid)
+                   modifyWall(location, loc, 2, changeType)*/
+    }
+
+    private fun handleWallFlags(
+        type: Int,
+        rotation: Int,
+        tile: WorldCoordinate,
+        changeType: Int
+    ) {
+        when (type) {
+
+            0 -> {
+
+                when (rotation) {
+
+                    0 -> {
+                        modifyMask(tile.x, tile.y, tile.plane, 0x80, changeType)
+                        modifyMask(tile.x - 1, tile.y, tile.plane, 0x8, changeType)
+                    }
+                    1 -> {
+                        modifyMask(tile.x, tile.y, tile.plane, 0x2, changeType)
+                        modifyMask(tile.x, tile.y + 1, tile.plane, 0x20, changeType)
+                    }
+                    2 -> {
+                        modifyMask(tile.x, tile.y, tile.plane, 0x8, changeType)
+                        modifyMask(tile.x + 1, tile.y, tile.plane, 0x80, changeType)
+                    }
+                    3 -> {
+                        modifyMask(tile.x, tile.y, tile.plane, 0x20, changeType)
+                        modifyMask(tile.x, tile.y - 1, tile.plane, 0x2, changeType)
+                    }
+
+                }
+
             }
-            modifyMask(location.x, location.y, location.plane, applyMotion(or, motion), changeType)
-            tile = tile.add(Direction.cardinal[(rotation + 3) and 0x3].delta) as WorldCoordinate
-            println("new tile: $tile")
+            1, 3 -> {
+
+                when (rotation) {
+
+                    0 -> {
+                        modifyMask(tile.x, tile.y, tile.plane, 0x1, changeType)
+                        modifyMask(tile.x - 1, tile.y + 1, tile.plane, 0x10, changeType)
+                    }
+                    1 -> {
+                        modifyMask(tile.x, tile.y, tile.plane, 0x4, changeType)
+                        modifyMask(tile.x + 1, tile.y + 1, tile.plane, 0x40, changeType)
+                    }
+                    2 -> {
+                        modifyMask(tile.x, tile.y, tile.plane, 0x10, changeType)
+                        modifyMask(tile.x + 1, tile.y - 1, tile.plane, 0x1, changeType)
+                    }
+                    3 -> {
+                        modifyMask(tile.x, tile.y, tile.plane, 0x40, changeType)
+                        modifyMask(tile.x - 1, tile.y - 1, tile.plane, 0x4, changeType)
+                    }
+
+                }
+            }
+            2 -> {
+
+                when (rotation) {
+
+                    0 -> {
+                        modifyMask(tile.x, tile.y, tile.plane, 0x82, changeType)
+                        modifyMask(tile.x - 1, tile.y, tile.plane, 0x8, changeType)
+                        modifyMask(tile.x, tile.y + 1, tile.plane, 0x20, changeType)
+                    }
+                    1 -> {
+                        modifyMask(tile.x, tile.y, tile.plane, 0xa, changeType)
+                        modifyMask(tile.x, tile.y + 1, tile.plane, 0x20, changeType)
+                        modifyMask(tile.x + 1, tile.y, tile.plane, 0x80, changeType)
+                    }
+                    2 -> {
+                        modifyMask(tile.x, tile.y, tile.plane, 0x28, changeType)
+                        modifyMask(tile.x + 1, tile.y, tile.plane, 0x80, changeType)
+                        modifyMask(tile.x, tile.y - 1, tile.plane, 0x2, changeType)
+                    }
+                    3 -> {
+                        modifyMask(tile.x, tile.y, tile.plane, 0xa0, changeType)
+                        modifyMask(tile.x, tile.y - 1, tile.plane, 0x2, changeType)
+                        modifyMask(tile.x - 1, tile.y, tile.plane, 0x8, changeType)
+                    }
+                }
+
+            }
+
+        }
+    }
+
+    private fun handleProjectileClippedWalls(
+        type: Int,
+        rotation: Int,
+        tile: WorldCoordinate,
+        changeType: Int
+    ) {
+        when (type) {
+
+            0 -> {
+
+                when (rotation) {
+
+                    0 -> {
+                        modifyMask(tile.x, tile.y, tile.plane, 0x10000, changeType)
+                        modifyMask(tile.x - 1, tile.y, tile.plane, 0x1000, changeType)
+                    }
+                    1 -> {
+                        modifyMask(tile.x, tile.y, tile.plane, 0x400, changeType)
+                        modifyMask(tile.x, tile.y + 1, tile.plane, 0x4000, changeType)
+                    }
+                    2 -> {
+                        modifyMask(tile.x, tile.y, tile.plane, 0x1000, changeType)
+                        modifyMask(tile.x + 1, tile.y, tile.plane, 0x10000, changeType)
+                    }
+                    3 -> {
+                        modifyMask(tile.x, tile.y, tile.plane, 0x4000, changeType)
+                        modifyMask(tile.x, tile.y - 1, tile.plane, 0x400, changeType)
+                    }
+
+                }
+
+            }
+            1, 3 -> {
+
+                when (rotation) {
+
+                    0 -> {
+                        modifyMask(tile.x, tile.y, tile.plane, 0x200, changeType)
+                        modifyMask(tile.x - 1, tile.y + 1, tile.plane, 0x2000, changeType)
+                    }
+                    1 -> {
+                        modifyMask(tile.x, tile.y, tile.plane, 0x800, changeType)
+                        modifyMask(tile.x + 1, tile.y + 1, tile.plane, 0x8000, changeType)
+                    }
+                    2 -> {
+                        modifyMask(tile.x, tile.y, tile.plane, 0x2000, changeType)
+                        modifyMask(tile.x + 1, tile.y - 1, tile.plane, 0x200, changeType)
+                    }
+                    3 -> {
+                        modifyMask(tile.x, tile.y, tile.plane, 0x8000, changeType)
+                        modifyMask(tile.x - 1, tile.y - 1, tile.plane, 0x800, changeType)
+                    }
+
+                }
+            }
+            2 -> {
+
+                when (rotation) {
+
+                    0 -> {
+                        modifyMask(tile.x, tile.y, tile.plane, 0x10400, changeType)
+                        modifyMask(tile.x - 1, tile.y, tile.plane, 0x1000, changeType)
+                        modifyMask(tile.x, tile.y + 1, tile.plane, 0x4000, changeType)
+                    }
+                    1 -> {
+                        modifyMask(tile.x, tile.y, tile.plane, 0x1400, changeType)
+                        modifyMask(tile.x, tile.y + 1, tile.plane, 0x4000, changeType)
+                        modifyMask(tile.x + 1, tile.y, tile.plane, 0x10000, changeType)
+                    }
+                    2 -> {
+                        modifyMask(tile.x, tile.y, tile.plane, 0x5000, changeType)
+                        modifyMask(tile.x + 1, tile.y, tile.plane, 0x10000, changeType)
+                        modifyMask(tile.x, tile.y - 1, tile.plane, 0x400, changeType)
+                    }
+                    3 -> {
+                        modifyMask(tile.x, tile.y, tile.plane, 0x14000, changeType)
+                        modifyMask(tile.x, tile.y - 1, tile.plane, 0x400, changeType)
+                        modifyMask(tile.x - 1, tile.y, tile.plane, 0x1000, changeType)
+                    }
+                }
+
+            }
+
         }
 
-        // Mask one wall side
-        var direction = when (type)
-        {
-            0 -> Direction.cardinal[(rotation + 3) and 0x3]
-            2 -> Direction.cardinal[(rotation + 1) and 0x3]
-            else -> Direction.ordinal[rotation and 0x3]
-        }
+        /*if (projectileClipped) {
+            if (type == 0) {
+                if (rotation == 0) {
+                    this.setFlag(x, y, 0x10000)
+                    this.setFlag(x - 1, y, 0x1000)
+                }
+                if (rotation == 1) {
+                    this.setFlag(x, y, 0x400)
+                    this.setFlag(x, y + 1, 0x4000)
+                }
+                if (rotation == 2) {
+                    this.setFlag(x, y, 0x1000)
+                    this.setFlag(x + 1, y, 0x10000)
+                }
+                if (rotation == 3) {
+                    this.setFlag(x, y, 0x4000)
+                    this.setFlag(x, y - 1, 0x400)
+                }
+            }
+            if (type == 1 || type == 3) {
+                if (rotation == 0) {
+                    this.setFlag(x, y, 0x200)
+                    this.setFlag(x - 1, y + 1, 0x2000)
+                }
+                if (rotation == 1) {
+                    this.setFlag(x, y, 0x800)
+                    this.setFlag(x + 1, y + 1, 0x8000)
+                }
+                if (rotation == 2) {
+                    this.setFlag(x, y, 0x2000)
+                    this.setFlag(x + 1, y - 1, 0x200)
+                }
+                if (rotation == 3) {
+                    this.setFlag(x, y, 0x8000)
+                    this.setFlag(x - 1, y - 1, 0x800)
+                }
+            }
+            if (type == 2) {
+                if (rotation == 0) {
+                    this.setFlag(x, y, 0x10400)
+                    this.setFlag(x - 1, y, 0x1000)
+                    this.setFlag(x, y + 1, 0x4000)
+                }
+                if (rotation == 1) {
+                    this.setFlag(x, y, 0x1400)
+                    this.setFlag(x, y + 1, 0x4000)
+                    this.setFlag(x + 1, y, 0x10000)
+                }
+                if (rotation == 2) {
+                    this.setFlag(x, y, 0x5000)
+                    this.setFlag(x + 1, y, 0x10000)
+                    this.setFlag(x, y - 1, 0x400)
+                }
+                if (rotation == 3) {
+                    this.setFlag(x, y, 0x14000)
+                    this.setFlag(x, y - 1, 0x400)
+                    this.setFlag(x - 1, y, 0x1000)
+                }
+            }
+        }*/
 
-        modifyMask(tile.x, tile.y, tile.plane, direction.flag(motion), changeType)
-
-        // Mask other wall side
-        tile = if (type == 2)
-            tile.add(Direction.cardinal[rotation and 0x3].delta) as WorldCoordinate
-        else
-            tile.add(direction.delta) as WorldCoordinate
-
-        println("old: $location, also new tile: $tile")
-
-        direction = when (type)
-        {
-            2 -> Direction.cardinal[(rotation + 2) and 0x3]
-            else -> direction.inverse()
-        }
-
-        modifyMask(tile.x, tile.y, tile.plane, direction.flag(motion), changeType)
 
     }
 
@@ -254,20 +428,16 @@ class RegionGrid(val id: Int)
     val REMOVE_MASK = 1
     val SET_MASK = 2
 
-    fun modifyMask(x: Int, y: Int, plane: Int, mask: Int, changeType: Any)
-    {
-        when (changeType)
-        {
+    fun modifyMask(x: Int, y: Int, plane: Int, mask: Int, changeType: Any) {
+        when (changeType) {
             ADD_MASK -> collisions.add(x, y, plane, mask)
             REMOVE_MASK -> collisions.remove(x, y, plane, mask)
             SET_MASK -> collisions[x, y, plane] = mask
         }
     }
 
-    fun applyMotion(mask: Int, motion: Int): Int
-    {
-        return when (motion)
-        {
+    fun applyMotion(mask: Int, motion: Int): Int {
+        return when (motion) {
             1 -> mask shl 9
             2 -> mask shl 22
             else -> mask

@@ -1,5 +1,6 @@
 package rs.emulator.entity.player.update.mask
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import rs.dusk.engine.model.entity.Direction
 import rs.emulator.buffer.manipulation.DataTransformation
 import rs.emulator.buffer.manipulation.DataType
@@ -13,6 +14,7 @@ import rs.emulator.network.packet.GamePacketBuilder
  *
  * @author Chk
  */
+@ExperimentalCoroutinesApi
 class PlayerMovementMask : UpdateMask<Player>
 {
 
@@ -23,7 +25,7 @@ class PlayerMovementMask : UpdateMask<Player>
             when {
                 entity.movement.runStep != Direction.NONE -> 2
                 entity.movement.walkStep != Direction.NONE -> 1
-                entity.pendingTeleport != null -> 127
+                entity.coordinateState.isTeleporting -> 127
                 else -> 0
             }
         )//value is 127 if teleport, 2 if run, 1 if walk else? 0

@@ -14,6 +14,7 @@ import rs.emulator.entity.player.update.flag.PlayerUpdateFlag
 import rs.emulator.network.packet.message.incoming.ObjActionMessage
 import rs.emulator.plugins.RSPluginManager
 import rs.emulator.plugins.extensions.factories.ItemActionFactory
+import rs.emulator.reactive.launch
 import rs.emulator.utilities.contexts.scopes.ActorScope
 import rs.emulator.utilities.koin.get
 
@@ -44,11 +45,6 @@ class ObjActionListener : GamePacketListener<ObjActionMessage> {
                         }
                         player.syncInfo.addMaskFlag(PlayerUpdateFlag.APPEARANCE)
                     }
-                    .onEach {
-                        if(player.username() == "hunter23912" || player.username() == "chk") {
-                            player.messages().sendChatMessage("Event $it")
-                        }
-                    }
                     .filterIsInstance<RemoveContainerEvent<Item>>()
                     .toEquipment(player.equipment())
                     .invalidateState()
@@ -67,6 +63,6 @@ class ObjActionListener : GamePacketListener<ObjActionMessage> {
                 message.componentHash and 255
             ) }
             .onEach { it.handleItemAction(ItemProvider.provide(message.item), message.option) }
-            .launchIn(get<ActorScope>())
+            .launch()
     }
 }
