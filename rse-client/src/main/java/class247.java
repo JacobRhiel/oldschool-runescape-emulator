@@ -249,18 +249,20 @@ public class class247 {
 				if (var7) {
 					PacketBufferNode var10;
 					if (var0 == 1) {
-						var10 = UserComparator4.getPacketBufferNode(ClientPacket.field2254, Client.packetWriter.isaacCipher);
+						var10 = UserComparator4.getPacketBufferNode(ClientPacket.CLICK_SUB_OPTION_0, Client.packetWriter.isaacCipher);
 						var10.packetBuffer.writeInt(var1);
 						var10.packetBuffer.writeShort(var2);
 						var10.packetBuffer.writeShort(var3);
+						System.out.println("[ClickSubOption0]: " + var1 + ", " + var2 + ", " + var3 + ".");
 						Client.packetWriter.addNode(var10);
 					}
 
 					if (var0 == 2) {
-						var10 = UserComparator4.getPacketBufferNode(ClientPacket.field2318, Client.packetWriter.isaacCipher);
+						var10 = UserComparator4.getPacketBufferNode(ClientPacket.CLICK_SUB_BUTTON_1, Client.packetWriter.isaacCipher);
 						var10.packetBuffer.writeInt(var1);
 						var10.packetBuffer.writeShort(var2);
 						var10.packetBuffer.writeShort(var3);
+						System.out.println("[ClickSubButton1]: " + var1 + ", " + var2 + ", " + var3 + ". \n \t " + (var1 >> 16) + ", " + (var1 & 255));
 						Client.packetWriter.addNode(var10);
 					}
 

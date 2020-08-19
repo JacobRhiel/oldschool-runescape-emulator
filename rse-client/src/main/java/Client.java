@@ -2,6 +2,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import net.runelite.mapping.Export;
@@ -4116,7 +4117,8 @@ public final class Client extends GameShell implements Usernamed {
 					return true;
 				}
 
-				if (ServerPacket.field2206 == var1.serverPacket) {
+				if (ServerPacket.SYNC_VAR_CACHE == var1.serverPacket) {
+					System.out.println("[SyncVarCache]");
 					for (var16 = 0; var16 < Varps.Varps_main.length; ++var16) {
 						if (Varps.Varps_main[var16] != Varps.Varps_temp[var16]) {
 							Varps.Varps_main[var16] = Varps.Varps_temp[var16];
@@ -4158,7 +4160,7 @@ public final class Client extends GameShell implements Usernamed {
 					return true;
 				}
 
-				if (ServerPacket.field2157 == var1.serverPacket) {
+				if (ServerPacket.RUN_CLIENT_SCRIPT == var1.serverPacket) {
 					var39 = var3.readStringCp1252NullTerminated();
 					Object[] var55 = new Object[var39.length() + 1];
 
@@ -4171,6 +4173,7 @@ public final class Client extends GameShell implements Usernamed {
 					}
 
 					var55[0] = new Integer(var3.readInt());
+					System.out.println("[RunClientScript]: " + var55[0] + ", args: [" + Arrays.toString(var55) + "].");
 					ScriptEvent var45 = new ScriptEvent();
 					var45.args = var55;
 					InterfaceParent.runScriptEvent(var45);
@@ -4216,7 +4219,8 @@ public final class Client extends GameShell implements Usernamed {
 					return false;
 				}
 
-				if (ServerPacket.field2209 == var1.serverPacket) {
+				if (ServerPacket.RESET_VAR_CACHE == var1.serverPacket) {
+					System.out.println("[ResetVarCache]");
 					for (var16 = 0; var16 < VarpDefinition.VarpDefinition_fileCount; ++var16) {
 						VarpDefinition var54 = class219.VarpDefinition_get(var16);
 						if (var54 != null) {
@@ -4375,10 +4379,11 @@ public final class Client extends GameShell implements Usernamed {
 				}
 
 				InterfaceParent var28;
-				if (ServerPacket.field2167 == var1.serverPacket) {
+				if (ServerPacket.OPEN_SUB == var1.serverPacket) {
 					var16 = var3.readUnsignedByte();
 					var5 = var3.method5867();
 					var21 = var3.method5767();
+					System.out.println("[OpenSub]: " + var16 + ", " + var5 + ", " + var21 + ". \n hash parent: " + (var16 >> 16) + ", hash component: " + (var16 & 255));
 					var28 = (InterfaceParent)interfaceParents.get((long)var21);
 					if (var28 != null) {
 						class41.closeInterface(var28, var5 != var28.group);
@@ -4426,9 +4431,10 @@ public final class Client extends GameShell implements Usernamed {
 					return true;
 				}
 
-				if (ServerPacket.field2196 == var1.serverPacket) {
+				if (ServerPacket.VAR_LARGE == var1.serverPacket) {
 					var16 = var3.method5767();
 					var5 = var3.method5757();
+					System.out.println("[VarLarge]: " + var16 + ", " + var5 + ".");
 					Varps.Varps_temp[var5] = var16;
 					if (Varps.Varps_main[var5] != var16) {
 						Varps.Varps_main[var5] = var16;
@@ -4492,7 +4498,7 @@ public final class Client extends GameShell implements Usernamed {
 				}
 
 				int var29;
-				if (ServerPacket.field2232 == var1.serverPacket) {
+				if (ServerPacket.WIDGET_ACCESS_MASKS == var1.serverPacket) {
 					var16 = var3.method5766();
 					var5 = var3.readUnsignedShort();
 					if (var5 == 65535) {
@@ -4505,6 +4511,8 @@ public final class Client extends GameShell implements Usernamed {
 					}
 
 					var22 = var3.method5765();
+
+					System.out.println("[WidgetAccessMasks]: " + var16 + ", " + var5 + ", " + var21 + ", " + var22 + ".");
 
 					for (var29 = var5; var29 <= var21; ++var29) {
 						var23 = (long)var29 + ((long)var16 << 32);
@@ -4968,9 +4976,10 @@ public final class Client extends GameShell implements Usernamed {
 				}
 
 				Widget var8;
-				if (ServerPacket.field2215 == var1.serverPacket) {
+				if (ServerPacket.MOVE_SUB == var1.serverPacket) {
 					var16 = var3.readInt();
 					var5 = var3.method5765();
+					System.out.println("[MoveSub]: from: " + var16 + ", to: " + var5 + ".");
 					InterfaceParent var40 = (InterfaceParent)interfaceParents.get((long)var5);
 					var28 = (InterfaceParent)interfaceParents.get((long)var16);
 					if (var28 != null) {
@@ -5038,9 +5047,10 @@ public final class Client extends GameShell implements Usernamed {
 					return true;
 				}
 
-				if (ServerPacket.field2185 == var1.serverPacket) {
+				if (ServerPacket.VAR_SMALL == var1.serverPacket) {
 					byte var49 = var3.method5751();
 					var5 = var3.readUnsignedShort();
+					System.out.println("[VarSmall]: " + var49 + ", " + var5 + ".");
 					Varps.Varps_temp[var5] = var49;
 					if (Varps.Varps_main[var5] != var49) {
 						Varps.Varps_main[var5] = var49;

@@ -76,7 +76,7 @@ public class ClientPacket implements class190 {
 	@ObfuscatedSignature(
 		descriptor = "Lgn;"
 	)
-	public static final ClientPacket field2254;
+	public static final ClientPacket CLICK_SUB_OPTION_0;
 	@ObfuscatedName("k")
 	@ObfuscatedSignature(
 		descriptor = "Lgn;"
@@ -396,7 +396,7 @@ public class ClientPacket implements class190 {
 	@ObfuscatedSignature(
 		descriptor = "Lgn;"
 	)
-	public static final ClientPacket field2318;
+	public static final ClientPacket CLICK_SUB_BUTTON_1;
 	@ObfuscatedName("cc")
 	@ObfuscatedSignature(
 		descriptor = "Lgn;"
@@ -471,7 +471,7 @@ public class ClientPacket implements class190 {
 	@ObfuscatedSignature(
 		descriptor = "Lgn;"
 	)
-	public static final ClientPacket field2333;
+	public static final ClientPacket CLICK_WORLD_MAP;
 	@ObfuscatedName("co")
 	@ObfuscatedSignature(
 		descriptor = "Lgn;"
@@ -545,7 +545,7 @@ public class ClientPacket implements class190 {
 		field2251 = new ClientPacket(10, 3);
 		field2252 = new ClientPacket(11, 8);
 		field2273 = new ClientPacket(12, -1);
-		field2254 = new ClientPacket(13, 8);
+		CLICK_SUB_OPTION_0 = new ClientPacket(13, 8);
 		field2292 = new ClientPacket(14, -1);
 		field2256 = new ClientPacket(15, 9);
 		field2253 = new ClientPacket(16, -1);
@@ -609,7 +609,7 @@ public class ClientPacket implements class190 {
 		field2315 = new ClientPacket(74, 8);
 		field2316 = new ClientPacket(75, -1);
 		field2245 = new ClientPacket(76, 8);
-		field2318 = new ClientPacket(77, 8);
+		CLICK_SUB_BUTTON_1 = new ClientPacket(77, 8);
 		field2337 = new ClientPacket(78, 3);
 		field2320 = new ClientPacket(79, 8);
 		field2304 = new ClientPacket(80, -2);
@@ -624,7 +624,7 @@ public class ClientPacket implements class190 {
 		field2330 = new ClientPacket(89, -2);
 		field2331 = new ClientPacket(90, -1);
 		field2332 = new ClientPacket(91, 8);
-		field2333 = new ClientPacket(92, 4);
+		CLICK_WORLD_MAP = new ClientPacket(92, 4);
 		field2334 = new ClientPacket(93, 8);
 		field2272 = new ClientPacket(94, 3);
 		field2336 = new ClientPacket(95, -1);

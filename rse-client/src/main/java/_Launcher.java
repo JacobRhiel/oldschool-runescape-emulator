@@ -66,6 +66,8 @@ public final class _Launcher implements AppletStub, AppletContext {
 
     private final Map<String, String> parameters;
 
+    public static boolean live = false;
+
     private _Launcher(
             Map<String, String> properties,
             Map<String, String> parameters
@@ -86,6 +88,8 @@ public final class _Launcher implements AppletStub, AppletContext {
                     case "param":
                         String[] split2 = split1[1].split("=", 2);
                         parameters.put(split2[0], split2[1]);
+                        if(Integer.valueOf(split2[0]) == 12)
+                            parameters.put(split2[0], "417");
                         break;
                     case "msg":
                         // ignore
@@ -95,6 +99,7 @@ public final class _Launcher implements AppletStub, AppletContext {
                 }
             }
         }
+        properties.put("codebase", "http://oldschool117.runescape.com/");
         return new _Launcher(properties, parameters);
     }
 
@@ -127,7 +132,8 @@ public final class _Launcher implements AppletStub, AppletContext {
 
     @Override public URL getCodeBase() {
         try {
-            return new URL("http://127.0.0.1"/*properties.get("codebase")*/);
+            System.out.println("codebase: " + properties.get("codebase"));
+            return new URL(live ? properties.get("codebase") : "http://127.0.0.1");
         } catch (MalformedURLException e) {
             throw new InvalidParameterException();
         }

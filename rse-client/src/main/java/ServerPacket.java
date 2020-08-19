@@ -81,7 +81,7 @@ public class ServerPacket {
 	@ObfuscatedSignature(
 		descriptor = "Lgu;"
 	)
-	public static final ServerPacket field2167;
+	public static final ServerPacket OPEN_SUB;
 	@ObfuscatedName("r")
 	@ObfuscatedSignature(
 		descriptor = "Lgu;"
@@ -101,7 +101,7 @@ public class ServerPacket {
 	@ObfuscatedSignature(
 		descriptor = "Lgu;"
 	)
-	public static final ServerPacket field2232;
+	public static final ServerPacket WIDGET_ACCESS_MASKS;
 	@ObfuscatedName("e")
 	@ObfuscatedSignature(
 		descriptor = "Lgu;"
@@ -171,7 +171,7 @@ public class ServerPacket {
 	@ObfuscatedSignature(
 		descriptor = "Lgu;"
 	)
-	public static final ServerPacket field2185;
+	public static final ServerPacket VAR_SMALL;
 	@ObfuscatedName("am")
 	@ObfuscatedSignature(
 		descriptor = "Lgu;"
@@ -221,7 +221,7 @@ public class ServerPacket {
 	@ObfuscatedSignature(
 		descriptor = "Lgu;"
 	)
-	public static final ServerPacket field2157;
+	public static final ServerPacket RUN_CLIENT_SCRIPT;
 	@ObfuscatedName("af")
 	@ObfuscatedSignature(
 		descriptor = "Lgu;"
@@ -276,7 +276,7 @@ public class ServerPacket {
 	@ObfuscatedSignature(
 		descriptor = "Lgu;"
 	)
-	public static final ServerPacket field2206;
+	public static final ServerPacket SYNC_VAR_CACHE;
 	@ObfuscatedName("bg")
 	@ObfuscatedSignature(
 		descriptor = "Lgu;"
@@ -291,7 +291,7 @@ public class ServerPacket {
 	@ObfuscatedSignature(
 		descriptor = "Lgu;"
 	)
-	public static final ServerPacket field2209;
+	public static final ServerPacket RESET_VAR_CACHE;
 	@ObfuscatedName("ba")
 	@ObfuscatedSignature(
 		descriptor = "Lgu;"
@@ -321,7 +321,7 @@ public class ServerPacket {
 	@ObfuscatedSignature(
 		descriptor = "Lgu;"
 	)
-	public static final ServerPacket field2215;
+	public static final ServerPacket MOVE_SUB;
 	@ObfuscatedName("bc")
 	@ObfuscatedSignature(
 		descriptor = "Lgu;"
@@ -341,7 +341,7 @@ public class ServerPacket {
 	@ObfuscatedSignature(
 		descriptor = "Lgu;"
 	)
-	public static final ServerPacket field2196;
+	public static final ServerPacket VAR_LARGE;
 	@ObfuscatedName("bl")
 	@ObfuscatedSignature(
 		descriptor = "Lgu;"
@@ -465,11 +465,11 @@ public class ServerPacket {
 		field2164 = new ServerPacket(11, 15);
 		field2155 = new ServerPacket(12, 6);
 		field2166 = new ServerPacket(13, 2);
-		field2167 = new ServerPacket(14, 7);
+		OPEN_SUB = new ServerPacket(14, 7);
 		field2168 = new ServerPacket(15, 4);
 		field2181 = new ServerPacket(16, -2);
 		field2170 = new ServerPacket(17, 2);
-		field2232 = new ServerPacket(18, 12);
+		WIDGET_ACCESS_MASKS = new ServerPacket(18, 12);
 		field2172 = new ServerPacket(19, 2);
 		field2173 = new ServerPacket(20, -2);
 		field2189 = new ServerPacket(21, -2);
@@ -483,7 +483,7 @@ public class ServerPacket {
 		field2182 = new ServerPacket(29, -2);
 		field2183 = new ServerPacket(30, 28);
 		field2184 = new ServerPacket(31, 6);
-		field2185 = new ServerPacket(32, 3);
+		VAR_SMALL = new ServerPacket(32, 3);
 		field2186 = new ServerPacket(33, 4);
 		field2187 = new ServerPacket(34, -2);
 		field2188 = new ServerPacket(35, 1);
@@ -493,7 +493,7 @@ public class ServerPacket {
 		field2159 = new ServerPacket(39, 1);
 		field2199 = new ServerPacket(40, -1);
 		field2194 = new ServerPacket(41, 1);
-		field2157 = new ServerPacket(42, -2);
+		RUN_CLIENT_SCRIPT = new ServerPacket(42, -2);
 		field2193 = new ServerPacket(43, 6);
 		field2197 = new ServerPacket(44, 4);
 		field2190 = new ServerPacket(45, 4);
@@ -504,20 +504,20 @@ public class ServerPacket {
 		field2203 = new ServerPacket(50, 8);
 		field2204 = new ServerPacket(51, 2);
 		field2205 = new ServerPacket(52, 5);
-		field2206 = new ServerPacket(53, 0);
+		SYNC_VAR_CACHE = new ServerPacket(53, 0);
 		field2207 = new ServerPacket(54, 10);
 		field2208 = new ServerPacket(55, -2);
-		field2209 = new ServerPacket(56, 0);
+		RESET_VAR_CACHE = new ServerPacket(56, 0);
 		field2210 = new ServerPacket(57, 5);
 		field2230 = new ServerPacket(58, 6);
 		field2212 = new ServerPacket(59, -2);
 		field2213 = new ServerPacket(60, 5);
 		field2226 = new ServerPacket(61, 6);
-		field2215 = new ServerPacket(62, 8);
+		MOVE_SUB = new ServerPacket(62, 8);
 		field2216 = new ServerPacket(63, 7);
 		field2217 = new ServerPacket(64, -1);
 		field2218 = new ServerPacket(65, 10);
-		field2196 = new ServerPacket(66, 6);
+		VAR_LARGE = new ServerPacket(66, 6);
 		field2174 = new ServerPacket(67, 1);
 		field2221 = new ServerPacket(68, 2);
 		field2222 = new ServerPacket(69, 8);
