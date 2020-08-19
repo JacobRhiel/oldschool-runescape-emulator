@@ -336,6 +336,14 @@ class PacketService : AbstractIdleService(), KoinComponent {
             listener = DragItemListener()
         )
 
+        packetRepository.putDecoder(
+            92,
+            decoder = ClickWorldMapEventDecoder(),
+            length = 4,
+            clazz = ClickWorldMapMessage::class,
+            listener = ClickWorldMapListener()
+        )
+
     }
 
     private fun addEncoders() {

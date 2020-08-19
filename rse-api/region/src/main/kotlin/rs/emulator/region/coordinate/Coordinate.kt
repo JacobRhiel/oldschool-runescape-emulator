@@ -63,6 +63,26 @@ abstract class Coordinate(var x: Int, var y: Int, var plane: Int = 0)
 
         fun getId(x: Int, z: Int, plane: Int = 0) = (z and 0x3FFF) or ((x and 0x3FFF) shl 14) or ((plane and 0x3) shl 28)
 
+        fun fromRotatedHash(packed: Int): WorldCoordinate {
+            val x = ((packed shr 14) and 0x3FF) shl 3
+            val z = ((packed shr 3) and 0x7FF) shl 3
+            val height = (packed shr 28) and 0x3
+            return WorldCoordinate(x, z, height)
+        }
+
+        fun from30BitHash(packed: Int): WorldCoordinate {
+            val x = ((packed shr 14) and 0x3FFF)
+            val z = ((packed) and 0x3FFF)
+            val height = (packed shr 28)
+            return WorldCoordinate(x, z, height)
+        }
+
+        fun fromRegion(region: Int): WorldCoordinate {
+            val x = ((region shr 8) shl 6)
+            val z = ((region and 0xFF) shl 6)
+            return WorldCoordinate(x, z)
+        }
+
         val EMPTY = WorldCoordinate(0)
 
     }

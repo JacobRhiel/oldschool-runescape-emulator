@@ -10,7 +10,7 @@ import rs.emulator.definitions.widget.WidgetDefinition
 
 abstract class AbstractDefinitionRepository {
 
-    protected abstract fun findActual(identifier: Int, child: Int, keys: IntArray? = null, clazz: Class<*>): Definition?
+    abstract fun findActual(identifier: Int, child: Int, keys: IntArray? = null, clazz: Class<*>): Definition?
 
     abstract fun findWidget(identifier: Int): Array<WidgetDefinition>
 
