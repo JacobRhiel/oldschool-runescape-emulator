@@ -49,11 +49,6 @@ class ObjActionListener : GamePacketListener<ObjActionMessage> {
                         }
                         player.syncInfo.addMaskFlag(PlayerUpdateFlag.APPEARANCE)
                     }
-                    .onEach {
-                        if(player.username() == "hunter23912" || player.username() == "chk") {
-                            player.messages().sendChatMessage("Event $it")
-                        }
-                    }
                     .filterIsInstance<RemoveContainerEvent<Item>>()
                     .toEquipment(player.equipment())
                     .onEach {
@@ -102,6 +97,6 @@ class ObjActionListener : GamePacketListener<ObjActionMessage> {
                 message.componentHash and 255
             ) }
             .onEach { it.handleItemAction(ItemProvider.provide(message.item), message.option) }
-            .launchIn(get<ActorScope>())
+            .launch()
     }
 }

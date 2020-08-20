@@ -1,5 +1,6 @@
 package rs.emulator.network.packet.encoder.impl
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import rs.dusk.engine.model.entity.Direction
 import rs.emulator.buffer.manipulation.DataType
 import rs.emulator.entity.player.Player
@@ -17,6 +18,7 @@ import kotlin.math.abs
  * @author javatar
  */
 
+@ExperimentalCoroutinesApi
 class UpdatePlayerSyncEncoder : PacketEncoder<UpdatePlayerSyncMessage<Player>>()
 {
 
@@ -104,91 +106,77 @@ class UpdatePlayerSyncEncoder : PacketEncoder<UpdatePlayerSyncMessage<Player>>()
 
             }
 
-            if(player.pendingTeleport != null)
-            {
-
-                builder.putBits(1, 1)
-
-                builder.putBits(1, 1)
-
-                builder.putBits(2, 3)
-
-                val diffX = player.coordinate.x - player.lastCoordinate.x
-
-                val diffZ = player.coordinate.y - player.lastCoordinate.y
-
-                val diffH = player.coordinate.plane - player.lastCoordinate.plane
-
-                if (abs(diffX) <= 15 && abs(diffZ) <= 15)
-                {
-
-                    builder.putBits(1, 0)
-
-                    builder.putBits(2, diffH and 0x3)
-
-                    builder.putBits(5, diffX and 0x1F)
-
-                    builder.putBits(5, diffZ and 0x1F)
-
-                }
-                else
-                {
+            when {
+                player.coordinateState.isTeleporting -> {
+                    builder.putBits(1, 1)
 
                     builder.putBits(1, 1)
 
-                    builder.putBits(2, diffH and 0x3)
+                    builder.putBits(2, 3)
 
-                    builder.putBits(14, diffX and 0x3FFF)
+                    val diffX = player.coordinate.x - player.lastCoordinate.x
 
-                    builder.putBits(14, diffZ and 0x3FFF)
+                    val diffZ = player.coordinate.y - player.lastCoordinate.y
+
+                    val diffH = player.coordinate.plane - player.lastCoordinate.plane
+
+                    if (abs(diffX) <= 15 && abs(diffZ) <= 15) {
+
+                        builder.putBits(1, 0)
+
+                        builder.putBits(2, diffH and 0x3)
+
+                        builder.putBits(5, diffX and 0x1F)
+
+                        builder.putBits(5, diffZ and 0x1F)
+
+                    } else {
+
+                        builder.putBits(1, 1)
+
+                        builder.putBits(2, diffH and 0x3)
+
+                        builder.putBits(14, diffX and 0x3FFF)
+
+                        builder.putBits(14, diffZ and 0x3FFF)
+
+                    }
+
+                    player.coordinateState.isTeleporting = false
 
                 }
+                player.movement.walkStep != Direction.NONE/* ||
+                        player.movement.runStep != Direction.NONE*/ -> {
+                    val direction = player.movement.walkStep //todo: implement run
 
-                player.pendingTeleport = null
+                    builder.putBits(1, 1)
 
-                println("teleport segment.")
+                    builder.putBits(1, if(updateRequired) 1 else 0)//0 = no other flags in queue?
 
-            }
-            else if(player.movement.walkStep != Direction.NONE/* ||
-                player.movement.runStep != Direction.NONE*/
-            )
-            {
+                    builder.putBits(2, 1)//1 - walk, 2 - run
 
-                val direction = player.movement.walkStep //todo: implement run
+                    builder.putBits(3, direction.ordinal)//4 - run, 3 - walk
 
-                builder.putBits(1, 1)
+                    //if(!updateRequired)
+                    //   update(builder, syncInformation, viewportPlayer, maskBuilder)
 
-                builder.putBits(1, if(updateRequired) 1 else 0)//0 = no other flags in queue?
+                }
+                updateRequired -> {
 
-                builder.putBits(2, 1)//1 - walk, 2 - run
+                    builder.putBits(1, 1)
 
-                builder.putBits(3, direction.ordinal)//4 - run, 3 - walk
+                    builder.putBits(1, 1)
 
-                //if(!updateRequired)
-                 //   update(builder, syncInformation, viewportPlayer, maskBuilder)
+                    builder.putBits(2, 0)
 
-            }
-            else if(updateRequired)
-            {
+                }
+                else -> {
 
-                println("abc...")
+                    skipCount = generateSkipCount(viewport, builder, true, inverse)
 
-                builder.putBits(1, 1)
+                    syncInformation.setFlag(0x2)
 
-                builder.putBits(1, 1)
-
-                builder.putBits(2, 0)
-
-            }
-            else
-            {
-
-                //println("skip")
-
-                skipCount = generateSkipCount(viewport, builder, true, inverse)
-
-                syncInformation.setFlag(0x2)
-
+                }
             }
 
             builder.switchToByteAccess()

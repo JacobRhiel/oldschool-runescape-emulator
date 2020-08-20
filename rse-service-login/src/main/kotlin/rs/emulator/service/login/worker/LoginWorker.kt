@@ -7,6 +7,7 @@ import rs.emulator.entity.details.Privilege
 import rs.emulator.entity.material.containers.impl.Equipment
 import rs.emulator.entity.material.containers.impl.Inventory
 import rs.emulator.region.WorldCoordinate
+import rs.emulator.region.as30BitInteger
 import rs.emulator.service.login.LoginStatus
 import rs.emulator.service.login.network.message.LoginRequestMessage
 import rs.emulator.utilities.koin.get

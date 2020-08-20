@@ -16,6 +16,7 @@ import rs.emulator.network.SESSION_KEY
 import rs.emulator.network.message.NetworkMessage
 import rs.emulator.network.packet.message.outgoing.RebuildRegionMessage
 import rs.emulator.network.packet.session.PacketSession
+import rs.emulator.region.as30BitInteger
 import rs.emulator.service.login.LoginCredentials
 import rs.emulator.service.login.LoginResult
 import rs.emulator.service.login.worker.LoginWorker

@@ -10,6 +10,7 @@ import rs.emulator.entity.actor.player.messages.AbstractMessageHandler
 import rs.emulator.entity.actor.player.widgets.WidgetViewport
 import rs.emulator.entity.details.IPlayerDetails
 import rs.emulator.entity.material.containers.ItemContainerManager
+import rs.emulator.region.WorldCoordinate
 import rs.emulator.region.coordinate.Coordinate
 import rs.emulator.regions.zones.RegionZone
 
@@ -35,7 +36,7 @@ interface IPlayer : IActor {
 
     fun messages(): AbstractMessageHandler
 
-    fun setTeleportCoordinate(coordinate: Coordinate)
+    fun setTeleportCoordinate(coordinate: WorldCoordinate)
 
     fun update()
 

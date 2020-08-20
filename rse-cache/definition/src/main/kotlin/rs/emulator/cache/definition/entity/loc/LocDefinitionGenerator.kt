@@ -24,7 +24,7 @@ class LocDefinitionGenerator : DefinitionGenerator<LocDefinition>()
 
     override fun decodeHeader(id: Int, reader: BufferedReader): LocDefinition {
         val d = super.decodeHeader(id, reader)
-        if (d.ignoreClipOnAlternativeRoute) {
+        if (d.isSolid) {
             d.solidType = 0
             d.projectileClipped = false
         }
@@ -48,8 +48,8 @@ class LocDefinitionGenerator : DefinitionGenerator<LocDefinition>()
                     reader.getUnsigned(DataType.SHORT).toInt() // Model
                 }
             }
-            14 -> definition.width = reader.getUnsigned(DataType.BYTE).toInt().toInt()
-            15 -> definition.length = reader.getUnsigned(DataType.BYTE).toInt().toInt()
+            14 -> definition.sizeX = reader.getUnsigned(DataType.BYTE).toInt().toInt()
+            15 -> definition.sizeY = reader.getUnsigned(DataType.BYTE).toInt().toInt()
             17 -> {
                 definition.solidType = 0
                 definition.projectileClipped = false
@@ -100,7 +100,7 @@ class LocDefinitionGenerator : DefinitionGenerator<LocDefinition>()
             72 -> reader.getSigned(DataType.SHORT).toInt()
             73 -> definition.obstructive = true
             74 -> {
-                definition.ignoreClipOnAlternativeRoute = true
+                definition.isSolid = true
             }
             75 -> reader.getUnsigned(DataType.BYTE).toInt()
             77, 92 -> {

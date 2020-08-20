@@ -165,7 +165,7 @@ object CollisionFlag {
 }
 
 fun Direction.flag() = when (this) {
-    Direction.NORTH_WEST -> rs.dusk.engine.model.world.map.collision.CollisionFlag.NORTH_WEST
+    Direction.NORTH_WEST -> CollisionFlag.NORTH_WEST
     Direction.NORTH -> rs.dusk.engine.model.world.map.collision.CollisionFlag.NORTH
     Direction.NORTH_EAST -> rs.dusk.engine.model.world.map.collision.CollisionFlag.NORTH_EAST
     Direction.EAST -> rs.dusk.engine.model.world.map.collision.CollisionFlag.EAST

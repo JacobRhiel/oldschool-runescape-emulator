@@ -7,7 +7,10 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import rs.emulator.entity.player.Player
 import rs.emulator.network.packet.message.outgoing.RebuildRegionMessage
+import rs.emulator.region.WorldCoordinate
+import rs.emulator.region.as30BitInteger
 import rs.emulator.region.coordinate.Coordinate
+import rs.emulator.region.events.MoveCoordinateEvent
 import rs.emulator.regions.zones.RegionZone
 import rs.emulator.service.event.IEvent
 import rs.emulator.utilities.contexts.scopes.ActorScope
@@ -121,7 +124,7 @@ object PreUpdatePlayerSynchronizationTask : IEvent {
             val from = player.coordinate
             val to = player.coordinate.add(movement.delta)
             player.lastCoordinate.set(player.coordinate)
-            player.coordinate.set(to.x, to.y, to.plane)
+            player.coordinateState[to.x, to.y, to.plane] = MoveCoordinateEvent(player, from, to as WorldCoordinate)
         }
     }
 

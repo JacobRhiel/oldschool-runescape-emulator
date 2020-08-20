@@ -7,6 +7,7 @@ import rs.emulator.entity.player.Player
 import rs.emulator.entity.player.update.flag.PlayerUpdateFlag
 import rs.emulator.network.packet.message.WalkHereMessage
 import rs.emulator.region.WorldCoordinate
+import rs.emulator.region.events.TeleportCoordinateEvent
 import rs.emulator.region.set
 import rs.emulator.world.World
 import rs.emulator.world.regions.RegionZoneManager
@@ -31,9 +32,8 @@ class WalkHereListener : GamePacketListener<WalkHereMessage>, KoinComponent {
 
             player.lastCoordinate.set(player.coordinate)
 
-            player.coordinateState.set(message.destX, message.destZ)
-
-            player.pendingTeleport = player.coordinate
+            player.coordinateState[message.destX, message.destZ] =
+                TeleportCoordinateEvent(player, player.coordinate, WorldCoordinate(message.destX, message.destZ))
 
             player.syncInfo.addMaskFlag(PlayerUpdateFlag.MOVEMENT)
 
