@@ -5,6 +5,7 @@ import rs.emulator.cache.definition.generator.MetaDataDefinitionGenerator
 import rs.emulator.definitions.entity.obj.ObjMetaDataDefinition
 import java.io.File
 import java.io.FileReader
+import java.nio.file.Paths
 
 /**
  *
@@ -20,9 +21,17 @@ class ObjMetaDataDefinitionGenerator : MetaDataDefinitionGenerator<ObjMetaDataDe
     override fun generate(id: Int): ObjMetaDataDefinition
     {
 
+        val resource = this::class.java.classLoader.getResource("data")
+
+        val path = Paths.get(
+            if (System.getProperty("os.name") == "Windows 10")
+                resource.path.replace("%20", " ").replaceFirst("/", "")
+            else resource.path
+        )
+
         if(cached.isEmpty())
             cached = gson.fromJson(
-                FileReader(File("./data/osrsbox/item/items-complete.json")),
+                FileReader(path.resolve("osrsbox/item/items-complete.json").toFile()),
                 object : TypeToken<HashMap<Int, ObjMetaDataDefinition>>(){}.type
             )
 

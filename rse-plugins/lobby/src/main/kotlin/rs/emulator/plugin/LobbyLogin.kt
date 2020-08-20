@@ -3,10 +3,15 @@ package rs.emulator.plugin
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.pf4j.Extension
+import rs.emulator.definitions.factories.ItemDefinitionFactory
+import rs.emulator.definitions.factories.ItemMetaDefinitionFactory
 import rs.emulator.entity.actor.player.IPlayer
 import rs.emulator.entity.actor.player.widgets.WidgetViewport
+import rs.emulator.entity.material.EquipmentSlot
+import rs.emulator.entity.material.containers.equipment
 import rs.emulator.plugins.extensions.factories.LoginActionFactory
 import rs.emulator.plugins.extensions.factories.actions.LoginAction
+import rs.emulator.reactive.launch
 import rs.emulator.region.WorldCoordinate
 import rs.emulator.regions.zones.events.MessageBroadcastZoneEvent
 import rs.emulator.utilities.contexts.scopes.ActorScope
@@ -156,6 +161,8 @@ class LobbyLogin : LoginActionFactory, LoginAction {
 
         player.messages().sendClientScript(2015, 0)
 
+        player.energy = 100 //todo: database
+
         player.skillManager.skillState.onEach { it ->
             it.forEach {
                 player.messages().sendSkillUpdate(
@@ -164,8 +171,12 @@ class LobbyLogin : LoginActionFactory, LoginAction {
                     it.experience
                 )
             }
-        }.launchIn(get<ActorScope>())
+        }.launch()
 
         player.skillManager.invalidateSkills()
+
+        player.messages().setWidgetText(593, 3, "Combat Lvl: 3")
+
+
     }
 }

@@ -23,6 +23,8 @@ interface IPlayer : IActor {
     override val affectHandler: AffectHandler<IPlayer>
     val playerIndex: Int
 
+    var running: Boolean
+
     var energy: Int
     var skullIcon: Int
     var prayerIcon: Int

@@ -91,6 +91,12 @@ class Player(
 
     override val affectHandler: AffectHandler<IPlayer> = AffectHandler()
 
+    override var running: Boolean by actorAttributes.Boolean(false).markPersistent().apply {
+        add(this.changeListener.subscribe {
+            this@Player.messages().sendSmallVarp(173, if(it) 1 else 0)
+        })
+    }
+
     override var energy: Int by actorAttributes.Int(100).markPersistent().apply {
         add(this.changeListener.subscribe {
             outgoingPackets.sendBlocking(UpdateRunEnergyMessage(it))
@@ -116,10 +122,6 @@ class Player(
             .map { it.registerLoginAction(this) }
             .onEach { it.onLogin(this) }
             .launchIn(get<ActorScope>())
-
-        coordinateState
-            .onEach { messages().sendChatMessage("Changed coord to $it") }
-            .launch()
     }
 
     override fun dispose() {

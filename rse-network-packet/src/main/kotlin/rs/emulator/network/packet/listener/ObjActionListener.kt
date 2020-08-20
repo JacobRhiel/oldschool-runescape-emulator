@@ -2,8 +2,12 @@ package rs.emulator.network.packet.listener
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
+import rs.emulator.cache.definition.definition
+import rs.emulator.definitions.entity.obj.ObjMetaDataDefinition
+import rs.emulator.definitions.factories.ItemDefinitionFactory
 import rs.emulator.definitions.factories.ItemMetaDefinitionFactory
 import rs.emulator.entity.actor.player.hasRequirementsFor
+import rs.emulator.entity.material.EquipmentSlot
 import rs.emulator.entity.material.containers.*
 import rs.emulator.entity.material.containers.events.impl.RemoveContainerEvent
 import rs.emulator.entity.material.items.Item
@@ -14,6 +18,7 @@ import rs.emulator.entity.player.update.flag.PlayerUpdateFlag
 import rs.emulator.network.packet.message.incoming.ObjActionMessage
 import rs.emulator.plugins.RSPluginManager
 import rs.emulator.plugins.extensions.factories.ItemActionFactory
+import rs.emulator.reactive.launch
 import rs.emulator.utilities.contexts.scopes.ActorScope
 import rs.emulator.utilities.koin.get
 
@@ -51,10 +56,40 @@ class ObjActionListener : GamePacketListener<ObjActionMessage> {
                     }
                     .filterIsInstance<RemoveContainerEvent<Item>>()
                     .toEquipment(player.equipment())
+                    .onEach {
+
+                        val def = ItemMetaDefinitionFactory.provide(it.item.id)
+
+                        println("def: " + def.equipable_weapon)
+
+                        if(!def.equipable_weapon)
+                            return@onEach
+
+                        val weapon = player.equipment().elements[0]
+
+                        println(weapon)
+
+                        if(weapon.mainSlot == EquipmentSlot.WEAPON)
+                        {
+
+                            println("here?")
+
+                            val def = if(weapon.id == -1) null else ItemDefinitionFactory.provide(weapon.id)
+
+                            player.messages().setWidgetText(593, 1, def?.name ?: "Unarmed")
+
+                            val metaDef = if(weapon.id == -1) null else ItemMetaDefinitionFactory.provide(weapon.id)
+
+                            if(metaDef != null)
+                                player.messages().setWidgetText(593, 2, "Category: ${metaDef.weapon.weapon_type}")
+
+                        }
+
+                    }
                     .invalidateState()
                     .filterIsInstance<RemoveContainerEvent<Wearable>>()
                     .toContainer(player.inventory())
-                    .launchIn(get<ActorScope>())
+                    .launch()
             }
 
         }
