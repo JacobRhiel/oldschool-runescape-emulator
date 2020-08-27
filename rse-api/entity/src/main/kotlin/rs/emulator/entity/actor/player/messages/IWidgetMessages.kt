@@ -1,5 +1,6 @@
 package rs.emulator.entity.actor.player.messages
 
+import rs.emulator.entity.actor.player.IPlayer
 import rs.emulator.entity.actor.player.messages.chat.ChatMessageType
 import rs.emulator.entity.actor.player.widgets.WidgetEvent
 import java.util.*
@@ -22,6 +23,8 @@ interface IWidgetMessages : IMessages {
         message: String,
         messageType: ChatMessageType = ChatMessageType.GAMEMESSAGE
     )
+
+    fun sendUpdateFriendsList(friends: List<IPlayer>)
 
     fun sendAccessMask(widgetId: Int, defChildId: Int, cs2Children: IntRange, mask: Int)
         = sendAccessMask(widgetId, defChildId, cs2Children.first, cs2Children.last, mask)

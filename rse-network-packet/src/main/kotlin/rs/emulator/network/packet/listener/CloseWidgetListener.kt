@@ -24,6 +24,7 @@ class CloseWidgetListener : GamePacketListener<CloseWidgetMessage> {
         player: Player,
         message: CloseWidgetMessage
     ) {
+
         player.widgetViewport.close(WidgetViewport.OverlayFrame.VIEW_PORT)
 
         flowOf(*RSPluginManager.getExtensions<CloseWidgetFactory>().toTypedArray())

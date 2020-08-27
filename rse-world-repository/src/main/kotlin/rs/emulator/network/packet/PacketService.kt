@@ -134,7 +134,7 @@ class PacketService : AbstractIdleService(), KoinComponent {
         )
 
         packetRepository.putDecoders(
-            opcodes = *intArrayOf(1, 42, 57, 39, 43),
+            opcodes = *intArrayOf(1, 42, 39, 43),
             decoder = ObjGroundActionDecoder(),
             length = 7,
             ignore = false,
@@ -347,6 +347,13 @@ class PacketService : AbstractIdleService(), KoinComponent {
     }
 
     private fun addEncoders() {
+
+        packetRepository.putEncoder(
+            79,
+            UpdateFriendListEncoder(),
+            packetType = PacketType.VARIABLE_SHORT,
+            clazz = UpdateFriendListMessage::class
+        )
 
         packetRepository.putEncoder(
             21,

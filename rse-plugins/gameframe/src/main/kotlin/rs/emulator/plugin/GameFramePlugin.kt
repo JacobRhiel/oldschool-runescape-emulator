@@ -1,5 +1,7 @@
 package rs.emulator.plugin
 
+import kotlinx.coroutines.channels.consume
+import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.pf4j.Plugin
@@ -8,6 +10,7 @@ import rs.emulator.entity.actor.attributes.attribute.BooleanAttributeValue
 import rs.emulator.entity.actor.player.widgets.WidgetEvent
 import rs.emulator.entity.actor.player.widgets.WidgetViewport
 import rs.emulator.reactive.launch
+import rs.emulator.region.as30BitInteger
 import rs.emulator.widget.WidgetRegistration
 
 /**
@@ -38,6 +41,14 @@ class GameFramePlugin(wrapper: PluginWrapper) : Plugin(wrapper) {
             }
         }
 
+        /*WidgetRegistration.registerWidget(595, "world-map") {
+
+            addActionComponent(38) {
+                it.source.widgetViewport.close(WidgetViewport.OverlayFrame.VIEW_PORT)
+            }
+
+        }*/
+
         WidgetRegistration.registerWidget(160, "fixed-gameframe") {
 
             addActionComponent(22) {
@@ -51,16 +62,16 @@ class GameFramePlugin(wrapper: PluginWrapper) : Plugin(wrapper) {
                 it.source.widgetViewport.open(595, WidgetViewport.OverlayFrame.VIEW_PORT)
                 it.source.messages().sendAccessMask(595, 17, 0..4, WidgetEvent.IF_BUTTON1)
 
-                val player = it.source
+                /*val player = it.source
 
-                player.coordinateState.onEach {
+                player.coordinateState.events.consume {
 
                     println("is interface open: " + player.widgetViewport.isWidgetActive(595))
 
                     if(player.widgetViewport.isWidgetActive(595))
                         player.messages().sendClientScript(1749, player.coordinate.as30BitInteger)
 
-                }.launch()
+                }*/
 
             }
         }

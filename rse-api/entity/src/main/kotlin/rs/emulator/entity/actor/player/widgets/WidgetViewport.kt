@@ -30,21 +30,22 @@ class WidgetViewport(val player: IPlayer) {
         activeWidgets[frame] = widgetId
         when (frame) {
             VIEW_PORT -> player.messages().sendOpenSub(overlayMode.id, overlayMode.viewportId, widgetId, 0)
-            COMMUNICATION_HUB -> player.messages()
-                .sendOpenSub(overlayMode.id, overlayMode.communicationHuhId, widgetId, 0)
+            COMMUNICATION_HUB -> player.messages().sendOpenSub(overlayMode.id, overlayMode.communicationHubId, widgetId, 0)
             //TABS -> player.messages().sendOpenSub(overlayMode.id, overlayMode.tabsId, widgetId, 0)
         }
     }
+
+    fun close(widgetId: Int) = activeWidgets.entries.filter { it.value == widgetId }.forEach { close(it.key) }
 
     fun close(frame: OverlayFrame) {
         activeWidgets[frame] = -1
         when (frame) {
             VIEW_PORT -> player.messages().sendCloseSub(overlayMode.id, overlayMode.viewportId)
-            COMMUNICATION_HUB -> player.messages().sendCloseSub(overlayMode.id, overlayMode.communicationHuhId)
+            COMMUNICATION_HUB -> player.messages().sendCloseSub(overlayMode.id, overlayMode.communicationHubId)
         }
     }
 
-    enum class OverlayMode(val id: Int, val viewportId: Int, val tabsId: Int, val communicationHuhId: Int) {
+    enum class OverlayMode(val id: Int, val viewportId: Int, val tabsId: Int, val communicationHubId: Int) {
         FIXED(548, 23, -1, 27),
         RESIZABLE(161, 15, -1, 32),
         LEGACY_RESIZABLE(164, 15, -1, 34),

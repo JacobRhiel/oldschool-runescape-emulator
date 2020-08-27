@@ -21,10 +21,11 @@ class IfButtonDecoder : PacketDecoder<IfButtonMessage>()
         val item = reader.getSigned(DataType.SHORT).toInt()
 
         return IfButtonMessage(
-            hash = hash,
-            option = opcode,
-            slot = if (slot == 0xFFFF) -1 else slot,
-            item = if (item == 0xFFFF) -1 else item
+                opcode,
+                hash = hash,
+                option = opcode,
+                slot = if (slot == 0xFFFF) -1 else slot,
+                item = if (item == 0xFFFF) -1 else item
         )
 
     }

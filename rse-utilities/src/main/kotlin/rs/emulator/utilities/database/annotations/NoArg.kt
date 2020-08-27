@@ -1,4 +1,4 @@
-package rs.emulator.database.annotations
+package rs.emulator.utilities.database.annotations
 
 /**
  * Annotates a class that requires a no-args constructor created for JPA.

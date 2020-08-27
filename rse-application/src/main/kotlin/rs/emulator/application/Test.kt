@@ -21,6 +21,8 @@ import rs.emulator.cache.store.data.DataFile
 import rs.emulator.cache.store.index.IndexConfig
 import rs.emulator.cache.store.reference.ReferenceTable
 import rs.emulator.database.service.JDBCPoolingService
+import rs.emulator.definitions.entity.obj.ObjDefinition
+import rs.emulator.definitions.enums.EnumDefinition
 import rs.emulator.encryption.huffman.HuffmanCodec
 import rs.emulator.encryption.rsa.RSAService
 import rs.emulator.encryption.xtea.XteaKeyService
@@ -69,8 +71,6 @@ class Test : KoinComponent {
         fun main(args: Array<String>) {
 
             val resource = Test::class.java.classLoader.getResource("data")
-
-            println(System.getProperty("os.name"))
 
             val path = Paths.get(
                 if (System.getProperty("os.name") == "Windows 10")
@@ -172,7 +172,6 @@ class Test : KoinComponent {
 
             val collisionModule = module {
                 single { Collisions() }
-                //single { CollisionReader(get()) }
             }
 
             runBlocking {
@@ -208,6 +207,13 @@ class Test : KoinComponent {
                         .awaitHealthy()
 
                     System.gc()
+
+                    val def1: EnumDefinition = definition().find(818)//track ids
+
+                    val def2: EnumDefinition = definition().find(819) //region ids
+
+                    val def3: EnumDefinition = definition().find(817) //track ids/names
+
 
                 }
             }

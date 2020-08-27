@@ -1,6 +1,6 @@
 package rs.emulator.entity.details
 
-import rs.emulator.database.annotations.NoArg
+import rs.emulator.utilities.database.annotations.NoArg
 import rs.emulator.database.entry.Entry
 import javax.persistence.Column
 import javax.persistence.Entity

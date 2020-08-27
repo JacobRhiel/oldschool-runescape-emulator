@@ -1,7 +1,7 @@
 package rs.emulator.entity.details
 
 import org.hibernate.annotations.Type
-import rs.emulator.database.annotations.NoArg
+import rs.emulator.utilities.database.annotations.NoArg
 import rs.emulator.database.entry.Entry
 import javax.persistence.*
 

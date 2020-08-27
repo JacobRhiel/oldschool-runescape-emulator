@@ -29,7 +29,8 @@ include(
     "rse-api:widgets",
     "rse-api:skills",
     "rse-api:reactive",
-    "rse-api:persistent-details"
+    "rse-api:persistent-details",
+    "rse-api:database"
 )
 include(
     "rse-plugins",
@@ -52,3 +53,4 @@ include("rse-world-repository")
 include("rse-map:route")
 include("rse-client")
 include("rse-entity:combat")
+include("rse-plugins:social")

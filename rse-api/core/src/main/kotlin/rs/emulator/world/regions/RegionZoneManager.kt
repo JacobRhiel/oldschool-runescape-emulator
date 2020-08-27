@@ -32,12 +32,12 @@ object RegionZoneManager {
             )
         ).consumeEachEvent<ZoneRestrictionEvent> {
             it.restricted = true
-        }.consumeEachEvent<PlayerEnterZoneEvent> {
+        /*}.consumeEachEvent<PlayerEnterZoneEvent> {
             it.source.affectHandler.addIntervalAffect(
                 name = "msg",
                 period = 5000,
                 affect = MessageAffect("Hello World", it.source)
-            )
+            )*/
         }.consumeEachEvent<PlayerLeaveZoneEvent> {
             it.source.affectHandler.cancelAffectByName("msg")
         }.launch()

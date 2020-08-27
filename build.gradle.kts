@@ -28,7 +28,7 @@ subprojects {
     apply(plugin = "org.jetbrains.kotlin.plugin.noarg")
 
     noArg {
-        annotation("rs.emulator.database.annotations.NoArg")
+        annotation("rs.emulator.utilities.database.annotations.NoArg")
     }
 
     dependencies {

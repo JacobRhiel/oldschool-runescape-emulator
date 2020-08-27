@@ -2,6 +2,7 @@ package rs.emulator.entity.player
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.sendBlocking
+import rs.emulator.entity.actor.player.IPlayer
 import rs.emulator.entity.actor.player.messages.AbstractMessageHandler
 import rs.emulator.entity.actor.player.messages.chat.ChatMessageType
 import rs.emulator.entity.material.containers.ItemContainer
@@ -122,6 +123,17 @@ class MessageHandler(val player: Player) : AbstractMessageHandler() {
                 mask
             )
         )
+    }
+
+    override fun sendUpdateFriendsList(friends: List<IPlayer>)
+    {
+
+        player.outgoingPackets.sendBlocking(
+            UpdateFriendListMessage(
+                *friends.toTypedArray()
+            )
+        )
+
     }
 
     override fun sendItemContainerFull(

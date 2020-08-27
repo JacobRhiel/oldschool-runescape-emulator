@@ -19,11 +19,13 @@ import java.util.*
  *
  * @author Chk
  */
-class JDBCPoolingService : AbstractIdleService() {
+class JDBCPoolingService : AbstractIdleService()
+{
 
     lateinit var factory: SessionFactory
 
-    inline fun <reified T> withTransaction(crossinline block: Transaction.(Session) -> T): T {
+    inline fun <reified T> withTransaction(crossinline block: Transaction.(Session) -> T): T
+    {
         return Observable.just(factory)
             .observeOn(Schedulers.io())
             .map { it.openSession() }
@@ -38,7 +40,8 @@ class JDBCPoolingService : AbstractIdleService() {
             }.singleElement().blockingGet()
     }
 
-    override fun startUp() {
+    override fun startUp()
+    {
 
         val properties = Properties()
 
@@ -69,19 +72,24 @@ class JDBCPoolingService : AbstractIdleService() {
         val serviceRegistry: ServiceRegistry =
             StandardServiceRegistryBuilder().applySettings(configuration.properties).build()
 
-        try {
+        try
+        {
 
             factory = configuration
                 .buildSessionFactory(
                     serviceRegistry
                 )
-        } catch (e: Exception) {
+
+        }
+        catch (e: Exception)
+        {
             e.printStackTrace()
         }
 
     }
 
-    override fun shutDown() {
+    override fun shutDown()
+    {
 
         factory.close()
 

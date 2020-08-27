@@ -2,6 +2,7 @@ package rs.emulator.widget
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
+import rs.emulator.Repository
 import rs.emulator.entity.actor.player.IPlayer
 import rs.emulator.entity.actor.player.widgets.WidgetViewport
 import rs.emulator.widget.components.ActionComponent
@@ -84,15 +85,37 @@ object WidgetRegistration {
         childId: Int,
         slot: Int,
         itemId: Int,
-        option : Int
-    ): Flow<ComponentEvent<IPlayer, ActionComponent>> {
-        return if (widgets.containsKey(interfaceId)) {
+        option : Int,
+        opcode: Int
+    ): Flow<ComponentEvent<IPlayer, ActionComponent>>
+    {
+
+        val def = Repository.getWidgetDefinition(interfaceId)
+
+        for (wdef in def)
+        {
+
+            if (wdef.id == childId)
+            {
+                var index = wdef.actions.indexOfFirst { it == "Close" }
+                if(index == -1)
+                    index = wdef.configActions.indexOfFirst { it == "Close" }
+                if(index != -1 && opcode == actionOpcodes[index])
+                    player.widgetViewport.close(interfaceId)
+                break
+            }
+
+        }
+        return if (widgets.containsKey(interfaceId))
             widgets[interfaceId]?.widget?.fireAction(childId, player, slot, itemId, option) ?: emptyFlow()
-        } else {
+        else
+        {
             player.messages().sendChatMessage("Unhandled Widget Action $interfaceId - $childId - $slot - $itemId")
             emptyFlow()
         }
     }
+
+    private val actionOpcodes = intArrayOf(13, 77, 34, 91)
 
     fun assertWidgetIsRegistered(id : Int) : Boolean = widgets.containsKey(id)
 

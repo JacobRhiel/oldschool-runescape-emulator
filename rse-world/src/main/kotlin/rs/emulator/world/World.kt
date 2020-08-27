@@ -1,7 +1,7 @@
 package rs.emulator.world
 
 import org.koin.core.KoinComponent
-import rs.emulator.database.annotations.NoArg
+import rs.emulator.utilities.database.annotations.NoArg
 import rs.emulator.database.entry.Entry
 import rs.emulator.map.MapGrid
 import javax.persistence.Column
