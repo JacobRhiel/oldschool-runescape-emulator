@@ -21,8 +21,9 @@ class ObjMetaDataDefinitionGenerator : MetaDataDefinitionGenerator<ObjMetaDataDe
     {
 
         if(cached.isEmpty())
+
             cached = gson.fromJson(
-                FileReader(File("./data/osrsbox/item/items-complete.json")),
+                FileReader(File("/home/Javatar/IdeaProjects/oldschool-runescape-emulator/rse-application/src/main/resources/data/osrsbox/item/items-complete.json")),
                 object : TypeToken<HashMap<Int, ObjMetaDataDefinition>>(){}.type
             )
 

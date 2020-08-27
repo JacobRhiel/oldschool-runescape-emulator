@@ -13,6 +13,7 @@ import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.sendBlocking
 import kotlinx.coroutines.flow.*
 import rs.dusk.engine.path.Finder
+import rs.emulator.collections.varbits.VarbitList
 import rs.emulator.database.service.JDBCPoolingService
 import rs.emulator.entity.actor.Actor
 import rs.emulator.entity.actor.affects.AffectHandler
@@ -23,11 +24,13 @@ import rs.emulator.entity.actor.player.messages.AbstractMessageHandler
 import rs.emulator.entity.actor.player.messages.IMessages
 import rs.emulator.entity.actor.player.widgets.WidgetViewport
 import rs.emulator.entity.details.PlayerDetails
-import rs.emulator.entity.material.containers.ItemContainerManager
-import rs.emulator.entity.material.containers.equipment
+import rs.emulator.entity.material.containers.*
 import rs.emulator.entity.material.containers.impl.Equipment
 import rs.emulator.entity.material.containers.impl.Inventory
-import rs.emulator.entity.material.containers.inventory
+import rs.emulator.entity.material.containers.impl.bank.Bank
+import rs.emulator.entity.material.containers.impl.bank.BankTab
+import rs.emulator.entity.material.items.Wearable
+import rs.emulator.entity.material.provider.ItemProvider
 import rs.emulator.entity.player.chat.PublicChatText
 import rs.emulator.entity.player.update.flag.PlayerUpdateFlag
 import rs.emulator.entity.player.update.sync.SyncInformation
@@ -45,7 +48,6 @@ import rs.emulator.plugins.extensions.factories.SavePlayerFactory
 import rs.emulator.reactive.launch
 import rs.emulator.region.WorldCoordinate
 import rs.emulator.region.as30BitInteger
-import rs.emulator.region.coordinate.Coordinate
 import rs.emulator.region.events.TeleportCoordinateEvent
 import rs.emulator.regions.zones.RegionZone
 import rs.emulator.utilities.koin.get
@@ -92,6 +94,8 @@ class Player(
 
     override val affectHandler: AffectHandler<IPlayer> = AffectHandler()
 
+    override val varbits: VarbitList = VarbitList()
+
     override var energy: Int by actorAttributes.Int(100).markPersistent().apply {
         add(this.changeListener.subscribe {
             outgoingPackets.sendBlocking(UpdateRunEnergyMessage(it))
@@ -131,6 +135,7 @@ class Player(
         val con = containerManager
         con.inventory.let { details.inventory = it.toString() }
         con.equipment.let { details.equipment = it.toString() }
+        con.bank.let { details.bank = it.toString() }
         details.skills = skillManager.toString()
         details.coordinate = coordinate.as30BitInteger
         details.attributes.putAll(actorAttributes.attributes)
@@ -150,10 +155,11 @@ class Player(
 
         val inv: Inventory? = gson.fromJson(details.inventory, Inventory::class.java)
         val equ: Equipment? = gson.fromJson(details.equipment, Equipment::class.java)
-        //val bak = gson.fromJson(details.bank, Bank::class.java)
+        val bank: Array<BankTab>? = gson.fromJson(details.bank, Array<BankTab>::class.java)
 
         containerManager.registerContainer(93, inv ?: Inventory())
         containerManager.registerContainer(94, equ ?: Equipment())
+        containerManager.registerContainer(95, Bank(varbits, 800, bank ?: Array(9) { BankTab(it) }))
 
         inventory().containerState.onEach {
             messages().sendItemContainerFull(149, 0, 93, it.container)
@@ -162,6 +168,14 @@ class Player(
             messages().sendItemContainerFull(-1, -1, 94, it.container)
             syncInfo.addMaskFlag(PlayerUpdateFlag.APPEARANCE)
         }.launchIn(CoroutineScope(Dispatchers.Default))
+        bank().containerState.onEach {
+            println("Update bank")
+            messages().sendItemContainerFull(-1, -1, 95, it.container)
+        }.launchIn(CoroutineScope(Dispatchers.Default))
+
+        val item = ItemProvider.provide<Wearable>(4151)
+
+        bank().addItem(item)
 
         if (details.skills.isNotEmpty()) {
             val skills = gson.fromJson(details.skills, Array<Skill>::class.java)
@@ -173,16 +187,13 @@ class Player(
         val coord = WorldCoordinate.from30BitHash(details.coordinate)
         coordinateState[coord] = TeleportCoordinateEvent(this, coord)
 
-        CoroutineScope(Dispatchers.IO + SupervisorJob())
-
         flowOf(*RSPluginManager.getExtensions<SavePlayerFactory>().toTypedArray())
             .map { it.registerSaveAction(this) }
             .onEach { it.onLoad(this) }
             .launchIn(CoroutineScope(Dispatchers.IO))
     }
 
-    override fun update()
-    {
+    override fun update() {
 
         syncInfo.addMaskFlag(PlayerUpdateFlag.APPEARANCE)
 

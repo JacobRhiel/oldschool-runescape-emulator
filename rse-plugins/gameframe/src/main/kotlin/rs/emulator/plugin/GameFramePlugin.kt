@@ -15,24 +15,31 @@ class GameFramePlugin(wrapper: PluginWrapper) : Plugin(wrapper) {
     override fun start() {
         super.start()
         WidgetRegistration.registerWidget(548, "fixed-gameframe") {
-            addActionComponent(37) {
-                it.source.widgetViewport.open(182, WidgetViewport.OverlayFrame.TABS)
+            components {
+                addActionComponent(37) {
+                    it.source.widgetViewport.open(182, WidgetViewport.OverlayFrame.TABS)
+                }
+                addActionComponent(54) {
+                    it.source.widgetViewport.open(149, WidgetViewport.OverlayFrame.TABS)
+                }
+                addActionComponent(55) {
+                    it.source.widgetViewport.open(387, WidgetViewport.OverlayFrame.TABS)
+                }
             }
-            addActionComponent(54) {
-                it.source.widgetViewport.open(149, WidgetViewport.OverlayFrame.TABS)
-            }
-            addActionComponent(55) {
-                it.source.widgetViewport.open(387, WidgetViewport.OverlayFrame.TABS)
-            }
+
         }
         WidgetRegistration.registerWidget(182, "fixed-gameframe") {
-            addActionComponent(8) {
-                it.source.logout()
+            components {
+                addActionComponent(8) {
+                    it.source.logout()
+                }
             }
         }
         WidgetRegistration.registerWidget(160, "fixed-gameframe") {
-            addActionComponent(46) {
-                it.source.messages().sendChatMessage("Worked!")
+            components {
+                addActionComponent(46) {
+                    it.source.messages().sendChatMessage("Worked!")
+                }
             }
         }
     }

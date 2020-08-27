@@ -39,7 +39,28 @@ class Wearable(
             def.noteLinkId,
             amount,
             stackable
-        ) else this.copy()
+        ).also { it.attributes.setAttributes(this.attributes.map) } else this.copy()
+    }
+
+    override fun toPlaceholder(): Wearable {
+        val def = ItemDefinitionFactory.provide(this.id)
+        return if (def.placeholderTemplate == 0 && def.placeholderLink > 0) {
+            Wearable(mainSlot, secondarySlot, def.placeholderLink, amount, stackable)
+                .also { it.attributes.setAttributes(this.attributes.map) }
+        } else {
+            this.copy()
+        }
+    }
+
+    override fun fromPlaceholder(): Wearable {
+        val def = ItemDefinitionFactory.provide(this.id)
+        return if (def.placeholderTemplate > 0) Wearable(
+            mainSlot,
+            secondarySlot,
+            def.placeholderLink,
+            amount,
+            stackable
+        ).also { this.attributes.setAttributes(this.attributes.map) } else this.copy()
     }
 
 

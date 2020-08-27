@@ -3,11 +3,12 @@ package rs.emulator.widget
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import rs.emulator.entity.actor.player.IPlayer
-import rs.emulator.entity.actor.player.widgets.WidgetViewport
 import rs.emulator.widget.components.ActionComponent
 import rs.emulator.widget.components.Widget
 import rs.emulator.widget.components.events.ComponentEvent
 import rs.emulator.widget.components.events.impl.ComponentActionEvent
+import rs.emulator.widget.dsl.WidgetBuilder
+import rs.emulator.widget.dsl.WidgetBuilderContext
 
 /**
  * Registration of widgets is first come first serve
@@ -94,19 +95,11 @@ object WidgetRegistration {
         }
     }
 
-    fun assertWidgetIsRegistered(id : Int) : Boolean = widgets.containsKey(id)
-
-    class WidgetBuilder(val id: Int) {
-
-        private val widget = Widget(id)
-
-        fun addActionComponent(id: Int, action: (ComponentActionEvent) -> Unit) = apply {
-            widget[id] = ActionComponent(id, action)
-        }
-
-        fun create() = widget
+    fun t() {
 
     }
+
+    fun assertWidgetIsRegistered(id : Int) : Boolean = widgets.containsKey(id)
 
     data class RegisteredWidget(val widget : Widget, val plugin : String)
 

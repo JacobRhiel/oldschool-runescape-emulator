@@ -2,6 +2,7 @@ package rs.emulator.entity.actor.player
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import rs.emulator.collections.varbits.VarbitList
 import rs.emulator.entity.actor.IActor
 import rs.emulator.entity.actor.affects.AffectHandler
 import rs.emulator.entity.actor.combat.CombatFactory
@@ -21,6 +22,7 @@ interface IPlayer : IActor {
     val details: IPlayerDetails
     val containerManager: ItemContainerManager
     val combatFactory: CombatFactory
+    val varbits: VarbitList
     override val affectHandler: AffectHandler<IPlayer>
     val playerIndex: Int
 

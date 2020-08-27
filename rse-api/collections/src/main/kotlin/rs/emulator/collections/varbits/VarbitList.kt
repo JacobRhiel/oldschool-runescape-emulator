@@ -20,7 +20,8 @@ class VarbitList {
         return VarbitDelegate(this, id, this[id])
     }
 
-    internal operator fun get(key: Int): Int = varbits.getOrDefault(key, 0)
+    operator fun get(key: Int): Int = varbits.getOrDefault(key, 0)
+
     internal operator fun set(key: Int, value: Int) {
         varbits[key] = value
     }

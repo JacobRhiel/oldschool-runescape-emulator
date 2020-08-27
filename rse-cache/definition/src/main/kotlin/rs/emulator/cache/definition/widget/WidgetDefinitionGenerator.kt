@@ -163,7 +163,7 @@ class WidgetDefinitionGenerator : DefinitionGenerator<WidgetDefinition>()
                 }
                 ++var8
             }
-            definition.configActions = arrayOfNulls(5)
+            //definition.configActions = arrayOfNulls(5)
             var8 = 0
             while (var8 < 5)
             {
@@ -256,7 +256,7 @@ class WidgetDefinitionGenerator : DefinitionGenerator<WidgetDefinition>()
             if (var4 == 1) {
                 definition.clickMask = definition.clickMask or 1073741824
             }
-            definition.configActions = arrayOfNulls(5)
+            //definition.configActions = arrayOfNulls(5)
             var5 = 0
             while (var5 < 5) {
                 val var10 = var1.string
