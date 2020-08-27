@@ -69,3 +69,4 @@ fun Flow<ItemContainerEvent<Item>>.toEquipment(container: Equipment) = flow {
 
 fun IPlayer.inventory() = containerManager.inventory
 fun IPlayer.equipment() = containerManager.equipment
+fun IPlayer.bank() = containerManager.bank

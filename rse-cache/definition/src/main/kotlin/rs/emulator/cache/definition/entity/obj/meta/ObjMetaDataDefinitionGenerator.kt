@@ -30,6 +30,7 @@ class ObjMetaDataDefinitionGenerator : MetaDataDefinitionGenerator<ObjMetaDataDe
         )
 
         if(cached.isEmpty())
+
             cached = gson.fromJson(
                 FileReader(path.resolve("osrsbox/item/items-complete.json").toFile()),
                 object : TypeToken<HashMap<Int, ObjMetaDataDefinition>>(){}.type

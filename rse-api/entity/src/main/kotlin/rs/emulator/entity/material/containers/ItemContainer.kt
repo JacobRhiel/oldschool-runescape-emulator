@@ -21,7 +21,7 @@ import rs.emulator.utilities.koin.get
  * @author javatar
  */
 @ExperimentalCoroutinesApi
-abstract class ItemContainer<I : Item>(val key: Int, val elements: Array<I>) : Container<I, ItemContainerEvent<I>> {
+abstract class ItemContainer<I : Item>(val key: Int, open val elements: Array<I>) : Container<I, ItemContainerEvent<I>> {
 
     val nextSlot: Int get() = elements.indexOfFirst { it === ItemData.EMPTY }
     val attributes = MaterialAttributes()
@@ -32,8 +32,8 @@ abstract class ItemContainer<I : Item>(val key: Int, val elements: Array<I>) : C
     fun addItem(element: I) = add(element).invalidateState().launchIn(get<ActorScope>())
     fun removeItem(element: I) = remove(element).invalidateState().launchIn(get<ActorScope>())
 
-    fun isFull(): Boolean = all { it !== ItemData.EMPTY }
-    fun isEmpty(): Boolean = all { it === ItemData.EMPTY }
+    open fun isFull(): Boolean = all { it !== ItemData.EMPTY }
+    open fun isEmpty(): Boolean = all { it === ItemData.EMPTY }
 
     fun updateState() {
         containerState.value = containerState.value.invalidate()
@@ -55,6 +55,11 @@ abstract class ItemContainer<I : Item>(val key: Int, val elements: Array<I>) : C
         list.forEach { i ->
             emitAll(remove(i))
         }
+    }
+
+    operator fun get(index: Int) = elements[index]
+    operator fun set(index: Int, value: I) {
+        elements[index] = value
     }
 
     override fun iterator(): Iterator<I> {

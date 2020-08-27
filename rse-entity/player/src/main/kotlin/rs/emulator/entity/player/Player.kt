@@ -4,7 +4,10 @@ import com.google.gson.Gson
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.internal.disposables.DisposableContainer
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.sendBlocking
@@ -68,8 +71,6 @@ class Player(
 
     val idleMouseTicks = AtomicLong(0L)
 
-    var pendingTeleport: Coordinate? = null
-
     var pendingPublicChatMessage: PublicChatText? = null
 
     override val searchPattern: Finder = pathFinder.bfs
@@ -91,11 +92,7 @@ class Player(
 
     override val affectHandler: AffectHandler<IPlayer> = AffectHandler()
 
-    override var running: Boolean by actorAttributes.Boolean(false).markPersistent().apply {
-        add(this.changeListener.subscribe {
-            this@Player.messages().sendSmallVarp(173, if(it) 1 else 0)
-        })
-    }
+    override val varbits: VarbitList = VarbitList()
 
     override var energy: Int by actorAttributes.Int(100).markPersistent().apply {
         add(this.changeListener.subscribe {
@@ -136,6 +133,7 @@ class Player(
         val con = containerManager
         con.inventory.let { details.inventory = it.toString() }
         con.equipment.let { details.equipment = it.toString() }
+        con.bank.let { details.bank = it.toString() }
         details.skills = skillManager.toString()
         details.coordinate = coordinate.as30BitInteger
         details.attributes.putAll(actorAttributes.attributes)
@@ -155,10 +153,11 @@ class Player(
 
         val inv: Inventory? = gson.fromJson(details.inventory, Inventory::class.java)
         val equ: Equipment? = gson.fromJson(details.equipment, Equipment::class.java)
-        //val bak = gson.fromJson(details.bank, Bank::class.java)
+        val bank: Array<BankTab>? = gson.fromJson(details.bank, Array<BankTab>::class.java)
 
         containerManager.registerContainer(93, inv ?: Inventory())
         containerManager.registerContainer(94, equ ?: Equipment())
+        containerManager.registerContainer(95, Bank(varbits, 800, bank ?: Array(9) { BankTab(it) }))
 
         inventory().containerState.onEach {
             messages().sendItemContainerFull(149, 0, 93, it.container)
@@ -167,6 +166,14 @@ class Player(
             messages().sendItemContainerFull(-1, -1, 94, it.container)
             syncInfo.addMaskFlag(PlayerUpdateFlag.APPEARANCE)
         }.launchIn(CoroutineScope(Dispatchers.Default))
+        bank().containerState.onEach {
+            println("Update bank")
+            messages().sendItemContainerFull(-1, -1, 95, it.container)
+        }.launchIn(CoroutineScope(Dispatchers.Default))
+
+        val item = ItemProvider.provide<Wearable>(4151)
+
+        bank().addItem(item)
 
         if (details.skills.isNotEmpty()) {
             val skills = gson.fromJson(details.skills, Array<Skill>::class.java)
@@ -178,16 +185,13 @@ class Player(
         val coord = WorldCoordinate.from30BitHash(details.coordinate)
         coordinateState[coord] = TeleportCoordinateEvent(this, coord)
 
-        CoroutineScope(Dispatchers.IO + SupervisorJob())
-
         flowOf(*RSPluginManager.getExtensions<SavePlayerFactory>().toTypedArray())
             .map { it.registerSaveAction(this) }
             .onEach { it.onLoad(this) }
             .launchIn(CoroutineScope(Dispatchers.IO))
     }
 
-    override fun update()
-    {
+    override fun update() {
 
         syncInfo.addMaskFlag(PlayerUpdateFlag.APPEARANCE)
 

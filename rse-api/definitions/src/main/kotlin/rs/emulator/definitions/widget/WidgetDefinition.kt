@@ -100,7 +100,7 @@ class WidgetDefinition(identifier: Int) : Definition(identifier)
     lateinit var xOffsets: IntArray
     lateinit var yOffsets: IntArray
     lateinit var sprites: IntArray
-    var configActions: Array<String?> = arrayOf()
+    var configActions = Array(5) { "null" }
     var alternateText = ""
     var alternateTextColor = 0
     var hoveredTextColor = 0

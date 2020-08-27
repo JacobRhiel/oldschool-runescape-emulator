@@ -29,6 +29,11 @@ fun <T> Flow<T>.collectBlocking(action : (T) -> Unit) {
 
 fun <T> Flow<T>.launch() = launchIn(get<ActorScope>())
 
+/**
+ * launches the provided flow in a blocking matter.
+ */
+fun <T> Flow<T>.test() = collectBlocking {}
+
 fun <T> intervalFlowOf(value: T, period: Long) = flow {
     while (true) {
         delay(period)

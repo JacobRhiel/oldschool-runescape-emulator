@@ -2,6 +2,7 @@ package rs.emulator.entity.material.containers
 
 import rs.emulator.entity.material.containers.impl.Equipment
 import rs.emulator.entity.material.containers.impl.Inventory
+import rs.emulator.entity.material.containers.impl.bank.Bank
 
 /**
  *
@@ -14,6 +15,8 @@ class ItemContainerManager {
         get() = containers[93] as Inventory
     val equipment: Equipment
         get() = containers[94] as Equipment
+    val bank: Bank
+        get() = containers[95] as Bank
 
 
     private val _containers = mutableMapOf<Int, ItemContainer<*>>()

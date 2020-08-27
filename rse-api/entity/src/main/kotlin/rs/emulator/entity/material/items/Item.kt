@@ -27,6 +27,8 @@ abstract class Item(var id: Int, var amount: Int = 1, var stackable: Boolean = f
     abstract fun copy(amount: Int = this.amount, stackable: Boolean = this.stackable): Item
     abstract fun toNoted(): Item
     abstract fun toUnnoted(): Item
+    abstract fun toPlaceholder(): Item
+    abstract fun fromPlaceholder(): Item
 
     override fun toString(): String {
         return "Item(id=$id, amount=$amount, stackable=$stackable)"

@@ -1,5 +1,6 @@
 package rs.emulator.entity.material.items
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import rs.emulator.definitions.factories.ItemDefinitionFactory
 
 /**
@@ -7,6 +8,7 @@ import rs.emulator.definitions.factories.ItemDefinitionFactory
  * @author javatar
  */
 
+@ExperimentalCoroutinesApi
 class StandardItem(id: Int, amount: Int = 1, stackable: Boolean = false) : Item(id, amount, stackable) {
     override fun copy(amount: Int, stackable: Boolean): StandardItem {
         return StandardItem(this.id, amount, stackable)
@@ -19,11 +21,34 @@ class StandardItem(id: Int, amount: Int = 1, stackable: Boolean = false) : Item(
             def.noteLinkId,
             amount,
             stackable
-        ) else this.copy()
+        ).also { it.attributes.setAttributes(this.attributes.map) } else this.copy()
     }
 
     override fun toUnnoted(): StandardItem {
         val def = ItemDefinitionFactory.provide(this.id)
-        return if (def.noteTemplateId > 0) StandardItem(def.noteLinkId, amount, stackable) else this.copy()
+        return if (def.noteTemplateId > 0) StandardItem(
+            def.noteLinkId,
+            amount,
+            stackable
+        ).also { it.attributes.setAttributes(this.attributes.map) } else this.copy()
+    }
+
+    override fun toPlaceholder(): StandardItem {
+        val def = ItemDefinitionFactory.provide(this.id)
+        return if (def.placeholderTemplate == 0 && def.placeholderLink > 0) {
+            StandardItem(def.placeholderLink, amount, stackable)
+                .also { it.attributes.setAttributes(this.attributes.map) }
+        } else {
+            this.copy()
+        }
+    }
+
+    override fun fromPlaceholder(): StandardItem {
+        val def = ItemDefinitionFactory.provide(this.id)
+        return if (def.placeholderTemplate > 0) StandardItem(
+            def.placeholderLink,
+            amount,
+            stackable
+        ).also { this.attributes.setAttributes(this.attributes.map) } else this.copy()
     }
 }
