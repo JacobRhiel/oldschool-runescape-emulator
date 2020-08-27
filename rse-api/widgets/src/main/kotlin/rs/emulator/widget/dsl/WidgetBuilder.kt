@@ -18,7 +18,7 @@ class WidgetBuilder(val id: Int) {
 
     @WidgetBuilderContext
     class ActionContext(private val context: WidgetBuilder) {
-        fun addActionComponent(componentId: Int, action: (ComponentActionEvent) -> Unit) {
+        fun button(componentId: Int, action: (ComponentActionEvent) -> Unit) {
             context.widget[componentId] = ActionComponent(componentId, action)
         }
     }

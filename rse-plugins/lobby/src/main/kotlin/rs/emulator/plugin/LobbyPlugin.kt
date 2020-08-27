@@ -15,7 +15,7 @@ class LobbyPlugin(wrapper: PluginWrapper) : Plugin(wrapper) {
         super.start()
         WidgetRegistration.registerWidget(378, LobbyPlugin::class.java.simpleName) {
             components {
-                addActionComponent(78) {
+                button(78) {
                     val enum548 = Repository.getDefinition<EnumDefinition>(1129)
                     val enum161 = Repository.getDefinition<EnumDefinition>(1132)
                     if(it.option == 14) {

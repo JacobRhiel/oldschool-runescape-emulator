@@ -3,7 +3,6 @@ package rs.emulator.plugin
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.pf4j.Plugin
 import org.pf4j.PluginWrapper
-import rs.emulator.entity.actor.player.widgets.WidgetViewport
 import rs.emulator.widget.WidgetRegistration
 
 /**
@@ -17,7 +16,7 @@ class ReportAbusePlugin(wrapper: PluginWrapper) : Plugin(wrapper) {
         super.start()
         WidgetRegistration.registerWidget(162, ReportAbusePlugin::class.java.simpleName) {
             components {
-                addActionComponent(33) {
+                button(33) {
                     val player = it.source
                     if(it.option == 78) {
 

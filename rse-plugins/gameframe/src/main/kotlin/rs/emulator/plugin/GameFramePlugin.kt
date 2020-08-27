@@ -16,13 +16,13 @@ class GameFramePlugin(wrapper: PluginWrapper) : Plugin(wrapper) {
         super.start()
         WidgetRegistration.registerWidget(548, "fixed-gameframe") {
             components {
-                addActionComponent(37) {
+                button(37) {
                     it.source.widgetViewport.open(182, WidgetViewport.OverlayFrame.TABS)
                 }
-                addActionComponent(54) {
+                button(54) {
                     it.source.widgetViewport.open(149, WidgetViewport.OverlayFrame.TABS)
                 }
-                addActionComponent(55) {
+                button(55) {
                     it.source.widgetViewport.open(387, WidgetViewport.OverlayFrame.TABS)
                 }
             }
@@ -30,14 +30,14 @@ class GameFramePlugin(wrapper: PluginWrapper) : Plugin(wrapper) {
         }
         WidgetRegistration.registerWidget(182, "fixed-gameframe") {
             components {
-                addActionComponent(8) {
+                button(8) {
                     it.source.logout()
                 }
             }
         }
         WidgetRegistration.registerWidget(160, "fixed-gameframe") {
             components {
-                addActionComponent(46) {
+                button(46) {
                     it.source.messages().sendChatMessage("Worked!")
                 }
             }
