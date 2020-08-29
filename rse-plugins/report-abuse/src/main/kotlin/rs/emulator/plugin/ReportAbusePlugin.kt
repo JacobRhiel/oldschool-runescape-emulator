@@ -3,6 +3,7 @@ package rs.emulator.plugin
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.pf4j.Plugin
 import org.pf4j.PluginWrapper
+import rs.emulator.identifications.data.VarBits
 import rs.emulator.widget.WidgetRegistration
 
 /**
@@ -18,14 +19,23 @@ class ReportAbusePlugin(wrapper: PluginWrapper) : Plugin(wrapper) {
             components {
                 button(33) {
                     val player = it.source
-                    if(it.option == 78) {
+                    if (it.option == 78) {
 
-                        if(player.username() == "hunter23912") {
+                        if (player.username() == "hunter23912") {
 
                             player.widgetViewport {
                                 widgetId = 12
                                 extensionWidgetId = 15
                                 setup {
+                                    val bank = player.containerManager.bank
+                                    bank.updateState()
+                                    println("Setting up bank")
+                                    player.messages().sendSmallVarp(115, 0)
+                                    player.messages().sendLargeVarp(867, 1054722)
+                                    player.messages().sendSmallVarp(1052, 0)
+                                    player.messages().sendSmallVarp(1053, 0)
+                                    player.messages().sendSmallVarp(2743, 0)
+                                    player.messages().sendSmallVarp(261, 0)
                                     player.messages().sendClientScript(917, -1, -2)
                                     player.messages().sendAccessMask(12, 12, 0, 815, 1312766)
                                     player.messages().sendAccessMask(12, 12, 825, 833, 2)

@@ -20,6 +20,11 @@ class LegacyObjActionListener : GamePacketListener<LegacyObjActionMessage> {
 
         //TODO - Validate interface is visible
 
+        val widgetId = message.componentHash shr 16
+        val childId = message.componentHash and 255
+
+        player.messages().sendChatMessage("Unhandled legacy action $widgetId:$childId itemId:${message.itemId} slot:${message.slot}")
+
         RSPluginManager.getExtensions<LegacyItemActionFactory>()
             .toObservable()
             .map {

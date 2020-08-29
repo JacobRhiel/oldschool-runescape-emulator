@@ -15,6 +15,7 @@ import rs.emulator.regions.zones.RegionZone
 import rs.emulator.service.event.IEvent
 import rs.emulator.utilities.contexts.scopes.ActorScope
 import rs.emulator.utilities.koin.get
+import rs.emulator.utilities.logger.debug
 import rs.emulator.world.regions.RegionZoneManager
 import rs.emulator.world.repository.WorldRepository
 
@@ -60,6 +61,7 @@ object PreUpdatePlayerSynchronizationTask : IEvent {
             player.actions.cycle()
 
             player.incomingPackets.consumeAsFlow()
+                .onEach { println("Incoming Packet ${it.msg.opcode}") }
                 .onEach { it.handler.handle(player, it.msg) }
                 .launchIn(get<ActorScope>())
 

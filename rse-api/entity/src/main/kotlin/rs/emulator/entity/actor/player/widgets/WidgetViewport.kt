@@ -39,6 +39,7 @@ class WidgetViewport(val player: IPlayer) {
     fun open(widgetId: Int, frame: OverlayFrame) {
         close(frame)
         activeMetaData[frame] = WidgetContext(widgetId).also { it.frame = frame }
+        activeWidgets[frame] = widgetId
         when (frame) {
             VIEW_PORT -> player.messages().sendOpenSub(overlayMode.id, overlayMode.viewportId, widgetId, 0)
             COMMUNICATION_HUB -> player.messages()
@@ -48,6 +49,10 @@ class WidgetViewport(val player: IPlayer) {
     }
 
     fun close(frame: OverlayFrame) {
+        val meta = activeMetaData[frame]
+        if(meta != null && meta.extensionWidgetId != -1) {
+            close(VIEW_PORT_EXTENSION)
+        }
         activeMetaData[frame]?.closeContext?.close()
         activeMetaData[frame] = WidgetContext.EMPTY_CONTEXT
         activeWidgets[frame] = -1
