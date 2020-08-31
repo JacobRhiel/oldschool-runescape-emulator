@@ -48,6 +48,8 @@ class WidgetViewport(val player: IPlayer) {
         }
     }
 
+    fun close(widgetId: Int) = activeWidgets.entries.filter { it.value == widgetId }.forEach { close(it.key) }
+
     fun close(frame: OverlayFrame) {
         val meta = activeMetaData[frame]
         if(meta != null && meta.extensionWidgetId != -1) {

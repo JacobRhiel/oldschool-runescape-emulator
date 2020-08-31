@@ -1,5 +1,6 @@
 package rs.emulator.api.database.properties
 
+import org.hibernate.boot.registry.classloading.internal.ClassLoaderServiceImpl
 import org.hibernate.cfg.AvailableSettings
 import org.hibernate.engine.jdbc.connections.spi.ConnectionProvider
 import org.hibernate.hikaricp.internal.HikariCPConnectionProvider
@@ -40,14 +41,6 @@ data class DatabaseProperties(
         properties["hibernate.hikari.dataSource.portNumber"] = address.port.toString()
         properties["hibernate.hikari.dataSource.serverName"] = address.hostName
         properties["connection.provider_class"] = provider::class.java.name
-
-        properties[AvailableSettings.CLASSLOADERS] = listOf(this::class.java.classLoader, classLoader)
-
-        properties[AvailableSettings.TC_CLASSLOADER] = classLoader
-
-        println(username)
-
-        println("classloader: $classLoader")
 
         return properties
 

@@ -32,23 +32,6 @@ class SocialPlugin(wrapper: PluginWrapper) : Plugin(wrapper)
 
         }
 
-        val table = SocialDatabaseTable(0)
-
-        println(SocialDatabaseTable::class.java)
-
-        database.withTransaction { tx ->
-
-            println(tx.javaClass.classLoader.definedPackages.toList().toTypedArray().contentDeepToString())
-
-            //println(tx.get(SocialDatabaseTable::class.java, 0))
-
-            //(tx.get(SocialDatabaseTable::class.java, 0) ?: table.also { tx.save(it); this.commit() })
-          //  tx.update(table)
-
-           // this.commit()
-
-        }
-
     }
 
 }

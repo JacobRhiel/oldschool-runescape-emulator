@@ -2,11 +2,13 @@ package rs.emulator.api.database.factory
 
 import org.hibernate.HibernateException
 import org.hibernate.SessionFactory
+import org.hibernate.boot.registry.BootstrapServiceRegistryBuilder
 import org.hibernate.boot.registry.StandardServiceRegistry
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder
 import org.hibernate.cfg.Configuration
 import rs.emulator.api.database.annotation.DatabaseMetaData
 import rs.emulator.api.database.properties.DatabaseProperties
+import javax.persistence.Persistence
 import kotlin.reflect.full.findAnnotation
 
 /**
@@ -46,7 +48,7 @@ object DatabaseFactory
         try
         {
 
-            factory = configuration.buildSessionFactory(initServiceFactory(configuration))
+            factory = configuration.buildSessionFactory(initServiceFactory(configuration, properties.classLoader))
 
             database = Database(metaData, factory)
 
@@ -68,13 +70,13 @@ object DatabaseFactory
 
     }
 
-    private fun initServiceFactory(configuration: Configuration): StandardServiceRegistry
-    {
-
-        return StandardServiceRegistryBuilder()
+    private fun initServiceFactory(configuration: Configuration, classLoader: ClassLoader): StandardServiceRegistry =
+        StandardServiceRegistryBuilder(
+            BootstrapServiceRegistryBuilder()
+                .applyClassLoader(classLoader)
+                .build()
+        )
             .applySettings(configuration.properties)
             .build()
-
-    }
 
 }

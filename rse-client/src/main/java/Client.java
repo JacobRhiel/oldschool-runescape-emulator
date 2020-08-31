@@ -4383,7 +4383,7 @@ public final class Client extends GameShell implements Usernamed {
 					var16 = var3.readUnsignedByte();
 					var5 = var3.method5867();
 					var21 = var3.method5767();
-					System.out.println("[OpenSub]: " + var16 + ", " + var5 + ", " + var21 + ". \n hash parent: " + (var16 >> 16) + ", hash component: " + (var16 & 255));
+					System.out.println("[OpenSub]: " + var16 + ", " + var5 + ", " + var21 + ". \n hash parent: " + (var21 >> 16) + ", hash component: " + (var21 & 255));
 					var28 = (InterfaceParent)interfaceParents.get((long)var21);
 					if (var28 != null) {
 						class41.closeInterface(var28, var5 != var28.group);
@@ -4499,7 +4499,7 @@ public final class Client extends GameShell implements Usernamed {
 
 				int var29;
 				if (ServerPacket.WIDGET_ACCESS_MASKS == var1.serverPacket) {
-					var16 = var3.method5766();
+					var16 = var3.method5765();
 					var5 = var3.readUnsignedShort();
 					if (var5 == 65535) {
 						var5 = -1;
@@ -4513,6 +4513,8 @@ public final class Client extends GameShell implements Usernamed {
 					var22 = var3.method5765();
 
 					System.out.println("[WidgetAccessMasks]: " + var16 + ", " + var5 + ", " + var21 + ", " + var22 + ".");
+
+					System.out.println("[WidgetAccessMasks]: " + (var16 >> 16) + ", " + (var16 & 255) + ", " + var16 + ", " + var5 + ", " + var21 + ", " + var22 + (var21 >> 16) + ", " + (var21 & 255) + ".");
 
 					for (var29 = var5; var29 <= var21; ++var29) {
 						var23 = (long)var29 + ((long)var16 << 32);

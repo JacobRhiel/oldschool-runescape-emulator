@@ -20,9 +20,9 @@ class ClickWorldMapListener : GamePacketListener<ClickWorldMapMessage>
 
         player.lastCoordinate.set(player.coordinate)
 
-        player.coordinateState.set(Coordinate.from30BitHash(message.coordinateHash))
+        val coordinate = Coordinate.from30BitHash(message.coordinateHash)
 
-        player.pendingTeleport = player.coordinate
+        player.setTeleportCoordinate(coordinate)
 
         player.syncInfo.addMaskFlag(PlayerUpdateFlag.MOVEMENT)
 

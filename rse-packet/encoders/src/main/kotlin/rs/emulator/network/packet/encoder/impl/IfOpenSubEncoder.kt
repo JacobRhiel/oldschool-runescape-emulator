@@ -23,6 +23,14 @@ class IfOpenSubEncoder : PacketEncoder<IfOpenSubMessage>()
 
         }
 
+        println(message.interType)
+
+        println(message.component)
+
+        println(message.parent)
+
+        println(message.child)
+
         builder.put(DataType.BYTE, message.interType)
 
         builder.put(DataType.SHORT, DataTransformation.ADD, message.component)

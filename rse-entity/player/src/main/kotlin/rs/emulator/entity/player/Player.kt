@@ -13,6 +13,7 @@ import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.sendBlocking
 import kotlinx.coroutines.flow.*
 import rs.dusk.engine.path.Finder
+import rs.emulator.collections.varbits.VarbitList
 import rs.emulator.database.service.JDBCPoolingService
 import rs.emulator.entity.actor.Actor
 import rs.emulator.entity.actor.affects.AffectHandler
@@ -24,10 +25,15 @@ import rs.emulator.entity.actor.player.messages.IMessages
 import rs.emulator.entity.actor.player.widgets.WidgetViewport
 import rs.emulator.entity.details.PlayerDetails
 import rs.emulator.entity.material.containers.ItemContainerManager
+import rs.emulator.entity.material.containers.bank
 import rs.emulator.entity.material.containers.equipment
 import rs.emulator.entity.material.containers.impl.Equipment
 import rs.emulator.entity.material.containers.impl.Inventory
+import rs.emulator.entity.material.containers.impl.bank.Bank
+import rs.emulator.entity.material.containers.impl.bank.BankTab
 import rs.emulator.entity.material.containers.inventory
+import rs.emulator.entity.material.items.Wearable
+import rs.emulator.entity.material.provider.ItemProvider
 import rs.emulator.entity.player.chat.PublicChatText
 import rs.emulator.entity.player.update.flag.PlayerUpdateFlag
 import rs.emulator.entity.player.update.sync.SyncInformation
@@ -91,6 +97,12 @@ class Player(
     override val combatFactory: CombatFactory = CombatFactory(this)
 
     override val affectHandler: AffectHandler<IPlayer> = AffectHandler()
+
+    override var running: Boolean by actorAttributes.Boolean(false).markPersistent().apply {
+        add(this.changeListener.subscribe {
+            this@Player.messages().sendSmallVarp(173, if(it) 1 else 0)
+        })
+    }
 
     override val varbits: VarbitList = VarbitList()
 

@@ -266,6 +266,8 @@ public class WorldMapSection0 implements WorldMapSection {
 			var2 -= 2000;
 		}
 
+		System.out.println("Menu action: " + var2);
+
 		PacketBufferNode var8;
 		if (var2 == 1) {
 			Client.mouseCrossX = var6;
