@@ -4,6 +4,6 @@ dependencies {
 
     api(project(":rse-entity"))
     api(project(":rse-entity:action"))
-    api(project(":rse-api:entity"))
+    api(project(":rse-api:core"))
 
 }

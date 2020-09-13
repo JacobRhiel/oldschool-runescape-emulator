@@ -4,10 +4,10 @@ import it.unimi.dsi.fastutil.ints.Int2ReferenceArrayMap
 import rs.emulator.buffer.manipulation.DataType
 import rs.emulator.buffer.reader.BufferedReader
 import rs.emulator.cache.definition.generator.DefinitionGenerator
-import rs.emulator.definitions.scripts.ScriptVarType
+import rs.emulator.definitions.impl.scripts.ScriptVarType
 import rs.emulator.cache.store.index.IndexConfig
 import rs.emulator.cache.store.index.archive.ArchiveConfig
-import rs.emulator.definitions.enums.EnumDefinition
+import rs.emulator.definitions.impl.enums.EnumDefinition
 
 /**
  *

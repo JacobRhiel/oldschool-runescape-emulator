@@ -8,7 +8,7 @@ import rs.emulator.entity.actor.player.IPlayer
  * @author javatar
  */
 
-interface NpcAction {
+fun interface NpcAction {
 
     fun handleNpcAction(player: IPlayer, npc: INpc, option: Int)
 

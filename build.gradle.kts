@@ -1,7 +1,7 @@
 plugins {
     java
-    kotlin("jvm") version "1.4.0" apply false
     `maven-publish`
+    kotlin("jvm") version "1.4.0" apply false
     id("org.jetbrains.kotlin.plugin.noarg") version "1.4.0"
 }
 

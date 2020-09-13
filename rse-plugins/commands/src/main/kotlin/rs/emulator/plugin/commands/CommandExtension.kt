@@ -6,7 +6,6 @@ import org.pf4j.Extension
 import rs.emulator.entity.actor.combat.prayer.Prayers
 import rs.emulator.entity.actor.player.IPlayer
 import rs.emulator.entity.actor.player.messages.chat.ChatMessageType
-import rs.emulator.entity.actor.player.widgets.WidgetEvent
 import rs.emulator.entity.material.containers.inventory
 import rs.emulator.entity.material.items.Item
 import rs.emulator.entity.material.items.StandardItem

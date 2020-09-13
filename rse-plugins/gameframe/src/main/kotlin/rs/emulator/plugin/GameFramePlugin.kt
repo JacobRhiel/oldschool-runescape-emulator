@@ -2,8 +2,8 @@ package rs.emulator.plugin
 
 import org.pf4j.Plugin
 import org.pf4j.PluginWrapper
-import rs.emulator.entity.actor.player.widgets.WidgetViewport
 import rs.emulator.widget.WidgetRegistration
+import rs.emulator.widget.WidgetViewport
 
 /**
  *

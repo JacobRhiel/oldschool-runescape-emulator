@@ -2,7 +2,6 @@ val jar: Jar by tasks
 
 dependencies {
     api(project(":rse-api:core"))
-    api(project(":rse-api:definitions"))
 }
 
 jar.apply {

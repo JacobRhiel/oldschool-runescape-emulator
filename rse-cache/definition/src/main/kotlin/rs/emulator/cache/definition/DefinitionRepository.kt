@@ -4,7 +4,6 @@ import com.github.benmanes.caffeine.cache.Cache
 import com.github.benmanes.caffeine.cache.Caffeine
 import org.koin.core.KoinComponent
 import org.koin.core.get
-import rs.emulator.AbstractDefinitionRepository
 import rs.emulator.buffer.reader.BufferedReader
 import rs.emulator.cache.definition.entity.idk.IdentityKitDefinitionGenerator
 import rs.emulator.cache.definition.entity.loc.LocDefinitionGenerator
@@ -27,10 +26,9 @@ import rs.emulator.cache.definition.widget.param.ParamDefinitionGenerator
 import rs.emulator.cache.definition.widget.script.ScriptDefinitionGenerator
 import rs.emulator.cache.definition.widget.struct.StructDefinitionGenerator
 import rs.emulator.cache.store.VirtualFileStore
+import rs.emulator.definitions.AbstractDefinitionRepository
 import rs.emulator.definitions.Definition
-import rs.emulator.definitions.widget.WidgetDefinition
-import java.util.concurrent.TimeUnit
-import java.util.stream.Collectors
+import rs.emulator.definitions.impl.widget.WidgetDefinition
 
 /**
  *

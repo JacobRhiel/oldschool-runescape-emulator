@@ -4,9 +4,7 @@ dependencies {
 
     api(project(":rse-packet:message"))
 
-    api(project(":rse-api:region"))
-
-    api(project(":rse-api:entity"))
+    api(project(":rse-api:core"))
 
     implementation(project(":rse-encryption"))
 

@@ -1,10 +1,8 @@
 package rs.emulator.entity
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
 import rs.dusk.engine.model.entity.Size
 import rs.emulator.region.*
-import rs.emulator.region.coordinate.Coordinate
 
 @ExperimentalCoroutinesApi
 abstract class Entity(final override val coordinateState: EntityCoordinateState = EntityCoordinateState(WorldCoordinate(x = 3222, z = 3218))) : IEntity

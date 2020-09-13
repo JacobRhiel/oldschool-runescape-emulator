@@ -1,14 +1,12 @@
 package rs.emulator.network.packet.listener
 
 import io.reactivex.rxkotlin.toObservable
-import rs.emulator.entity.actor.npc.Npc
 import rs.emulator.entity.actor.player.messages.IWidgetMessages
 import rs.emulator.entity.player.Player
 import rs.emulator.network.packet.message.incoming.LocActionMessage
 import rs.emulator.plugins.RSPluginManager
 import rs.emulator.plugins.extensions.factories.entity.actions.ObjectActionFactory
 import rs.emulator.region.WorldCoordinate
-import rs.emulator.region.coordinate.Coordinate
 import rs.emulator.world.GameWorld
 
 /**

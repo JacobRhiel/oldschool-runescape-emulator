@@ -7,7 +7,6 @@ import io.reactivex.internal.disposables.DisposableContainer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.sendBlocking
@@ -16,13 +15,12 @@ import rs.dusk.engine.path.Finder
 import rs.emulator.collections.varbits.VarbitList
 import rs.emulator.database.service.JDBCPoolingService
 import rs.emulator.entity.actor.Actor
-import rs.emulator.entity.actor.affects.AffectHandler
 import rs.emulator.entity.actor.attributes.ActorAttributes
 import rs.emulator.entity.actor.combat.CombatFactory
+import rs.emulator.entity.actor.effects.AffectHandler
 import rs.emulator.entity.actor.player.IPlayer
 import rs.emulator.entity.actor.player.messages.AbstractMessageHandler
 import rs.emulator.entity.actor.player.messages.IMessages
-import rs.emulator.entity.actor.player.widgets.WidgetViewport
 import rs.emulator.entity.details.PlayerDetails
 import rs.emulator.entity.material.containers.ItemContainerManager
 import rs.emulator.entity.material.containers.bank
@@ -51,10 +49,10 @@ import rs.emulator.plugins.extensions.factories.SavePlayerFactory
 import rs.emulator.reactive.launch
 import rs.emulator.region.WorldCoordinate
 import rs.emulator.region.as30BitInteger
-import rs.emulator.region.coordinate.Coordinate
 import rs.emulator.region.events.TeleportCoordinateEvent
-import rs.emulator.regions.zones.RegionZone
+import rs.emulator.region.zones.RegionZone
 import rs.emulator.utilities.koin.get
+import rs.emulator.widget.WidgetViewport
 import rs.emulator.world.World
 import java.util.concurrent.atomic.AtomicLong
 

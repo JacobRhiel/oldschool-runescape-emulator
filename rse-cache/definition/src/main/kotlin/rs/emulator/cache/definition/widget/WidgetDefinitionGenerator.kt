@@ -4,8 +4,8 @@ import rs.emulator.buffer.manipulation.DataType
 import rs.emulator.buffer.reader.BufferedReader
 import rs.emulator.cache.definition.generator.DefinitionGenerator
 import rs.emulator.cache.store.index.IndexConfig
-import rs.emulator.definitions.scripts.ClientScript1Instruction
-import rs.emulator.definitions.widget.WidgetDefinition
+import rs.emulator.definitions.impl.scripts.ClientScript1Instruction
+import rs.emulator.definitions.impl.widget.WidgetDefinition
 import java.util.*
 
 /**

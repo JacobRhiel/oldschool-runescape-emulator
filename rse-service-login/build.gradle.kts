@@ -3,7 +3,7 @@ version = "1.0-SNAPSHOT"
 
 dependencies {
 
-    implementation(project(":rse-api:entity"))
+    implementation(project(":rse-api:core"))
 
     implementation(project(":rse-utilities"))
 

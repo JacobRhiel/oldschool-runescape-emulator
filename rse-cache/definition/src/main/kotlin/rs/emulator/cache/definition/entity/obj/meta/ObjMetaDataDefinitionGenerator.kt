@@ -2,8 +2,7 @@ package rs.emulator.cache.definition.entity.obj.meta
 
 import com.google.gson.reflect.TypeToken
 import rs.emulator.cache.definition.generator.MetaDataDefinitionGenerator
-import rs.emulator.definitions.entity.obj.ObjMetaDataDefinition
-import java.io.File
+import rs.emulator.definitions.impl.entity.obj.ObjMetaDataDefinition
 import java.io.FileReader
 import java.nio.file.Paths
 

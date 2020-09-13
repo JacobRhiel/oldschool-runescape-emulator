@@ -11,7 +11,7 @@ import rs.emulator.region.WorldCoordinate
 import rs.emulator.region.as30BitInteger
 import rs.emulator.region.coordinate.Coordinate
 import rs.emulator.region.events.MoveCoordinateEvent
-import rs.emulator.regions.zones.RegionZone
+import rs.emulator.region.zones.RegionZone
 import rs.emulator.service.event.IEvent
 import rs.emulator.utilities.contexts.scopes.ActorScope
 import rs.emulator.utilities.koin.get

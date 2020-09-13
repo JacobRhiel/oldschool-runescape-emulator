@@ -21,16 +21,7 @@ include("rse-service")
 include("rse-cache:definition")
 include(
     "rse-api",
-    "rse-api:entity",
-    "rse-api:region",
-    "rse-api:collections",
-    "rse-api:definitions",
-    "rse-api:core",
-    "rse-api:widgets",
-    "rse-api:skills",
-    "rse-api:reactive",
-    "rse-api:persistent-details",
-    "rse-api:database"
+    "rse-api:core"
 )
 include(
     "rse-plugins",

@@ -2,10 +2,8 @@ package rs.emulator.network.packet.listener
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
-import rs.emulator.cache.definition.definition
-import rs.emulator.definitions.entity.obj.ObjMetaDataDefinition
-import rs.emulator.definitions.factories.ItemDefinitionFactory
-import rs.emulator.definitions.factories.ItemMetaDefinitionFactory
+import rs.emulator.definitions.impl.factories.ItemDefinitionFactory
+import rs.emulator.definitions.impl.factories.ItemMetaDefinitionFactory
 import rs.emulator.entity.actor.player.hasRequirementsFor
 import rs.emulator.entity.material.EquipmentSlot
 import rs.emulator.entity.material.containers.*
@@ -19,8 +17,6 @@ import rs.emulator.network.packet.message.incoming.ObjActionMessage
 import rs.emulator.plugins.RSPluginManager
 import rs.emulator.plugins.extensions.factories.ItemActionFactory
 import rs.emulator.reactive.launch
-import rs.emulator.utilities.contexts.scopes.ActorScope
-import rs.emulator.utilities.koin.get
 
 /**
  *

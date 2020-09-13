@@ -8,8 +8,6 @@ import rs.emulator.cache.store.data.DataFile
 import rs.emulator.cache.store.index.IndexConfig
 import rs.emulator.cache.store.index.archive.ArchiveConfig
 import rs.emulator.cache.store.reference.ReferenceTable
-import rs.emulator.definitions.entity.loc.LocDefinition
-import rs.emulator.encryption.xtea.XteaKeyService
 import rs.emulator.fileserver.FileStoreService
 import rs.emulator.utilities.koin.get
 import java.nio.file.Paths

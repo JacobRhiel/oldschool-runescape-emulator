@@ -10,9 +10,5 @@ import rs.emulator.plugins.extensions.factories.actions.action.NpcAction
  */
 
 fun Any.npcAction(block: (IPlayer, INpc, Int) -> Unit): NpcAction {
-    return object : NpcAction {
-        override fun handleNpcAction(player: IPlayer, npc: INpc, option: Int) {
-            block(player, npc, option)
-        }
-    }
+    return NpcAction { player, npc, option -> block(player, npc, option) }
 }

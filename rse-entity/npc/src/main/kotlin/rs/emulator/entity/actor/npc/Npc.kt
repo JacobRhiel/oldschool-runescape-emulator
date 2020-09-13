@@ -4,10 +4,10 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import rs.dusk.engine.path.Finder
 import rs.emulator.entity.actor.Actor
-import rs.emulator.entity.actor.affects.AffectHandler
 import rs.emulator.entity.actor.attributes.ActorAttributes
+import rs.emulator.entity.actor.effects.AffectHandler
 import rs.emulator.entity.skills.SkillManager
-import rs.emulator.regions.zones.RegionZone
+import rs.emulator.region.zones.RegionZone
 
 @ExperimentalCoroutinesApi
 class Npc(index: Int, override val id: Int) : Actor(index), INpc {

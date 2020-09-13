@@ -2,12 +2,12 @@ package rs.emulator.plugin
 
 import org.pf4j.Plugin
 import org.pf4j.PluginWrapper
-import rs.emulator.Repository
-import rs.emulator.definitions.enums.EnumDefinition
+import rs.emulator.definitions.Repository
+import rs.emulator.definitions.impl.enums.EnumDefinition
 import rs.emulator.entity.actor.player.IPlayer
 import rs.emulator.entity.actor.player.messages.chat.ChatMessageType
-import rs.emulator.entity.actor.player.widgets.WidgetViewport
 import rs.emulator.widget.WidgetRegistration
+import rs.emulator.widget.WidgetViewport
 
 class LobbyPlugin(wrapper: PluginWrapper) : Plugin(wrapper) {
 

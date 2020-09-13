@@ -1,7 +1,6 @@
 dependencies {
-    api(project(":rse-api:entity"))
     api(project(":rse-utilities"))
-
+    api(project(":rse-api:core"))
     testApi(project(":rse-entity:player"))
 }
 

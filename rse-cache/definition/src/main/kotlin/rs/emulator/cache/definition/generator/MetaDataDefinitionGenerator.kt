@@ -4,7 +4,7 @@ import com.google.gson.Gson
 import rs.emulator.buffer.reader.BufferedReader
 import rs.emulator.cache.store.index.IndexConfig
 import rs.emulator.definitions.MetaDataDefinition
-import rs.emulator.definitions.entity.obj.ObjMetaDataDefinition
+import rs.emulator.definitions.impl.entity.obj.ObjMetaDataDefinition
 import rs.emulator.utilities.koin.get
 
 /**

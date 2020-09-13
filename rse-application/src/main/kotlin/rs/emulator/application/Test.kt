@@ -13,7 +13,6 @@ import rs.dusk.engine.path.PathFinder
 import rs.dusk.engine.path.find.AxisAlignment
 import rs.dusk.engine.path.find.BreadthFirstSearch
 import rs.dusk.engine.path.find.DirectSearch
-import rs.emulator.Repository
 import rs.emulator.cache.definition.DefinitionRepository
 import rs.emulator.cache.definition.definition
 import rs.emulator.cache.store.VirtualFileStore
@@ -21,8 +20,8 @@ import rs.emulator.cache.store.data.DataFile
 import rs.emulator.cache.store.index.IndexConfig
 import rs.emulator.cache.store.reference.ReferenceTable
 import rs.emulator.database.service.JDBCPoolingService
-import rs.emulator.definitions.entity.obj.ObjDefinition
-import rs.emulator.definitions.enums.EnumDefinition
+import rs.emulator.definitions.Repository
+import rs.emulator.definitions.impl.enums.EnumDefinition
 import rs.emulator.encryption.huffman.HuffmanCodec
 import rs.emulator.encryption.rsa.RSAService
 import rs.emulator.encryption.xtea.XteaKeyService

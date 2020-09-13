@@ -6,7 +6,7 @@ dependencies {
 
     api(project(":rse-utilities"))
 
-    api(project(":rse-api:definitions"))
+    api(project(":rse-api:core"))
 
     implementation("org.bouncycastle:bcprov-jdk16:1.46")
 

@@ -2,8 +2,8 @@ package rs.emulator.cache.definition.entity.npc.meta
 
 import com.google.gson.reflect.TypeToken
 import rs.emulator.cache.definition.generator.MetaDataDefinitionGenerator
-import rs.emulator.definitions.entity.npc.NpcMetaDataDefinition
-import rs.emulator.definitions.entity.obj.ObjMetaDataDefinition
+import rs.emulator.definitions.impl.entity.npc.NpcMetaDataDefinition
+import rs.emulator.definitions.impl.entity.obj.ObjMetaDataDefinition
 import java.io.File
 import java.io.FileReader
 

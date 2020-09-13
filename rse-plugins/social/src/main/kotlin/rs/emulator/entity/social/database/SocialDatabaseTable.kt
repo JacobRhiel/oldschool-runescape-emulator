@@ -1,6 +1,6 @@
 package rs.emulator.entity.social.database
 
-import rs.emulator.api.database.IDatabaseTable
+import rs.emulator.database.IDatabaseTable
 import rs.emulator.utilities.database.annotations.NoArg
 import javax.persistence.*
 

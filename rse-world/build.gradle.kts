@@ -4,8 +4,6 @@ dependencies {
 
     implementation(project(":rse-database"))
 
-    implementation(project(":rse-api:collections"))
-
     implementation(project(":rse-map"))
 
 }

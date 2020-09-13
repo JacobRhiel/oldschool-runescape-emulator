@@ -1,23 +1,12 @@
 package rs.emulator.plugin
 
-import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.pf4j.Extension
-import rs.emulator.definitions.factories.ItemDefinitionFactory
-import rs.emulator.definitions.factories.ItemMetaDefinitionFactory
 import rs.emulator.entity.actor.player.IPlayer
-import rs.emulator.entity.actor.player.widgets.WidgetViewport
-import rs.emulator.entity.material.EquipmentSlot
-import rs.emulator.entity.material.containers.equipment
 import rs.emulator.plugins.extensions.factories.LoginActionFactory
 import rs.emulator.plugins.extensions.factories.actions.LoginAction
 import rs.emulator.reactive.launch
-import rs.emulator.region.WorldCoordinate
-import rs.emulator.regions.zones.events.MessageBroadcastZoneEvent
-import rs.emulator.utilities.contexts.scopes.ActorScope
-import rs.emulator.utilities.koin.get
-import rs.emulator.utilities.logger.info
-import rs.emulator.world.regions.RegionZoneManager
+import rs.emulator.widget.WidgetViewport
 
 /**
  *

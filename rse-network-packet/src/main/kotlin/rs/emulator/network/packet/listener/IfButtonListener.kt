@@ -1,14 +1,7 @@
 package rs.emulator.network.packet.listener
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.launchIn
-import rs.emulator.Repository
-import rs.emulator.definitions.enums.EnumDefinition
-import rs.emulator.entity.actor.player.messages.chat.ChatMessageType
 import rs.emulator.entity.player.Player
 import rs.emulator.network.packet.message.incoming.IfButtonMessage
-import rs.emulator.network.packet.message.outgoing.*
 import rs.emulator.reactive.launch
 import rs.emulator.widget.WidgetRegistration
 

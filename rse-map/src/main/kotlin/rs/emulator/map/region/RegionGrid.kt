@@ -9,7 +9,7 @@ import rs.emulator.cache.definition.region.landscape.LandscapeDefinition
 import rs.emulator.cache.definition.region.landscape.LandscapeLoc
 import rs.emulator.cache.definition.region.mapscape.MapScapeDefinition
 import rs.emulator.cache.definition.region.mapscape.MapScapeTile
-import rs.emulator.definitions.entity.loc.LocDefinition
+import rs.emulator.definitions.impl.entity.loc.LocDefinition
 import rs.emulator.encryption.xtea.XteaKeyService
 import rs.emulator.map.grid.AreaGrid
 import rs.emulator.map.grid.tile.GridTile

@@ -2,10 +2,9 @@ package rs.emulator.entity.social
 
 import org.pf4j.Plugin
 import org.pf4j.PluginWrapper
-import rs.emulator.api.database.annotation.DatabaseMetaData
-import rs.emulator.api.database.factory.DatabaseFactory
 import rs.emulator.entity.social.database.SocialDatabaseTable
-import rs.emulator.api.database.factory.withTransaction
+import rs.emulator.database.annotation.DatabaseMetaData
+import rs.emulator.database.factory.DatabaseFactory
 
 /**
  *

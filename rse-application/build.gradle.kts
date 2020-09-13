@@ -30,7 +30,7 @@ dependencies {
 
     implementation(project(":rse-entity:player"))
 
-    implementation(project(":rse-api:region"))
+    implementation(project(":rse-api:core"))
 
     implementation(project(":rse-map"))
 

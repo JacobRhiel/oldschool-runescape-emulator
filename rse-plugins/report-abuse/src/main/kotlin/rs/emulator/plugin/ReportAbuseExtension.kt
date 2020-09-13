@@ -2,10 +2,7 @@ package rs.emulator.plugin
 
 import org.pf4j.Extension
 import rs.emulator.entity.actor.player.IPlayer
-import rs.emulator.entity.actor.player.messages.chat.ChatMessageType
-import rs.emulator.plugins.extensions.factories.LoginActionFactory
 import rs.emulator.plugins.extensions.factories.ReportAbuseFactory
-import rs.emulator.plugins.extensions.factories.actions.LoginAction
 import rs.emulator.plugins.extensions.factories.actions.ReportAbuseAction
 
 /**

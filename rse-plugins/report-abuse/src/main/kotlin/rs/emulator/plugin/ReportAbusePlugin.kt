@@ -3,14 +3,10 @@ package rs.emulator.plugin
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.pf4j.Plugin
 import org.pf4j.PluginWrapper
-import rs.emulator.definitions.factories.WidgetDefinitionFactory
-import rs.emulator.definitions.widget.WidgetDefinition
-import rs.emulator.entity.actor.player.widgets.WidgetEvent
 import rs.emulator.entity.material.containers.bank
-import rs.emulator.entity.material.containers.equipment
 import rs.emulator.entity.material.containers.inventory
-import rs.emulator.identifications.data.VarBits
 import rs.emulator.widget.WidgetRegistration
+import rs.emulator.widget.WidgetEvent
 
 /**
  *

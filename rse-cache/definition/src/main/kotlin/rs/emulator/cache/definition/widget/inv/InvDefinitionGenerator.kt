@@ -5,7 +5,7 @@ import rs.emulator.buffer.reader.BufferedReader
 import rs.emulator.cache.definition.generator.DefinitionGenerator
 import rs.emulator.cache.store.index.IndexConfig
 import rs.emulator.cache.store.index.archive.ArchiveConfig
-import rs.emulator.definitions.widget.InvDefinition
+import rs.emulator.definitions.impl.widget.InvDefinition
 
 /**
  *

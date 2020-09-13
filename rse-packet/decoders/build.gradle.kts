@@ -6,7 +6,7 @@ dependencies {
 
     api(project(":rse-entity:player"))
 
-    api(project(":rse-api:entity"))
+    api(project(":rse-api:core"))
 
     implementation(project(":rse-encryption"))
 

@@ -5,7 +5,7 @@ dependencies {
 
     api(project(":rse-cache"))
 
-    api(project(":rse-api:definitions"))
+    api(project(":rse-api:core"))
 
 }
 
