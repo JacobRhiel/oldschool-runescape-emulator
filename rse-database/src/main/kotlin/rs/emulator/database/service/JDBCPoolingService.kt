@@ -26,7 +26,7 @@ class JDBCPoolingService : AbstractIdleService()
         val properties = Properties()
 
         properties["hibernate.hikari.dataSource.user"] = "postgres"
-        properties["hibernate.hikari.dataSource.password"] = "deadmau5"
+        properties["hibernate.hikari.dataSource.password"] = "####"
         properties["hibernate.hikari.dataSource.databaseName"] = "runescape-emulator"
         properties["hibernate.hikari.dataSource.portNumber"] = "5432"
         properties["hibernate.hikari.dataSource.serverName"] = "localhost"
